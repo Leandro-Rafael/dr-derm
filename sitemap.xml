@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>/index.html</loc></url>
+  <url><loc>/produtos.html</loc></url>
+  <url><loc>/produto.html</loc></url>
+  <url><loc>/carrinho.html</loc></url>
+  <url><loc>/checkout.html</loc></url>
+  <url><loc>/pedidos.html</loc></url>
+  <url><loc>/favoritos.html</loc></url>
+  <url><loc>/perfil.html</loc></url>
+  <url><loc>/login.html</loc></url>
+</urlset>

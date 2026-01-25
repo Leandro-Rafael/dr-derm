@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favoritos - DrDerm</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: http:; font-src 'self' data:; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests; block-all-mixed-content">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta name="Referrer-Policy" content="no-referrer">
+    <meta http-equiv="Permissions-Policy" content="geolocation=(), camera=(), microphone=(), payment=()">
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
+    <!-- Scripts de segurança temporariamente desabilitados para resolver problema de carregamento -->
+    <!-- <script src="crypto-utils.js" async></script> -->
+    <!-- <script src="code-protection.js" async></script> -->
+    <!-- <script src="integrity-check.js" async></script> -->
+    <script src="security.js" defer></script>
+    <script src="utils.js" defer></script>
+    <link rel="stylesheet" href="header-styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            color: #1e2723;
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding-top: 140px; /* Header + mobile search */
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header - Usa header-styles.css compartilhado */
+        /* Header já está definido como fixed no header-styles.css */
+
+        .header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+        }
+
+        .logo a {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-img {
+            height: 60px;
+            width: auto;
+            max-width: 200px;
+            object-fit: contain;
+            filter: brightness(0) invert(1);
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            background: rgba(220, 187, 146, 0.3);
+        }
+
+        /* Favorites Page */
+        .favorites-page {
+            padding: 40px 0;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1e2723;
+            margin-bottom: 10px;
+        }
+
+        .page-subtitle {
+            color: #6b7280;
+            font-size: 16px;
+        }
+
+        .favorites-stats {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stats-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .stats-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #395f69, #748d8c);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .stats-text h3 {
+            font-size: 20px;
+            color: #1e2723;
+            margin-bottom: 4px;
+        }
+
+        .stats-text p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .clear-all-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .clear-all-btn:hover {
+            background: #c0392b;
+            transform: translateY(-1px);
+        }
+
+        .favorites-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #395f69, #748d8c);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .product-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e2723;
+            margin-bottom: 8px;
+        }
+
+        .product-rating {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 8px;
+        }
+
+        .stars {
+            display: flex;
+            gap: 2px;
+        }
+
+        .star {
+            color: #fbbf24;
+            font-size: 14px;
+        }
+
+        .star.empty {
+            color: #e5e7eb;
+        }
+        
+        .remove-favorite-btn:hover {
+            background: #dc2626 !important;
+            transform: scale(1.1);
+        }
+        
+        .add-all-cart-btn:hover {
+            background: #16a34a !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+        }
+
+        .rating-text {
+            font-size: 12px;
+            color: #6b7280;
+            margin-left: 5px;
+        }
+
+        .product-price {
+            font-size: 24px;
+            font-weight: 700;
+            color: #395f69;
+            margin-bottom: 15px;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .add-to-cart {
+            background: #395f69;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            font-size: 14px;
+        }
+
+        .add-to-cart:hover {
+            background: #1e2723;
+        }
+
+        .buy-now {
+            background: #dcbb92;
+            color: #1e2723;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            font-size: 14px;
+        }
+
+        .buy-now:hover {
+            background: #c9a67a;
+            transform: translateY(-1px);
+        }
+
+        .favorite-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .favorite-btn:hover {
+            background: #c0392b;
+            transform: scale(1.1);
+        }
+
+        .empty-favorites {
+            text-align: center;
+            padding: 80px 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            color: #e5e7eb;
+            margin-bottom: 20px;
+        }
+
+        .empty-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1e2723;
+            margin-bottom: 10px;
+        }
+
+        .empty-text {
+            color: #6b7280;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .browse-btn {
+            background: linear-gradient(135deg, #395f69 0%, #1e2723 100%);
+            color: white;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .browse-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(57, 95, 105, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .favorites-stats {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .favorites-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 20px;
+            }
+
+            .product-actions {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
+<script>
+    (function(){
+        try {
+            var logged = localStorage.getItem('userLoggedIn') === 'true';
+            if (!logged) {
+                window.location.replace('login.html');
+            }
+        } catch (e) {}
+    })();
+</script>
+</head>
+<body>
+    <!-- Header -->
+    <!-- Header será carregado dinamicamente -->
+    <div id="header-placeholder"></div>
+
+    <!-- Favorites Page -->
+    <section class="favorites-page">
+        <div class="container">
+            <div class="page-header">
+                <h1 class="page-title">Meus Favoritos</h1>
+                <p class="page-subtitle">Produtos que você marcou como favoritos</p>
+            </div>
+
+            <div class="favorites-stats" id="favoritesStats">
+                <div class="stats-info">
+                    <div class="stats-icon">♡</div>
+                    <div class="stats-text">
+                        <h3 id="favoritesCount">0 produtos</h3>
+                        <p>salvos nos seus favoritos</p>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                <button class="clear-all-btn" onclick="clearAllFavorites()" id="clearAllBtn" style="display: none;">
+                    Limpar Todos
+                </button>
+                    <button class="add-all-cart-btn" onclick="addAllToCart()" id="addAllCartBtn" style="display: none; background: #22c55e; color: white; border: none; padding: 12px 24px; border-radius: 25px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
+                        Adicionar Todos ao Carrinho
+                    </button>
+                </div>
+            </div>
+
+            <div class="favorites-content" id="favoritesContent">
+                <!-- Content will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <script>
+        let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+        let allProducts = [];
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        
+        // Sistema de reserva temporária de estoque
+        const STOCK_RESERVATION_TIMEOUT = 30 * 60 * 1000; // 30 minutos
+        
+        function getStockReservations() {
+            const reservations = JSON.parse(localStorage.getItem('stockReservations')) || {};
+            // Limpar reservas expiradas
+            const now = Date.now();
+            const validReservations = {};
+            for (const [productId, reservation] of Object.entries(reservations)) {
+                if (now - reservation.timestamp < STOCK_RESERVATION_TIMEOUT) {
+                    validReservations[productId] = reservation;
+                }
+            }
+            if (Object.keys(validReservations).length !== Object.keys(reservations).length) {
+                localStorage.setItem('stockReservations', JSON.stringify(validReservations));
+            }
+            return validReservations;
+        }
+        
+        function getAvailableStock(productId, totalStock) {
+            const reservations = getStockReservations();
+            const reservation = reservations[String(productId)];
+            const reserved = reservation ? reservation.quantity : 0;
+            return Math.max(0, totalStock - reserved);
+        }
+        
+        function reserveStock(productId, quantity) {
+            const reservations = getStockReservations();
+            const productIdStr = String(productId);
+            const currentReserved = reservations[productIdStr] ? reservations[productIdStr].quantity : 0;
+            reservations[productIdStr] = {
+                quantity: currentReserved + quantity,
+                timestamp: Date.now()
+            };
+            localStorage.setItem('stockReservations', JSON.stringify(reservations));
+        }
+        
+        function releaseStock(productId, quantity) {
+            const reservations = getStockReservations();
+            const productIdStr = String(productId);
+            if (reservations[productIdStr]) {
+                reservations[productIdStr].quantity = Math.max(0, reservations[productIdStr].quantity - quantity);
+                if (reservations[productIdStr].quantity === 0) {
+                    delete reservations[productIdStr];
+                }
+            }
+            localStorage.setItem('stockReservations', JSON.stringify(reservations));
+        }
+
+        // Carregar produtos do backend
+        async function loadProductsFromBackend() {
+            try {
+                const response = await fetch('/api/products-public');
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar produtos');
+                }
+                const data = await response.json();
+                allProducts = data.products || [];
+                localStorage.setItem('allProducts', JSON.stringify(allProducts));
+                
+                // Recarregar favoritos antes de renderizar
+                favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+                
+                loadFavorites();
+            } catch (error) {
+                console.error('Erro ao carregar produtos:', error);
+                // Tentar usar produtos do localStorage como fallback
+                allProducts = JSON.parse(localStorage.getItem('allProducts')) || [];
+                
+                // Recarregar favoritos antes de renderizar
+                favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+                
+                loadFavorites();
+            }
+        }
+
+        // Avaliações pré-definidas (mesmo do index.html)
+        const productReviews = {
+            1: { rating: 4.8, count: 6 },
+            2: { rating: 4.7, count: 5 },
+            3: { rating: 4.5, count: 4 },
+            4: { rating: 4.6, count: 7 },
+            5: { rating: 4.4, count: 3 },
+            6: { rating: 4.3, count: 4 }
+        };
+
+        // Cache de avaliações do backend
+        let reviewsCache = {};
+        
+        // Função para gerar estrelas
+        function generateStars(rating, count = 0) {
+            if (count === 0 || !rating || rating === 0) {
+                return '<span class="star empty">☆</span>'.repeat(5);
+            }
+            let stars = '';
+            const roundedRating = Math.round(rating);
+            for (let i = 1; i <= 5; i++) {
+                stars += `<span class="star ${i <= roundedRating ? '' : 'empty'}">★</span>`;
+            }
+            return stars;
+        }
+        
+        // Função para buscar avaliações do backend
+        async function fetchProductReviews(productId) {
+            const id = typeof productId === 'string' ? String(productId) : String(productId);
+            
+            if (reviewsCache[id]) {
+                return reviewsCache[id];
+            }
+            
+            try {
+                const response = await fetch(`/api/product-reviews?product_id=${id}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    const reviewData = {
+                        rating: data.averageRating || 0,
+                        count: data.totalReviews || 0,
+                        reviews: data.reviews || []
+                    };
+                    reviewsCache[id] = reviewData;
+                    return reviewData;
+                }
+            } catch (error) {
+                console.error('Erro ao buscar avaliações:', error);
+            }
+            
+            const defaultReview = { rating: 0, count: 0, reviews: [] };
+            reviewsCache[id] = defaultReview;
+            return defaultReview;
+        }
+        
+        // Função para carregar avaliações de múltiplos produtos
+        async function loadReviewsForProducts(productIds) {
+            const uniqueIds = [...new Set(productIds.map(id => String(id)))];
+            const promises = uniqueIds.map(async (id) => {
+                if (!reviewsCache[id]) {
+                    await fetchProductReviews(id);
+                }
+            });
+            await Promise.all(promises);
+        }
+        
+        function getProductReviews(productId) {
+            const id = typeof productId === 'string' ? String(productId) : String(productId);
+            return reviewsCache[id] || { rating: 0, count: 0, reviews: [] };
+        }
+
+        async function loadFavorites() {
+            const favoritesContent = document.getElementById('favoritesContent');
+            const favoritesCount = document.getElementById('favoritesCount');
+            const clearAllBtn = document.getElementById('clearAllBtn');
+
+            favoritesCount.textContent = `${favorites.length} produto${favorites.length !== 1 ? 's' : ''}`;
+
+            if (favorites.length === 0) {
+                clearAllBtn.style.display = 'none';
+                const addAllCartBtn = document.getElementById('addAllCartBtn');
+                if (addAllCartBtn) {
+                    addAllCartBtn.style.display = 'none';
+                }
+                favoritesContent.innerHTML = `
+                    <div class="empty-favorites">
+                        <div class="empty-icon">♡</div>
+                        <h2 class="empty-title">Nenhum produto favorito</h2>
+                        <p class="empty-text">Você ainda não adicionou nenhum produto aos seus favoritos.<br>Explore nosso catálogo e marque os produtos que mais gosta!</p>
+                        <a href="index.html" class="browse-btn">Explorar Produtos</a>
+                    </div>
+                `;
+                return;
+            }
+
+            clearAllBtn.style.display = 'block';
+            const addAllCartBtn = document.getElementById('addAllCartBtn');
+            if (addAllCartBtn) {
+                addAllCartBtn.style.display = 'block';
+            }
+            
+            // Recarregar favoritos para garantir que está atualizado
+            favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+            
+            // Verificar se os produtos foram carregados
+            if (allProducts.length === 0) {
+                favoritesContent.innerHTML = `
+                    <div class="empty-favorites">
+                        <div class="empty-icon">⏳</div>
+                        <h2 class="empty-title">Carregando produtos...</h2>
+                        <p class="empty-text">Aguarde enquanto carregamos os produtos favoritos.</p>
+                    </div>
+                `;
+                // Tentar carregar produtos novamente
+                setTimeout(() => {
+                    loadProductsFromBackend();
+                }, 500);
+                return;
+            }
+            
+            // Filtrar produtos favoritos (apenas ativos), comparando IDs corretamente (string vs número)
+            const favoriteProducts = allProducts.filter(product => {
+                // Filtrar apenas produtos ativos
+                const isActive = product.is_active === true || product.is_active === 1 || product.is_active === undefined;
+                if (!isActive) return false;
+                
+                const productIdNum = typeof product.id === 'string' ? parseInt(product.id) : product.id;
+                return favorites.some(favId => {
+                    const favIdNum = typeof favId === 'string' ? parseInt(favId) : favId;
+                    return favIdNum === productIdNum;
+                });
+            });
+
+            if (favoriteProducts.length === 0 && favorites.length > 0) {
+                favoritesContent.innerHTML = `
+                    <div class="empty-favorites">
+                        <div class="empty-icon">♡</div>
+                        <h2 class="empty-title">Produtos não encontrados</h2>
+                        <p class="empty-text">Os produtos favoritos não puderam ser carregados. Tente recarregar a página.</p>
+                        <button class="browse-btn" onclick="location.reload()">Recarregar Página</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Carregar avaliações para os produtos favoritos
+            const productIds = favoriteProducts.map(p => p.id);
+            await loadReviewsForProducts(productIds);
+
+            favoritesContent.innerHTML = `
+                <div class="favorites-grid">
+                    ${favoriteProducts.map(product => {
+                        const reviewData = getProductReviews(product.id);
+                        const priceDisplay = product.discount_percentage > 0 && product.original_price
+                            ? `<span style="text-decoration: line-through; color: #9ca3af; font-size: 14px;">R$ ${product.original_price.toFixed(2).replace('.', ',')}</span><br>
+                               <span style="color: #ef4444; font-weight: bold; font-size: 20px;">R$ ${product.price.toFixed(2).replace('.', ',')}</span>
+                               <span style="background: #ef4444; color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 8px;">${Math.round(product.discount_percentage)}% OFF</span>`
+                            : `<span style="font-size: 24px;">R$ ${product.price.toFixed(2).replace('.', ',')}</span>`;
+                        
+                        const imageUrl = (product.images && product.images.length > 0) ? product.images[0] : (product.image_url || '');
+                        const cropPositions = product.image_crop_positions || [];
+                        const cropPos = cropPositions[0] || { x: 50, y: 50 };
+                        const cropPosition = `${cropPos.x}% ${cropPos.y}%`;
+                        
+                        const productIdNum = typeof product.id === 'string' ? parseInt(product.id) : product.id;
+                        return `
+                            <div class="product-card" style="position: relative; cursor: pointer;" onclick="openProduct(${productIdNum})">
+                                ${product.discount_percentage > 0 ? `<div class="discount-badge" style="position: absolute; top: 15px; left: 15px; background: #ef4444; color: white; padding: 6px 10px; border-radius: 6px; font-size: 14px; font-weight: bold; z-index: 5; box-shadow: 0 2px 8px rgba(0,0,0,0.2); pointer-events: none;">${Math.round(product.discount_percentage)}% OFF</div>` : ''}
+                                <button class="remove-favorite-btn" onclick="event.stopPropagation(); event.preventDefault(); removeFavorite(event, ${productIdNum});" style="position: absolute; top: 15px; right: 15px; background: #ef4444; color: white; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 20px; font-weight: bold; transition: all 0.3s ease; z-index: 15; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+                                    ×
+                                </button>
+                                <div style="pointer-events: none;">
+                                    <div class="product-image" style="${imageUrl ? `background-image: url('${imageUrl}'); background-size: cover; background-position: ${cropPosition};` : ''} aspect-ratio: 1;">${!imageUrl ? product.name : ''}</div>
+                                <h3 class="product-title">${product.name}</h3>
+                                <div style="font-size: 14px; color: #6b7280; margin-bottom: 8px;">${product.brand || 'marca não identificada'}</div>
+                                ${product.category ? `<div style="font-size: 12px; color: #9ca3af; margin-bottom: 8px;">${product.category}</div>` : ''}
+                                <div class="product-rating">
+                                        <div class="stars">${generateStars(Math.round(reviewData.rating), reviewData.count)}</div>
+                                        <span class="rating-text">${reviewData.count > 0 ? `(${reviewData.count})` : '(Sem avaliações)'}</span>
+                                </div>
+                                <div class="product-price" style="margin-bottom: 15px;">${priceDisplay}</div>
+                                ${product.description ? `<div style="font-size: 12px; color: #6b7280; margin-bottom: 15px; text-align: left; max-height: 60px; overflow: hidden; text-overflow: ellipsis;">${product.description.substring(0, 100)}${product.description.length > 100 ? '...' : ''}</div>` : ''}
+                                </div>
+                                <div class="product-actions" onclick="event.stopPropagation();" style="pointer-events: auto;">
+                                    <button class="add-to-cart" onclick="event.stopPropagation(); addToCart(event, ${JSON.stringify(product).replace(/"/g, '&quot;')})">
+                                        Carrinho
+                                    </button>
+                                    <button class="buy-now" onclick="event.stopPropagation(); buyNow(event, ${JSON.stringify(product).replace(/"/g, '&quot;')})">
+                                        Comprar
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        function removeFavorite(event, productId) {
+            event.stopPropagation();
+            // Garantir comparação correta de IDs (string vs número)
+            const productIdNum = typeof productId === 'string' ? parseInt(productId) : productId;
+            favorites = favorites.filter(favId => {
+                const favIdNum = typeof favId === 'string' ? parseInt(favId) : favId;
+                return favIdNum !== productIdNum;
+            });
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            loadFavorites();
+            showNotification('Produto removido dos favoritos!');
+        }
+
+        function clearAllFavorites() {
+            if (confirm('Tem certeza que deseja remover todos os produtos dos favoritos?')) {
+                favorites = [];
+                localStorage.setItem('favorites', JSON.stringify(favorites));
+                loadFavorites();
+                showNotification('Todos os favoritos foram removidos!');
+            }
+        }
+
+        function openProduct(productId) {
+            window.location.href = `produto.html?id=${productId}`;
+        }
+
+        function addAllToCart() {
+            // Recarregar favoritos e produtos
+            favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+            
+            // Filtrar produtos favoritos (apenas ativos)
+            const favoriteProducts = allProducts.filter(product => {
+                // Filtrar apenas produtos ativos
+                const isActive = product.is_active === true || product.is_active === 1 || product.is_active === undefined;
+                if (!isActive) return false;
+                
+                const productIdNum = typeof product.id === 'string' ? parseInt(product.id) : product.id;
+                return favorites.some(favId => {
+                    const favIdNum = typeof favId === 'string' ? parseInt(favId) : favId;
+                    return favIdNum === productIdNum;
+                });
+            });
+
+            if (favoriteProducts.length === 0) {
+                showNotification('Nenhum produto favorito encontrado para adicionar ao carrinho.');
+                return;
+            }
+
+            // Adicionar todos os produtos ao carrinho
+            let addedCount = 0;
+            let failedCount = 0;
+            favoriteProducts.forEach(product => {
+                // Verificar estoque disponível
+                const totalStock = parseInt(product.stock) || 0;
+                if (totalStock <= 0) {
+                    failedCount++;
+                    return;
+                }
+                
+                const existingItem = cart.find(item => {
+                    const itemIdNum = typeof item.id === 'string' ? parseInt(item.id) : item.id;
+                    const productIdNum = typeof product.id === 'string' ? parseInt(product.id) : product.id;
+                    return itemIdNum === productIdNum;
+                });
+                
+                const currentCartQuantity = existingItem ? existingItem.quantity : 0;
+                const newQuantity = currentCartQuantity + 1;
+                
+                // Validar se a quantidade não excede o estoque total
+                if (newQuantity > totalStock) {
+                    failedCount++;
+                    return;
+                }
+                
+                // Reservar estoque - sempre substituir pela nova quantidade total
+                reserveStock(product.id, newQuantity);
+                
+                if (existingItem) {
+                    existingItem.quantity = newQuantity;
+                } else {
+                    cart.push({...product, quantity: 1, stock: product.stock});
+                }
+                addedCount++;
+            });
+
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartBadge();
+            
+            let message = '';
+            if (addedCount > 0) {
+                message = `${addedCount} produto${addedCount !== 1 ? 's' : ''} adicionado${addedCount !== 1 ? 's' : ''} ao carrinho!`;
+            }
+            if (failedCount > 0) {
+                message += (message ? ' ' : '') + `${failedCount} produto${failedCount !== 1 ? 's' : ''} sem estoque disponível.`;
+            }
+            if (message) {
+                showNotification(message, failedCount > 0 ? 'error' : 'success');
+            }
+        }
+
+        function updateCartBadge() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            // Atualizar badge se existir
+            const cartBadge = document.getElementById('cartCount');
+            if (cartBadge) {
+                cartBadge.textContent = totalItems;
+            }
+        }
+
+        function addToCart(event, product) {
+            event.stopPropagation();
+            
+            // Verificar estoque disponível
+            const totalStock = parseInt(product.stock) || 0;
+            if (totalStock <= 0) {
+                showNotification('Este produto não possui mais estoque disponível!', 'error');
+                return;
+            }
+            
+            const existingItem = cart.find(item => String(item.id) === String(product.id));
+            const quantityToAdd = 1;
+            const currentCartQuantity = existingItem ? existingItem.quantity : 0;
+            const newQuantity = currentCartQuantity + quantityToAdd;
+            
+            // Validar se a quantidade não excede o estoque total
+            if (newQuantity > totalStock) {
+                showNotification(`Quantidade máxima disponível: ${totalStock} unidades!`, 'error');
+                return;
+            }
+            
+            // Reservar estoque - sempre substituir pela nova quantidade total
+            reserveStock(product.id, newQuantity);
+            
+            if (existingItem) {
+                existingItem.quantity = newQuantity;
+            } else {
+                cart.push({...product, quantity: 1, stock: product.stock});
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            showNotification(`${product.name} adicionado ao carrinho!`);
+        }
+
+        function buyNow(event, product) {
+            event.stopPropagation();
+            addToCart(event, product);
+            window.location.href = 'carrinho.html';
+        }
+
+        function showNotification(message) {
+            const existing = document.querySelector('.notification');
+            if (existing) existing.remove();
+            
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: #22c55e;
+                color: white;
+                padding: 16px 24px;
+                border-radius: 12px;
+                box-shadow: 0 8px 32px rgba(34, 197, 94, 0.3);
+                z-index: 3000;
+                transform: translateX(400px);
+                transition: all 0.4s ease;
+                font-weight: 600;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.style.transform = 'translateX(400px)';
+                    setTimeout(() => {
+                        if (notification.parentElement) {
+                            notification.remove();
+                        }
+                    }, 400);
+                }
+            }, 3000);
+        }
+
+        function toggleMobileNav() {
+            const mobileNav = document.getElementById('mobileNav');
+            const overlay = document.getElementById('mobileOverlay');
+            mobileNav.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function closeMobileNav() {
+            const mobileNav = document.getElementById('mobileNav');
+            const overlay = document.getElementById('mobileOverlay');
+            mobileNav.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+
+        function toggleUserMenu(event) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            const dropdown = document.getElementById('userDropdown');
+            if (dropdown) {
+                dropdown.classList.toggle('show');
+            } else {
+                console.warn('Dropdown de usuário não encontrado');
+            }
+        }
+
+        function closeUserMenu() {
+            const dropdown = document.getElementById('userDropdown');
+            if (dropdown) {
+                dropdown.classList.remove('show');
+            }
+        }
+
+        function handleLogin() {
+            closeUserMenu();
+            window.location.href = 'login.html';
+        }
+
+        function handleLogout() {
+            closeUserMenu();
+            closeMobileNav();
+            localStorage.removeItem('userLoggedIn');
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('userName');
+            localStorage.removeItem('userPhone');
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('isAdmin');
+            setTimeout(() => {
+                window.location.replace('login.html');
+            }, 100);
+        }
+
+        function viewProfile() {
+            closeUserMenu();
+            window.location.href = 'perfil.html';
+        }
+
+        function updateUserStatus() {
+            const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+            const userIcon = document.getElementById('userIcon');
+            const userAccount = document.getElementById('userAccount');
+            const dropdown = document.getElementById('userDropdown');
+            const mobileUserOptions = document.getElementById('mobileUserOptions');
+            
+            if (!userIcon || !userAccount || !dropdown) {
+                console.warn('Elementos do menu de usuário não encontrados');
+                return;
+            }
+            
+            updateMobileProfile(isLoggedIn);
+            
+            if (isLoggedIn) {
+                const userName = localStorage.getItem('userName') || 'Usuário';
+                if (userIcon) userIcon.textContent = userName.charAt(0).toUpperCase();
+                if (userAccount) {
+                    userAccount.title = `Logado como: ${userName}`;
+                    userAccount.style.background = 'rgba(34, 197, 94, 0.2)';
+                }
+                
+                if (dropdown) {
+                    dropdown.innerHTML = `
+                        <a href="#" class="user-dropdown-item" onclick="viewProfile()">
+                            <span>◉</span>
+                            Ver Perfil
+                        </a>
+                        <a href="#" class="user-dropdown-item logout" onclick="handleLogout()">
+                            <span>→</span>
+                            Sair
+                        </a>
+                    `;
+                }
+                
+                if (mobileUserOptions) {
+                    mobileUserOptions.innerHTML = `
+                        <li><a href="#" class="nav-item" onclick="closeMobileNav(); handleLogout();"><span>→</span> Sair</a></li>
+                    `;
+                }
+            } else {
+                if (userIcon) userIcon.textContent = '◉';
+                if (userAccount) {
+                    userAccount.title = 'Minha Conta';
+                    userAccount.style.background = '';
+                }
+                
+                if (dropdown) {
+                    dropdown.innerHTML = `
+                        <a href="#" class="user-dropdown-item" onclick="handleLogin()">
+                            <span>→</span>
+                            Entrar
+                        </a>
+                        <a href="login.html" class="user-dropdown-item" onclick="closeUserMenu()">
+                            <span>+</span>
+                            Cadastrar
+                        </a>
+                    `;
+                }
+                
+                if (mobileUserOptions) {
+                    mobileUserOptions.innerHTML = `
+                        <li><a href="#" class="nav-item" onclick="closeMobileNav(); handleLogin();"><span>→</span> Entrar</a></li>
+                        <li><a href="login.html" class="nav-item" onclick="closeMobileNav();"><span>+</span> Cadastrar</a></li>
+                    `;
+                }
+            }
+        }
+
+        function updateMobileProfile(isLoggedIn) {
+            if (isLoggedIn === undefined) {
+                isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+            }
+            const mobileUserProfile = document.getElementById('mobileUserProfile');
+            const mobileUserAvatar = document.getElementById('mobileUserAvatar');
+            const mobileUserName = document.getElementById('mobileUserName');
+            const mobileUserEmail = document.getElementById('mobileUserEmail');
+            
+            if (isLoggedIn) {
+                const userName = localStorage.getItem('userName') || 'Usuário';
+                const userEmail = localStorage.getItem('userEmail') || 'usuario@email.com';
+                
+                mobileUserAvatar.textContent = userName.charAt(0).toUpperCase();
+                mobileUserName.textContent = userName;
+                mobileUserEmail.textContent = userEmail;
+                
+                mobileUserProfile.onclick = function() {
+                    closeMobileNav();
+                    window.location.href = 'perfil.html';
+                };
+            } else {
+                mobileUserAvatar.textContent = 'DR';
+                mobileUserName.textContent = 'Visitante';
+                mobileUserEmail.textContent = 'Faça login para acessar';
+                
+                mobileUserProfile.onclick = function() {
+                    closeMobileNav();
+                    window.location.href = 'login.html';
+                };
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProductsFromBackend();
+            updateUserStatus();
+            
+            document.addEventListener('click', function(event) {
+                const userMenu = document.getElementById('userMenu');
+                if (userMenu && !userMenu.contains(event.target)) {
+                    closeUserMenu();
+                }
+            });
+        });
+    </script>
+
+    <!-- Menu hamburger será carregado dinamicamente -->
+    <div id="mobile-nav-placeholder"></div>
+    
+    <!-- Script para carregar header e menu compartilhados -->
+    <script src="load-header.js"></script>
+</body>
+</html>

@@ -1,0 +1,2635 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Perfil - DrDerm</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests; block-all-mixed-content">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta name="Referrer-Policy" content="no-referrer">
+    <meta http-equiv="Permissions-Policy" content="geolocation=(), camera=(), microphone=(), payment=()">
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
+    <!-- Scripts de segurança temporariamente desabilitados para resolver problema de carregamento -->
+    <!-- <script src="crypto-utils.js" async></script> -->
+    <!-- <script src="code-protection.js" async></script> -->
+    <!-- <script src="integrity-check.js" async></script> -->
+    <script src="security.js" defer></script>
+    <script src="utils.js" defer></script>
+    <script src="form-validation.js" defer></script>
+    <script src="error-handler.js" defer></script>
+    <link rel="stylesheet" href="header-styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #1e2723 75%, #395f69 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            color: #1e2723;
+            min-height: 100vh;
+            padding-top: 80px;
+            margin: 0;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(57, 95, 105, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(34, 197, 94, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(220, 187, 146, 0.2) 0%, transparent 50%);
+            animation: floatBackground 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes floatBackground {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.1); }
+            66% { transform: translate(-30px, 30px) scale(0.9); }
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.03) 4px);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding-top: 140px; /* Header + mobile search */
+            }
+        }
+
+        .container {
+            max-width: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header - Usa header-styles.css compartilhado */
+        /* Header já está definido como fixed no header-styles.css */
+
+        .header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+        }
+
+        .logo a {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-img {
+            height: 60px;
+            width: auto;
+            max-width: 200px;
+            object-fit: contain;
+            filter: brightness(0) invert(1);
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            background: rgba(220, 187, 146, 0.3);
+        }
+
+        /* Profile Page */
+        .profile-page {
+            padding: 0;
+            width: 100%;
+            max-width: 100%;
+            min-height: calc(100vh - 80px);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .profile-page {
+                min-height: calc(100vh - 140px);
+            }
+
+            .profile-header {
+                padding: clamp(30px, 5vw, 50px) clamp(15px, 4vw, 30px) clamp(50px, 8vw, 80px);
+                margin-bottom: 0;
+                min-height: auto;
+            }
+
+            .profile-avatar {
+                width: clamp(100px, 25vw, 140px);
+                height: clamp(100px, 25vw, 140px);
+                font-size: clamp(40px, 10vw, 56px);
+                margin-bottom: clamp(15px, 3vw, 25px);
+            }
+
+            .profile-name {
+                margin-bottom: clamp(8px, 2vw, 12px);
+                font-size: clamp(22px, 5vw, 32px);
+            }
+
+            .profile-email {
+                margin-bottom: clamp(10px, 2vw, 15px);
+                font-size: clamp(13px, 3vw, 16px);
+            }
+
+            .profile-content {
+                margin-top: -40px;
+                padding-top: 40px;
+                border-top: none;
+            }
+
+            .profile-tabs {
+                margin-top: 0;
+            }
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 0;
+            padding: clamp(30px, 5vw, 60px) clamp(15px, 4vw, 30px);
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.1) 0%, 
+                rgba(255, 255, 255, 0.05) 50%,
+                rgba(255, 255, 255, 0.1) 100%);
+            backdrop-filter: blur(20px) saturate(180%);
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @media (min-width: 769px) {
+            .profile-header {
+                max-width: 1200px;
+                margin: 0 auto;
+                width: calc(100% - 60px);
+            }
+        }
+
+        @media (min-width: 1400px) {
+            .profile-header {
+                max-width: 1400px;
+            }
+        }
+
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(57, 95, 105, 0.15) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .profile-header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                transparent,
+                #395f69,
+                #22c55e,
+                #dcbb92,
+                #22c55e,
+                #395f69,
+                transparent);
+            background-size: 200% 100%;
+            animation: shimmer 3s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .profile-avatar {
+            width: 140px;
+            height: 140px;
+            background: linear-gradient(135deg, #395f69 0%, #22c55e 50%, #dcbb92 100%);
+            background-size: 200% 200%;
+            animation: gradientMove 5s ease infinite;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 56px;
+            font-weight: bold;
+            color: white;
+            margin: 0 auto 25px;
+            box-shadow: 
+                0 20px 60px rgba(57, 95, 105, 0.4),
+                0 8px 32px rgba(34, 197, 94, 0.3),
+                inset 0 2px 10px rgba(255, 255, 255, 0.3),
+                0 0 0 5px rgba(255, 255, 255, 0.1),
+                0 0 0 10px rgba(57, 95, 105, 0.1);
+            position: relative;
+            z-index: 2;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes gradientMove {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .profile-avatar::before {
+            content: '';
+            position: absolute;
+            inset: -5px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #395f69, #22c55e, #dcbb92, #395f69);
+            background-size: 300% 300%;
+            animation: rotateBorder 3s linear infinite;
+            z-index: -1;
+            opacity: 0.7;
+            filter: blur(10px);
+        }
+
+        @keyframes rotateBorder {
+            0% { transform: rotate(0deg); background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { transform: rotate(360deg); background-position: 0% 50%; }
+        }
+
+        .profile-avatar:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 
+                0 30px 80px rgba(57, 95, 105, 0.5),
+                0 12px 40px rgba(34, 197, 94, 0.4),
+                inset 0 2px 10px rgba(255, 255, 255, 0.4),
+                0 0 0 5px rgba(255, 255, 255, 0.2),
+                0 0 0 10px rgba(57, 95, 105, 0.2),
+                0 0 50px rgba(57, 95, 105, 0.6);
+        }
+
+        .profile-name {
+            font-size: clamp(28px, 5vw, 40px);
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 50%, #ffffff 100%);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 4px 20px rgba(255, 255, 255, 0.3);
+            animation: textShimmer 3s ease infinite;
+            letter-spacing: -0.5px;
+        }
+
+        @keyframes textShimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .profile-email {
+            font-size: clamp(14px, 3vw, 18px);
+            color: rgba(255, 255, 255, 0.8);
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            letter-spacing: 0.5px;
+        }
+
+        .profile-content {
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.95) 0%, 
+                rgba(255, 255, 255, 0.9) 100%);
+            backdrop-filter: blur(30px) saturate(180%);
+            border-radius: 0;
+            box-shadow: none;
+            overflow: hidden;
+            width: 100%;
+            max-width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            position: relative;
+            border-top: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        @media (min-width: 769px) {
+            .profile-content {
+                border-radius: 30px 30px 0 0;
+                margin: 0 auto;
+                max-width: 1200px;
+                width: calc(100% - 60px);
+                box-shadow: 
+                    0 20px 60px rgba(0, 0, 0, 0.3),
+                    0 8px 32px rgba(0, 0, 0, 0.2),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            }
+        }
+
+        @media (min-width: 1400px) {
+            .profile-content {
+                max-width: 1400px;
+            }
+        }
+
+        .profile-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(57, 95, 105, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(34, 197, 94, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .profile-tabs {
+            display: flex;
+            background: linear-gradient(135deg, 
+                rgba(248, 250, 252, 0.8) 0%, 
+                rgba(241, 245, 249, 0.8) 100%);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(57, 95, 105, 0.1);
+            width: 100%;
+            overflow-x: auto;
+            flex-shrink: 0;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .profile-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: clamp(18px, 3.5vw, 24px);
+            background: none;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #64748b;
+            font-size: clamp(13px, 2.5vw, 16px);
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%) scaleX(0);
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(57, 95, 105, 0.1), rgba(34, 197, 94, 0.1));
+            transition: transform 0.4s ease;
+            z-index: -1;
+        }
+
+        .tab-btn:hover::before {
+            transform: translateX(-50%) scaleX(1);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.95) 0%, 
+                rgba(255, 255, 255, 0.9) 100%);
+            color: #395f69;
+            border-bottom: 4px solid transparent;
+            position: relative;
+            font-weight: 700;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                #395f69 0%, 
+                #22c55e 25%,
+                #dcbb92 50%,
+                #22c55e 75%,
+                #395f69 100%);
+            background-size: 200% 100%;
+            animation: shimmerTab 3s linear infinite;
+            border-radius: 2px 2px 0 0;
+        }
+
+        @keyframes shimmerTab {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .tab-btn.active::before {
+            transform: translateX(-50%) scaleX(1);
+            background: linear-gradient(135deg, rgba(57, 95, 105, 0.15), rgba(34, 197, 94, 0.15));
+        }
+
+        .tab-btn:hover:not(.active) {
+            color: #395f69;
+            transform: translateY(-2px);
+        }
+
+        .tab-content {
+            padding: clamp(20px, 4vw, 40px);
+            display: none;
+            width: 100%;
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (min-width: 769px) {
+            .tab-content {
+                padding: 40px 60px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .tab-content {
+                padding: 50px 80px;
+            }
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeInSlide 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes fadeInSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-group {
+            margin-bottom: 28px;
+            position: relative;
+            animation: fadeInUp 0.4s ease-out backwards;
+        }
+
+        @media (min-width: 769px) {
+            .form-group {
+                margin-bottom: 32px;
+            }
+        }
+
+        .form-group:nth-child(1) { animation-delay: 0.1s; }
+        .form-group:nth-child(2) { animation-delay: 0.15s; }
+        .form-group:nth-child(3) { animation-delay: 0.2s; }
+        .form-group:nth-child(4) { animation-delay: 0.25s; }
+        .form-group:nth-child(5) { animation-delay: 0.3s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            position: relative;
+            letter-spacing: 0.3px;
+        }
+
+        .form-label::before {
+            content: '';
+            position: absolute;
+            left: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 0;
+            background: linear-gradient(135deg, #395f69 0%, #22c55e 100%);
+            border-radius: 2px;
+            transition: height 0.3s ease;
+        }
+
+        .form-group:focus-within .form-label {
+            color: #395f69;
+            transform: translateX(2px);
+        }
+
+        .form-group:focus-within .form-label::before {
+            height: 16px;
+        }
+
+        .form-input {
+            width: 100%;
+            max-width: 100%;
+            padding: 16px 18px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+            color: #1e2723;
+            position: relative;
+            box-shadow: 
+                0 2px 4px rgba(0, 0, 0, 0.02),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        }
+
+        @media (min-width: 769px) {
+            .form-input {
+                padding: 18px 20px;
+                font-size: 16px;
+            }
+        }
+
+        .form-input::placeholder {
+            color: #9ca3af;
+            transition: color 0.3s ease;
+        }
+
+        .form-input:hover {
+            border-color: #cbd5e1;
+            background: white;
+            box-shadow: 
+                0 4px 8px rgba(0, 0, 0, 0.04),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            transform: translateY(-1px);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #395f69;
+            background: white;
+            box-shadow: 
+                0 0 0 4px rgba(57, 95, 105, 0.1),
+                0 8px 16px rgba(57, 95, 105, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            transform: translateY(-2px);
+        }
+
+        .form-input:focus::placeholder {
+            color: #cbd5e1;
+        }
+
+        .form-input:disabled {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            color: #6b7280;
+            cursor: not-allowed;
+            border-color: #e5e7eb;
+            opacity: 0.7;
+        }
+
+        /* Efeito de brilho ao focar */
+        .form-input-wrapper {
+            position: relative;
+            display: block;
+        }
+
+        .form-input-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 12px;
+            background: linear-gradient(135deg, 
+                rgba(57, 95, 105, 0.1) 0%, 
+                rgba(34, 197, 94, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .form-group:focus-within .form-input-wrapper::after {
+            opacity: 1;
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.1; }
+            50% { opacity: 0.2; }
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #f1f5f9;
+            animation: fadeInUp 0.5s ease-out backwards;
+            animation-delay: 0.4s;
+        }
+
+        @media (min-width: 769px) {
+            .form-actions {
+                gap: 20px;
+                margin-top: 50px;
+                padding-top: 40px;
+                max-width: 600px;
+            }
+        }
+
+        .btn {
+            padding: 16px 28px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 16px;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.3px;
+            box-shadow: 
+                0 4px 12px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #395f69 0%, #1e2723 100%);
+            color: white;
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.2), 
+                transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 
+                0 12px 32px rgba(57, 95, 105, 0.4),
+                0 4px 16px rgba(57, 95, 105, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-primary:hover::after {
+            left: 100%;
+        }
+
+        .btn-primary:active {
+            transform: translateY(-1px) scale(1);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+            color: #395f69;
+            border: 2px solid #395f69;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #395f69 0%, #1e2723 100%);
+            color: white;
+            border-color: transparent;
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 
+                0 12px 32px rgba(57, 95, 105, 0.3),
+                0 4px 16px rgba(57, 95, 105, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:active {
+            transform: translateY(-1px) scale(1);
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.95) 0%, 
+                rgba(248, 250, 252, 0.95) 100%);
+            backdrop-filter: blur(20px) saturate(180%);
+            border-radius: 20px;
+            padding: clamp(20px, 4vw, 28px);
+            margin-bottom: 24px;
+            width: 100%;
+            max-width: 100%;
+            border: 2px solid rgba(57, 95, 105, 0.1);
+            box-shadow: 
+                0 8px 24px rgba(0, 0, 0, 0.08),
+                0 2px 8px rgba(0, 0, 0, 0.04),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        @media (min-width: 769px) {
+            .info-card {
+                padding: 32px;
+                margin-bottom: 28px;
+            }
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                #395f69 0%, 
+                #22c55e 25%,
+                #dcbb92 50%,
+                #22c55e 75%,
+                #395f69 100%);
+            background-size: 200% 100%;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+            animation: shimmerCard 3s linear infinite;
+        }
+
+        @keyframes shimmerCard {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .info-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(57, 95, 105, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .info-card:hover {
+            border-color: rgba(57, 95, 105, 0.3);
+            box-shadow: 
+                0 16px 48px rgba(57, 95, 105, 0.2),
+                0 8px 24px rgba(34, 197, 94, 0.15),
+                0 2px 8px rgba(57, 95, 105, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            transform: translateY(-5px) scale(1.02);
+        }
+
+        .info-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .info-card:hover::after {
+            opacity: 1;
+        }
+
+        .info-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e2723;
+            margin-bottom: 12px;
+            position: relative;
+            padding-left: 12px;
+            letter-spacing: 0.2px;
+        }
+
+        .info-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(135deg, #395f69 0%, #22c55e 100%);
+            border-radius: 2px;
+        }
+
+        .info-text {
+            color: #6b7280;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr));
+            gap: clamp(15px, 3vw, 20px);
+            margin-bottom: 30px;
+            width: 100%;
+        }
+
+        @media (min-width: 769px) {
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 24px;
+                margin-bottom: 40px;
+            }
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #395f69, #748d8c);
+            color: white;
+            padding: 25px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .address-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            padding: clamp(18px, 3.5vw, 24px);
+            margin-bottom: 18px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+            max-width: 100%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 4px 12px rgba(0, 0, 0, 0.04),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        }
+
+        @media (min-width: 769px) {
+            .address-card {
+                padding: 28px;
+                margin-bottom: 20px;
+            }
+        }
+
+        .address-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, #395f69 0%, #22c55e 100%);
+            transform: scaleY(0);
+            transform-origin: top;
+            transition: transform 0.4s ease;
+        }
+
+        .address-card:hover {
+            border-color: #395f69;
+            box-shadow: 
+                0 8px 24px rgba(57, 95, 105, 0.15),
+                0 2px 8px rgba(57, 95, 105, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            transform: translateY(-3px);
+        }
+
+        .address-card:hover::before {
+            transform: scaleY(1);
+        }
+
+        .address-card.default {
+            border-color: #22c55e;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            box-shadow: 
+                0 4px 16px rgba(34, 197, 94, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        }
+
+        .address-card.default::before {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            transform: scaleY(1);
+        }
+
+        .address-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .address-name {
+            font-weight: 600;
+            color: #1e2723;
+            font-size: 16px;
+        }
+
+        .address-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 13px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 2px 8px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-default {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+        }
+
+        .btn-default:hover {
+            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+            transform: translateY(-2px);
+            box-shadow: 
+                0 4px 12px rgba(34, 197, 94, 0.3),
+                0 2px 6px rgba(34, 197, 94, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+            transform: translateY(-2px);
+            box-shadow: 
+                0 4px 12px rgba(245, 158, 11, 0.3),
+                0 2px 6px rgba(245, 158, 11, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            transform: translateY(-2px);
+            box-shadow: 
+                0 4px 12px rgba(239, 68, 68, 0.3),
+                0 2px 6px rgba(239, 68, 68, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-small:active {
+            transform: translateY(0);
+        }
+
+        .address-info {
+            color: #6b7280;
+            line-height: 1.4;
+        }
+
+        .default-badge {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
+            margin-left: 8px;
+            box-shadow: 
+                0 2px 8px rgba(34, 197, 94, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            animation: pulseBadge 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseBadge {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @media (max-width: 768px) {
+            .profile-tabs {
+                flex-direction: row;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .profile-header {
+                padding: 20px 15px;
+            }
+            
+            .profile-avatar {
+                width: 100px;
+                height: 100px;
+                font-size: 40px;
+            }
+            
+            .profile-name {
+                font-size: clamp(24px, 6vw, 32px);
+            }
+            
+            .profile-email {
+                font-size: clamp(14px, 3.5vw, 16px);
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .form-actions .btn {
+                width: 100%;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .address-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .address-actions {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+            
+            .address-actions .btn-small {
+                flex: 1;
+                min-width: 80px;
+            }
+            
+            .tab-content {
+                padding: 15px;
+            }
+            
+            .info-card {
+                padding: 15px;
+            }
+            
+            .profile-content {
+                border-radius: 0;
+            }
+            
+            /* Grid responsivo para formulários */
+            .address-form-grid {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        @media (min-width: 769px) {
+            #addressForm {
+                max-width: 800px;
+                margin: 0 auto 30px;
+            }
+
+            #addressList {
+                max-width: 800px;
+                margin: 0 auto;
+            }
+
+            .form-actions[style*="margin-bottom: 20px"] {
+                max-width: 800px;
+                margin: 0 auto 30px;
+            }
+        }
+        
+        /* Melhorias adicionais para responsividade total */
+        .form-input {
+            box-sizing: border-box;
+        }
+        
+        .form-group {
+            width: 100%;
+        }
+        
+        /* Garantir que tudo ocupe 100% da largura */
+        .profile-page,
+        .profile-content,
+        .tab-content,
+        .info-card,
+        .address-card,
+        .stats-grid,
+        .form-group,
+        .form-input {
+            box-sizing: border-box;
+        }
+
+        /* Melhorias visuais adicionais para formulários */
+        form {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @media (min-width: 769px) {
+            #profileForm {
+                max-width: 700px;
+                margin: 0 auto;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Efeito de loading nos botões */
+        .btn.loading {
+            position: relative;
+            color: transparent;
+            pointer-events: none;
+        }
+
+        .btn.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Efeito de sucesso nos inputs */
+        .form-input.success {
+            border-color: #22c55e;
+            background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
+        }
+
+        .form-input.error {
+            border-color: #ef4444;
+            background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+
+        /* Efeito de transição suave nas tabs */
+        .tab-content {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Melhorias nos stats cards */
+        .stat-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 
+                0 12px 32px rgba(0, 0, 0, 0.2),
+                0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Ajustes para telas muito pequenas */
+        @media (max-width: 480px) {
+            .profile-avatar {
+                width: 80px;
+                height: 80px;
+                font-size: 32px;
+            }
+            
+            .stat-number {
+                font-size: 24px;
+            }
+            
+            .tab-btn {
+                padding: 12px 8px;
+                font-size: 12px;
+            }
+        }
+        
+        /* Ajustes para telas muito grandes */
+        @media (min-width: 1200px) {
+            .profile-content {
+                max-width: 1400px;
+                border-radius: 30px 30px 0 0;
+            }
+            
+            .profile-header {
+                max-width: 1400px;
+                border-radius: 0 0 30px 30px;
+            }
+        }
+        
+        /* Garantir que não haja scroll horizontal */
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+            max-width: 100%;
+        }
+        
+        /* Melhorar scroll nas tabs */
+        .tab-content {
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* Ajustar altura mínima do conteúdo das tabs */
+        .tab-content.active {
+            min-height: 400px;
+        }
+        
+        @media (max-width: 768px) {
+            .tab-content.active {
+                min-height: 300px;
+            }
+        }
+        
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .profile-content {
+                margin: 0 30px;
+                width: calc(100% - 60px);
+            }
+        }
+
+        /* Melhorias adicionais para organização em desktop */
+        @media (min-width: 769px) {
+            .profile-tabs {
+                padding: 0 20px;
+            }
+
+            .tab-btn {
+                padding: 20px 24px;
+                font-size: 16px;
+            }
+
+            .btn {
+                padding: 18px 32px;
+                font-size: 16px;
+            }
+
+            .info-title {
+                font-size: 20px;
+                margin-bottom: 16px;
+            }
+
+            .info-text {
+                font-size: 16px;
+                line-height: 1.7;
+            }
+        }
+
+        /* Estoque Styles - Design Inovador */
+        .stock-header {
+            margin-bottom: 40px;
+            text-align: center;
+            position: relative;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, 
+                rgba(57, 95, 105, 0.05) 0%, 
+                rgba(34, 197, 94, 0.05) 50%,
+                rgba(57, 95, 105, 0.05) 100%);
+            border-radius: 24px;
+            border: 2px solid rgba(57, 95, 105, 0.1);
+            overflow: hidden;
+        }
+
+        .stock-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(57, 95, 105, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        .stock-title {
+            font-size: clamp(26px, 5vw, 36px);
+            font-weight: 800;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #395f69 0%, #22c55e 50%, #dcbb92 100%);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease infinite;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stock-subtitle {
+            color: #6b7280;
+            font-size: clamp(14px, 3vw, 16px);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Tabela Moderna de Estoque */
+        .stock-table-container {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.1),
+                0 8px 32px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(57, 95, 105, 0.1);
+            position: relative;
+        }
+
+        .stock-table-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                #395f69 0%, 
+                #22c55e 25%,
+                #dcbb92 50%,
+                #22c55e 75%,
+                #395f69 100%);
+            background-size: 200% 100%;
+            animation: shimmer 3s linear infinite;
+        }
+
+        .stock-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: transparent;
+        }
+
+        .stock-table thead {
+            background: linear-gradient(135deg, 
+                rgba(57, 95, 105, 0.08) 0%, 
+                rgba(34, 197, 94, 0.08) 100%);
+            position: relative;
+        }
+
+        .stock-table thead::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                transparent,
+                rgba(57, 95, 105, 0.3),
+                transparent);
+        }
+
+        .stock-table th {
+            padding: 20px 24px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 14px;
+            color: #1e2723;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+
+        .stock-table th:nth-child(1) {
+            padding-left: 32px;
+            width: 40%;
+        }
+
+        .stock-table th:nth-child(2) {
+            width: 30%;
+            text-align: right;
+        }
+
+        .stock-table th:nth-child(3) {
+            padding-right: 32px;
+            width: 30%;
+            text-align: right;
+        }
+
+        .stock-table th::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #395f69 0%, #22c55e 100%);
+            transition: width 0.3s ease;
+        }
+
+        .stock-table thead:hover th::after {
+            width: 100%;
+        }
+
+        .stock-table tbody tr {
+            background: transparent;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-bottom: 1px solid rgba(57, 95, 105, 0.08);
+            position: relative;
+            animation: fadeInRow 0.5s ease-out backwards;
+        }
+
+        @keyframes fadeInRow {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .stock-table tbody tr::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 0;
+            background: linear-gradient(90deg, 
+                rgba(57, 95, 105, 0.1) 0%, 
+                transparent 100%);
+            transition: width 0.3s ease;
+        }
+
+        .stock-table tbody tr:hover {
+            background: linear-gradient(135deg, 
+                rgba(57, 95, 105, 0.03) 0%, 
+                rgba(34, 197, 94, 0.03) 100%);
+            transform: scale(1.01);
+            box-shadow: 0 4px 16px rgba(57, 95, 105, 0.1);
+        }
+
+        .stock-table tbody tr:hover::before {
+            width: 4px;
+        }
+
+        .stock-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .stock-table td {
+            padding: 24px;
+            vertical-align: middle;
+            color: #374151;
+            font-size: 15px;
+        }
+
+        .stock-table td:nth-child(1) {
+            padding-left: 32px;
+            width: 40%;
+        }
+
+        .stock-table td:nth-child(2) {
+            width: 30%;
+            text-align: right;
+        }
+
+        .stock-table td:nth-child(3) {
+            padding-right: 32px;
+            width: 30%;
+            text-align: right;
+        }
+
+        /* Célula de Produto */
+        .stock-cell-product {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .stock-product-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #395f69 0%, #22c55e 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(57, 95, 105, 0.3);
+            flex-shrink: 0;
+        }
+
+        .stock-product-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .stock-product-name {
+            font-weight: 600;
+            color: #1e2723;
+            font-size: 16px;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .stock-product-brand {
+            font-size: 13px;
+            color: #6b7280;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Célula de Preço */
+        .stock-cell-price {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+            text-align: right;
+        }
+
+        .stock-price-main {
+            font-size: 20px;
+            font-weight: 700;
+            color: #395f69;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stock-price-old {
+            font-size: 14px;
+            color: #9ca3af;
+            text-decoration: line-through;
+        }
+
+        .stock-discount-badge {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+        }
+
+        /* Célula de Estoque */
+        .stock-cell-stock {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .stock-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            position: relative;
+            overflow: hidden;
+            min-width: 140px;
+            justify-content: center;
+        }
+
+        .stock-indicator::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0.1;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+        }
+
+        .stock-indicator.in-stock {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            color: #166534;
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
+        }
+
+        .stock-indicator.low-stock {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+            animation: pulseWarning 2s ease-in-out infinite;
+        }
+
+        .stock-indicator.out-of-stock {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #991b1b;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+        }
+
+        .stock-indicator-icon {
+            font-size: 18px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stock-indicator-text {
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes pulseWarning {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        /* Responsivo */
+        @media (max-width: 1024px) {
+            .stock-table-container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .stock-table {
+                min-width: 800px;
+            }
+
+            .stock-table th,
+            .stock-table td {
+                padding: 16px 20px;
+            }
+
+            .stock-product-icon {
+                width: 48px;
+                height: 48px;
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stock-table {
+                min-width: 700px;
+            }
+
+            .stock-table th,
+            .stock-table td {
+                padding: 14px 16px;
+                font-size: 14px;
+            }
+
+            .stock-product-icon {
+                width: 44px;
+                height: 44px;
+                font-size: 18px;
+            }
+
+            .stock-price-main {
+                font-size: 18px;
+            }
+
+            .stock-indicator {
+                min-width: 120px;
+                padding: 8px 14px;
+                font-size: 13px;
+            }
+        }
+
+        .empty-stock {
+            text-align: center;
+            padding: 80px 20px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 24px;
+            border: 2px dashed rgba(57, 95, 105, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .empty-stock::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(57, 95, 105, 0.05) 0%, transparent 70%);
+            animation: rotate 15s linear infinite;
+        }
+
+        .empty-stock-icon {
+            font-size: 72px;
+            margin-bottom: 24px;
+            opacity: 0.6;
+            position: relative;
+            z-index: 1;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .empty-stock-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1e2723;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .empty-stock-text {
+            color: #6b7280;
+            font-size: 15px;
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+<script>
+    (function(){
+        try {
+            var logged = localStorage.getItem('userLoggedIn') === 'true';
+            if (!logged) {
+                window.location.replace('login.html');
+            }
+        } catch (e) {}
+    })();
+</script>
+</head>
+<body>
+    <!-- Header -->
+    <!-- Header será carregado dinamicamente -->
+    <div id="header-placeholder"></div>
+
+    <!-- Profile Page -->
+    <section class="profile-page">
+        <div class="profile-header">
+            <div class="profile-avatar" id="profileAvatar">U</div>
+            <h1 class="profile-name" id="profileName">Nome do Usuário</h1>
+            <p class="profile-email" id="profileEmail">email@exemplo.com</p>
+        </div>
+
+        <div class="profile-content">
+                <div class="profile-tabs">
+                    <button class="tab-btn active" onclick="showTab('dados')">Meus Dados</button>
+                    <button class="tab-btn" onclick="showTab('enderecos')">Endereços</button>
+                    <button class="tab-btn" onclick="showTab('estoque')">Estoque</button>
+                    <button class="tab-btn" onclick="showTab('estatisticas')">Estatísticas</button>
+                    <button class="tab-btn" onclick="showTab('configuracoes')">Configurações</button>
+                </div>
+
+                <!-- Dados Pessoais -->
+                <div class="tab-content active" id="dados">
+                    <form id="profileForm">
+                        <div class="form-group">
+                            <label class="form-label">Nome Completo</label>
+                            <input type="text" class="form-input" id="userName" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">E-mail</label>
+                            <input type="email" class="form-input" id="userEmail" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Telefone</label>
+                            <input type="tel" class="form-input" id="userPhone" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Nova Senha (deixe em branco para manter atual)</label>
+                            <input type="password" class="form-input" id="newPassword" placeholder="••••••••">
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                            <button type="button" class="btn btn-secondary" onclick="cancelEdit()">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Endereços -->
+                <div class="tab-content" id="enderecos">
+                    <div class="form-actions" style="margin-bottom: 20px; border-top: none; padding-top: 0; margin-top: 0;">
+                        <button type="button" class="btn btn-primary" onclick="showAddressForm()">+ Adicionar Endereço</button>
+                    </div>
+
+                    <div id="addressForm" class="info-card" style="display: none;">
+                        <div class="info-title">Novo Endereço</div>
+                        <form id="newAddressForm">
+                            <div class="form-group">
+                                <label class="form-label">Nome do Endereço</label>
+                                <input type="text" class="form-input" id="addressName" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">CEP</label>
+                                <input type="text" class="form-input" id="addressCep" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Endereço</label>
+                                <input type="text" class="form-input" id="addressStreet" required>
+                            </div>
+
+                            <div class="address-form-grid" style="display: grid; grid-template-columns: 1fr 120px; gap: 15px;">
+                                <div class="form-group">
+                                    <label class="form-label">Bairro</label>
+                                    <input type="text" class="form-input" id="addressNeighborhood" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Número</label>
+                                    <input type="text" class="form-input" id="addressNumber" required>
+                                </div>
+                            </div>
+
+                            <div class="address-form-grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 15px;">
+                                <div class="form-group">
+                                    <label class="form-label">Cidade</label>
+                                    <input type="text" class="form-input" id="addressCity" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Estado</label>
+                                    <input type="text" class="form-input" id="addressState" maxlength="2" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Complemento (opcional)</label>
+                                <input type="text" class="form-input" id="addressComplement">
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Salvar Endereço</button>
+                                <button type="button" class="btn btn-secondary" onclick="hideAddressForm()">Cancelar</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div id="addressList">
+                        <!-- Endereços serão listados aqui -->
+                    </div>
+                </div>
+
+                <!-- Estoque -->
+                <div class="tab-content" id="estoque">
+                    <div class="stock-header">
+                        <h2 class="stock-title">Meus Produtos Favoritos - Estoque</h2>
+                        <p class="stock-subtitle">Acompanhe a disponibilidade dos seus produtos favoritos</p>
+                    </div>
+                    <div class="stock-table-container">
+                        <table class="stock-table" id="stockTable">
+                            <thead>
+                                <tr>
+                                    <th>Produto</th>
+                                    <th>Preço</th>
+                                    <th>Estoque</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stockList">
+                                <!-- Produtos favoritos com estoque serão listados aqui -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="emptyStock" class="empty-stock" style="display: none;">
+                        <div class="empty-stock-icon">📦</div>
+                        <div class="empty-stock-title">Nenhum produto favorito</div>
+                        <div class="empty-stock-text">Adicione produtos aos favoritos para acompanhar o estoque aqui!</div>
+                    </div>
+                </div>
+
+                <!-- Estatísticas -->
+                <div class="tab-content" id="estatisticas">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number" id="totalPedidos">0</div>
+                            <div class="stat-label">Pedidos Realizados</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="totalGasto">R$ 0</div>
+                            <div class="stat-label">Total Investido</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="produtosFavoritos">0</div>
+                            <div class="stat-label">Produtos Favoritos</div>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-title">Histórico de Compras</div>
+                        <div class="info-text">Você ainda não realizou nenhuma compra. Explore nosso catálogo de produtos dermatológicos!</div>
+                    </div>
+                </div>
+
+                <!-- Configurações -->
+                <div class="tab-content" id="configuracoes">
+                    <div class="info-card">
+                        <div class="info-title">Notificações</div>
+                        <div class="info-text">Receba atualizações sobre novos produtos, promoções e lançamentos.</div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-title">Privacidade</div>
+                        <div class="info-text">Seus dados são protegidos e utilizados apenas para melhorar sua experiência de compra.</div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-title">Suporte</div>
+                        <div class="info-text">Entre em contato conosco através do e-mail: suporte@drderm.com</div>
+                    </div>
+                </div>
+            </div>
+    </section>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            // Load stock when stock tab is opened
+            if (tabName === 'estoque') {
+                loadStock();
+            }
+        }
+
+        async function loadUserData() {
+            const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+            if (!isLoggedIn) {
+                alert('Você precisa estar logado para acessar esta página.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const token = localStorage.getItem('authToken');
+            let userName = localStorage.getItem('userName') || 'Usuário';
+            let userEmail = localStorage.getItem('userEmail') || '';
+            let userPhone = localStorage.getItem('userPhone') || '';
+            try {
+                if (token) {
+                    const res = await fetch('/api/profile', { headers: { Authorization: 'Bearer ' + token } });
+                    if (res.ok) {
+                        const data = await res.json();
+                        userEmail = data.email || userEmail;
+                        userName = data.name || userName;
+                        userPhone = data.phone || userPhone;
+                        // cache locally for faster rendering
+                        localStorage.setItem('userEmail', userEmail);
+                        localStorage.setItem('userName', userName);
+                        localStorage.setItem('userPhone', userPhone);
+                    }
+                }
+            } catch (_) {}
+
+            const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+            document.getElementById('profileAvatar').textContent = userName.charAt(0).toUpperCase();
+            document.getElementById('profileName').textContent = userName;
+            document.getElementById('profileEmail').textContent = userEmail;
+            document.getElementById('userName').value = userName;
+            document.getElementById('userEmail').value = userEmail;
+            document.getElementById('userPhone').value = userPhone;
+            document.getElementById('produtosFavoritos').textContent = favorites.length;
+        }
+
+        function cancelEdit() {
+            loadUserData();
+            document.getElementById('newPassword').value = '';
+        }
+
+        // Handle form submission -> calls /api/profile and caches locally
+        document.getElementById('profileForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('userName').value;
+            const email = document.getElementById('userEmail').value;
+            const phone = document.getElementById('userPhone').value;
+            const newPassword = document.getElementById('newPassword').value;
+            if (!name || !email || !phone) return;
+            const token = localStorage.getItem('authToken');
+            try {
+                if (token) {
+                    await fetch('/api/profile', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + token
+                        },
+                        body: JSON.stringify({ name, phone, newPassword })
+                    });
+                }
+            } catch (_) {}
+            localStorage.setItem('userName', name);
+            localStorage.setItem('userEmail', email);
+            localStorage.setItem('userPhone', phone);
+            await loadUserData();
+            alert(newPassword ? 'Dados e senha atualizados com sucesso!' : 'Dados atualizados com sucesso!');
+            if (newPassword) {
+                document.getElementById('newPassword').value = '';
+            }
+        });
+
+        let addresses = JSON.parse(localStorage.getItem('userAddresses')) || [];
+
+        function showAddressForm() {
+            document.getElementById('addressForm').style.display = 'block';
+        }
+
+        function hideAddressForm() {
+            document.getElementById('addressForm').style.display = 'none';
+            document.getElementById('newAddressForm').reset();
+        }
+
+        function loadAddresses() {
+            const addressList = document.getElementById('addressList');
+            
+            if (addresses.length === 0) {
+                const safeHTML = `
+                    <div class="info-card">
+                        <div class="info-title">Nenhum endereço cadastrado</div>
+                        <div class="info-text">Adicione um endereço para facilitar suas compras futuras.</div>
+                    </div>
+                `;
+                if (typeof setSafeHTML !== 'undefined') {
+                    setSafeHTML(addressList, safeHTML);
+                } else {
+                    addressList.innerHTML = safeHTML;
+                }
+                return;
+            }
+
+            const safeAddressesHTML = addresses.map((address, index) => {
+                const safeName = typeof escapeHTML !== 'undefined' ? escapeHTML(address.name || '') : (address.name || '');
+                const safeStreet = typeof escapeHTML !== 'undefined' ? escapeHTML(address.street || '') : (address.street || '');
+                const safeNumber = typeof escapeHTML !== 'undefined' ? escapeHTML(address.number || '') : (address.number || '');
+                const safeComplement = address.complement ? (typeof escapeHTML !== 'undefined' ? escapeHTML(address.complement) : address.complement) : '';
+                const safeNeighborhood = typeof escapeHTML !== 'undefined' ? escapeHTML(address.neighborhood || '') : (address.neighborhood || '');
+                const safeCity = typeof escapeHTML !== 'undefined' ? escapeHTML(address.city || '') : (address.city || '');
+                const safeState = typeof escapeHTML !== 'undefined' ? escapeHTML(address.state || '') : (address.state || '');
+                const safeCep = typeof escapeHTML !== 'undefined' ? escapeHTML(address.cep || '') : (address.cep || '');
+                return `
+                <div class="address-card ${address.default ? 'default' : ''}">
+                    <div class="address-header">
+                        <div class="address-name">
+                            ${safeName}
+                            ${address.default ? '<span class="default-badge">Padrão</span>' : ''}
+                        </div>
+                        <div class="address-actions">
+                            ${!address.default ? `<button class="btn btn-default btn-small" onclick="setDefaultAddress(${index})">Padrão</button>` : ''}
+                            <button class="btn btn-edit btn-small" onclick="editAddress(${index})">Editar</button>
+                            <button class="btn btn-delete btn-small" onclick="deleteAddress(${index})">Excluir</button>
+                        </div>
+                    </div>
+                    <div class="address-info">
+                        ${safeStreet}, ${safeNumber}${safeComplement ? ', ' + safeComplement : ''}<br>
+                        ${safeNeighborhood} - ${safeCity}/${safeState}<br>
+                        CEP: ${safeCep}
+                    </div>
+                </div>
+            `;
+            }).join('');
+            
+            if (typeof setSafeHTML !== 'undefined') {
+                setSafeHTML(addressList, safeAddressesHTML);
+            } else {
+                addressList.innerHTML = safeAddressesHTML;
+            }
+        }
+
+        function setDefaultAddress(index) {
+            addresses.forEach((addr, i) => {
+                addr.default = i === index;
+            });
+            localStorage.setItem('userAddresses', JSON.stringify(addresses));
+            loadAddresses();
+        }
+
+        function editAddress(index) {
+            const address = addresses[index];
+            document.getElementById('addressName').value = address.name;
+            document.getElementById('addressCep').value = address.cep;
+            document.getElementById('addressStreet').value = address.street;
+            document.getElementById('addressNumber').value = address.number;
+            document.getElementById('addressNeighborhood').value = address.neighborhood;
+            document.getElementById('addressCity').value = address.city;
+            document.getElementById('addressState').value = address.state;
+            document.getElementById('addressComplement').value = address.complement || '';
+            
+            showAddressForm();
+            
+            // Change form to edit mode
+            const form = document.getElementById('newAddressForm');
+            form.onsubmit = function(e) {
+                e.preventDefault();
+                updateAddress(index);
+            };
+        }
+
+        function updateAddress(index) {
+            const address = {
+                name: document.getElementById('addressName').value,
+                cep: document.getElementById('addressCep').value,
+                street: document.getElementById('addressStreet').value,
+                number: document.getElementById('addressNumber').value,
+                neighborhood: document.getElementById('addressNeighborhood').value,
+                city: document.getElementById('addressCity').value,
+                state: document.getElementById('addressState').value.toUpperCase(),
+                complement: document.getElementById('addressComplement').value,
+                default: addresses[index].default
+            };
+
+            addresses[index] = address;
+            localStorage.setItem('userAddresses', JSON.stringify(addresses));
+            loadAddresses();
+            hideAddressForm();
+            
+            // Reset form to add mode
+            document.getElementById('newAddressForm').onsubmit = function(e) {
+                e.preventDefault();
+                addAddress();
+            };
+            
+            alert('Endereço atualizado com sucesso!');
+        }
+
+        function deleteAddress(index) {
+            if (confirm('Tem certeza que deseja excluir este endereço?')) {
+                addresses.splice(index, 1);
+                
+                // If deleted address was default and there are other addresses, set first as default
+                if (addresses.length > 0 && !addresses.some(addr => addr.default)) {
+                    addresses[0].default = true;
+                }
+                
+                localStorage.setItem('userAddresses', JSON.stringify(addresses));
+                loadAddresses();
+            }
+        }
+
+        function addAddress() {
+            const address = {
+                name: document.getElementById('addressName').value,
+                cep: document.getElementById('addressCep').value,
+                street: document.getElementById('addressStreet').value,
+                number: document.getElementById('addressNumber').value,
+                neighborhood: document.getElementById('addressNeighborhood').value,
+                city: document.getElementById('addressCity').value,
+                state: document.getElementById('addressState').value.toUpperCase(),
+                complement: document.getElementById('addressComplement').value,
+                default: addresses.length === 0 // First address is default
+            };
+
+            addresses.push(address);
+            localStorage.setItem('userAddresses', JSON.stringify(addresses));
+            loadAddresses();
+            hideAddressForm();
+            alert('Endereço adicionado com sucesso!');
+        }
+
+        // Handle new address form submission
+        document.getElementById('newAddressForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            addAddress();
+        });
+
+        function toggleMobileNav() {
+            const mobileNav = document.getElementById('mobileNav');
+            const overlay = document.getElementById('mobileOverlay');
+            mobileNav.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function closeMobileNav() {
+            const mobileNav = document.getElementById('mobileNav');
+            const overlay = document.getElementById('mobileOverlay');
+            mobileNav.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+
+        function toggleUserMenu(event) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            const dropdown = document.getElementById('userDropdown');
+            if (dropdown) {
+                dropdown.classList.toggle('show');
+            } else {
+                console.warn('Dropdown de usuário não encontrado');
+            }
+        }
+
+        function closeUserMenu() {
+            const dropdown = document.getElementById('userDropdown');
+            if (dropdown) {
+                dropdown.classList.remove('show');
+            }
+        }
+
+        function handleLogin() {
+            closeUserMenu();
+            window.location.href = 'login.html';
+        }
+
+        function handleLogout() {
+            closeUserMenu();
+            closeMobileNav();
+            localStorage.removeItem('userLoggedIn');
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('userName');
+            localStorage.removeItem('userPhone');
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('isAdmin');
+            setTimeout(() => {
+                window.location.replace('login.html');
+            }, 100);
+        }
+
+        function viewProfile() {
+            closeUserMenu();
+            window.location.href = 'perfil.html';
+        }
+
+        function updateUserStatus() {
+            const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+            const userIcon = document.getElementById('userIcon');
+            const userAccount = document.getElementById('userAccount');
+            const dropdown = document.getElementById('userDropdown');
+            const mobileUserOptions = document.getElementById('mobileUserOptions');
+            
+            if (!userIcon || !userAccount || !dropdown) {
+                console.warn('Elementos do menu de usuário não encontrados');
+                return;
+            }
+            
+            updateMobileProfile(isLoggedIn);
+            
+            if (isLoggedIn) {
+                const userName = localStorage.getItem('userName') || 'Usuário';
+                if (userIcon) userIcon.textContent = userName.charAt(0).toUpperCase();
+                if (userAccount) {
+                    userAccount.title = `Logado como: ${userName}`;
+                    userAccount.style.background = 'rgba(34, 197, 94, 0.2)';
+                }
+                
+                if (dropdown) {
+                    const safeHTML = `
+                        <a href="#" class="user-dropdown-item" onclick="viewProfile()">
+                            <span>◉</span>
+                            Ver Perfil
+                        </a>
+                        <a href="#" class="user-dropdown-item logout" onclick="handleLogout()">
+                            <span>→</span>
+                            Sair
+                        </a>
+                    `;
+                    if (typeof setSafeHTML !== 'undefined') {
+                        setSafeHTML(dropdown, safeHTML);
+                    } else {
+                        dropdown.innerHTML = safeHTML;
+                    }
+                }
+                
+                if (mobileUserOptions) {
+                    const safeMobileHTML = `
+                        <li><a href="#" class="nav-item" onclick="closeMobileNav(); handleLogout();"><span>→</span> Sair</a></li>
+                    `;
+                    if (typeof setSafeHTML !== 'undefined') {
+                        setSafeHTML(mobileUserOptions, safeMobileHTML);
+                    } else {
+                        mobileUserOptions.innerHTML = safeMobileHTML;
+                    }
+                }
+            } else {
+                if (userIcon) userIcon.textContent = '◉';
+                if (userAccount) {
+                    userAccount.title = 'Minha Conta';
+                    userAccount.style.background = '';
+                }
+                
+                if (dropdown) {
+                    dropdown.innerHTML = `
+                        <a href="#" class="user-dropdown-item" onclick="handleLogin()">
+                            <span>→</span>
+                            Entrar
+                        </a>
+                        <a href="login.html" class="user-dropdown-item" onclick="closeUserMenu()">
+                            <span>+</span>
+                            Cadastrar
+                        </a>
+                    `;
+                }
+                
+                if (mobileUserOptions) {
+                    mobileUserOptions.innerHTML = `
+                        <li><a href="#" class="nav-item" onclick="closeMobileNav(); handleLogin();"><span>→</span> Entrar</a></li>
+                        <li><a href="login.html" class="nav-item" onclick="closeMobileNav();"><span>+</span> Cadastrar</a></li>
+                    `;
+                }
+            }
+        }
+
+        function updateMobileProfile(isLoggedIn) {
+            if (isLoggedIn === undefined) {
+                isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+            }
+            const mobileUserProfile = document.getElementById('mobileUserProfile');
+            const mobileUserAvatar = document.getElementById('mobileUserAvatar');
+            const mobileUserName = document.getElementById('mobileUserName');
+            const mobileUserEmail = document.getElementById('mobileUserEmail');
+            
+            if (isLoggedIn) {
+                const userName = localStorage.getItem('userName') || 'Usuário';
+                const userEmail = localStorage.getItem('userEmail') || 'usuario@email.com';
+                
+                mobileUserAvatar.textContent = userName.charAt(0).toUpperCase();
+                mobileUserName.textContent = userName;
+                mobileUserEmail.textContent = userEmail;
+                
+                mobileUserProfile.onclick = function() {
+                    closeMobileNav();
+                    window.location.href = 'perfil.html';
+                };
+            } else {
+                mobileUserAvatar.textContent = 'DR';
+                mobileUserName.textContent = 'Visitante';
+                mobileUserEmail.textContent = 'Faça login para acessar';
+                
+                mobileUserProfile.onclick = function() {
+                    closeMobileNav();
+                    window.location.href = 'login.html';
+                };
+            }
+        }
+
+        function loadStock() {
+            const stockList = document.getElementById('stockList');
+            const emptyStock = document.getElementById('emptyStock');
+            const stockTable = document.getElementById('stockTable');
+            
+            // Get favorites from localStorage
+            const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+            
+            if (favorites.length === 0) {
+                if (stockTable) stockTable.style.display = 'none';
+                if (emptyStock) emptyStock.style.display = 'block';
+                return;
+            }
+
+            // Load products from localStorage
+            const products = JSON.parse(localStorage.getItem('products') || '[]');
+            
+            // Filter products that are in favorites
+            const favoriteProducts = products.filter(product => {
+                const productId = typeof product.id === 'string' ? parseInt(product.id) : product.id;
+                return favorites.some(favId => {
+                    const favIdNum = typeof favId === 'string' ? parseInt(favId) : favId;
+                    return favIdNum === productId;
+                });
+            });
+
+            if (favoriteProducts.length === 0) {
+                if (stockTable) stockTable.style.display = 'none';
+                if (emptyStock) emptyStock.style.display = 'block';
+                return;
+            }
+
+            // Show table and hide empty message
+            if (stockTable) stockTable.style.display = 'table';
+            if (emptyStock) emptyStock.style.display = 'none';
+
+            // Generate HTML for table rows
+            let stockHTML = '';
+            favoriteProducts.forEach((product, index) => {
+                const stock = product.stock || 0;
+                const price = parseFloat(product.price || 0);
+                const discount = parseFloat(product.discount_percentage || 0);
+                const finalPrice = discount > 0 ? price * (1 - discount / 100) : price;
+                const oldPrice = discount > 0 ? price : null;
+
+                let stockClass = 'in-stock';
+                let stockIcon = '✓';
+                let stockText = `Em Estoque (${stock})`;
+                
+                if (stock === 0) {
+                    stockClass = 'out-of-stock';
+                    stockIcon = '✕';
+                    stockText = 'Sem Estoque';
+                } else if (stock < 10) {
+                    stockClass = 'low-stock';
+                    stockIcon = '⚠';
+                    stockText = `Estoque Baixo (${stock})`;
+                }
+
+                const productInitial = (product.name || 'P').charAt(0).toUpperCase();
+                const discountBadge = discount > 0 ? `<span class="stock-discount-badge">${Math.round(discount)}% OFF</span>` : '';
+
+                stockHTML += `
+                    <tr style="animation-delay: ${index * 0.05}s;">
+                        <td>
+                            <div class="stock-cell-product">
+                                <div class="stock-product-icon">${productInitial}</div>
+                                <div class="stock-product-info">
+                                    <div class="stock-product-name">${product.name || 'Produto'}</div>
+                                    <div class="stock-product-brand">${product.brand || 'Marca'}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="stock-cell-price">
+                                <div class="stock-price-main">
+                                    R$ ${finalPrice.toFixed(2).replace('.', ',')}
+                                    ${discountBadge}
+                                </div>
+                                ${oldPrice ? `<div class="stock-price-old">R$ ${oldPrice.toFixed(2).replace('.', ',')}</div>` : ''}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="stock-cell-stock">
+                                <div class="stock-indicator ${stockClass}">
+                                    <span class="stock-indicator-icon">${stockIcon}</span>
+                                    <span class="stock-indicator-text">${stockText}</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            if (stockList) {
+                stockList.innerHTML = stockHTML;
+            }
+        }
+
+        // Load user data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserData();
+            loadAddresses();
+            updateUserStatus();
+            
+            document.addEventListener('click', function(event) {
+                const userMenu = document.getElementById('userMenu');
+                if (userMenu && !userMenu.contains(event.target)) {
+                    closeUserMenu();
+                }
+            });
+        });
+    </script>
+
+    <!-- Menu hamburger será carregado dinamicamente -->
+    <div id="mobile-nav-placeholder"></div>
+    
+    <!-- Script para carregar header e menu compartilhados -->
+    <script src="load-header.js"></script>
+</body>
+</html>

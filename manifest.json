@@ -1,0 +1,9 @@
+{
+  "name": "DrDerm",
+  "short_name": "DrDerm",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "theme_color": "#395f69",
+  "background_color": "#f8fafc"
+}

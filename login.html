@@ -1,0 +1,2133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - DrDerm</title>
+    <meta name="theme-color" content="#395f69">
+    <link rel="manifest" href="manifest.json">
+    <meta name="description" content="Entre na DrDerm para acompanhar pedidos e favoritos.">
+    <meta property="og:site_name" content="DrDerm">
+    <meta property="og:title" content="Login - DrDerm">
+    <meta property="og:description" content="Acesse sua conta para comprar com mais praticidade.">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <script>
+        (function () {
+            try {
+                var origin = window.location.origin || '';
+                var href = origin + window.location.pathname;
+                var link = document.querySelector('link[rel="canonical"]');
+                if (!link) {
+                    link = document.createElement('link');
+                    link.setAttribute('rel', 'canonical');
+                    document.head.appendChild(link);
+                }
+                link.setAttribute('href', href);
+                var ogUrl = document.querySelector('meta[property="og:url"]');
+                if (!ogUrl) {
+                    ogUrl = document.createElement('meta');
+                    ogUrl.setAttribute('property', 'og:url');
+                    document.head.appendChild(ogUrl);
+                }
+                ogUrl.setAttribute('content', href);
+            } catch (e) {}
+        })();
+    </script>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests; block-all-mixed-content">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta name="Referrer-Policy" content="no-referrer">
+    <meta http-equiv="Permissions-Policy" content="geolocation=(), camera=(), microphone=(), payment=()">
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
+    <script src="security.js" defer></script>
+    <script src="utils.js" defer></script>
+    <script src="form-validation.js" defer></script>
+    <script src="error-handler.js" defer></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1e2723 0%, #395f69 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            width: 100%;
+            max-width: 900px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 600px;
+        }
+        
+        /* Quando o formulário de cadastro está ativo, aumentar tamanho */
+        .login-container.register-mode {
+            max-width: 1300px;
+            min-height: auto;
+            max-height: 90vh;
+            height: auto;
+        }
+        
+        /* Manter tamanho original quando login está ativo */
+        .login-container:not(.register-mode) {
+            max-width: 900px;
+            min-height: 600px;
+            max-height: none;
+        }
+
+        .login-brand {
+            background: linear-gradient(135deg, #395f69 0%, #748d8c 100%);
+            padding: 60px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+        }
+
+        .brand-logo {
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .brand-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .brand-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        .login-form {
+            padding: 60px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        /* Quando cadastro está ativo, ajustar padding e permitir scroll */
+        .login-form.register-mode {
+            padding: 30px 35px 20px 35px;
+            justify-content: flex-start;
+            overflow-y: auto;
+            max-height: calc(90vh - 20px);
+            min-height: auto;
+        }
+        
+        /* Quando login está ativo, remover scroll */
+        .login-form:not(.register-mode) {
+            padding: 60px 40px;
+            justify-content: center;
+            overflow: visible;
+            max-height: none;
+        }
+        
+        /* Formulário de cadastro com duas colunas no desktop */
+        #registerForm:not(.hidden) {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            align-items: start;
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+        
+        /* Garantir que o formulário de cadastro esteja oculto quando tiver a classe hidden */
+        #registerForm.hidden {
+            display: none !important;
+        }
+        
+        /* Garantir que o formulário de login esteja visível quando não tiver a classe hidden */
+        #loginForm:not(.hidden) {
+            display: block;
+        }
+        
+        #loginForm.hidden {
+            display: none !important;
+        }
+        
+        #registerForm .form-group {
+            margin-bottom: 12px;
+        }
+        
+        /* Campos que ocupam toda a largura */
+        #registerForm .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        /* Botão e checkbox ocupam toda a largura */
+        #registerForm .form-checkbox,
+        #registerForm .form-button {
+            grid-column: 1 / -1;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        /* Esconder botão de voltar e logo no desktop */
+        .form-header-back {
+            display: none;
+        }
+        
+        .form-header-logo {
+            display: none;
+        }
+
+        .form-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e2723;
+            margin-bottom: 10px;
+        }
+
+        .form-subtitle {
+            color: #6b7280;
+            font-size: 16px;
+        }
+
+        .form-tabs {
+            display: flex;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 30px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #6b7280;
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: #395f69;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        /* Reduzir espaçamento APENAS no formulário de cadastro */
+        #registerForm .form-group {
+            margin-bottom: 14px;
+        }
+        
+        /* Manter estilos originais no formulário de login */
+        #loginForm .form-group {
+            margin-bottom: 20px;
+        }
+        
+        #registerForm .form-label {
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+        
+        /* Manter estilos originais no formulário de login */
+        #loginForm .form-label {
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        #registerForm .form-input {
+            padding: 11px 13px;
+            font-size: 14px;
+        }
+        
+        /* Manter estilos originais no formulário de login */
+        #loginForm .form-input {
+            padding: 14px 16px;
+            font-size: 16px;
+        }
+        
+        /* Reduzir altura do container de upload */
+        #registerForm .document-upload-container {
+            margin-top: 5px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #395f69;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(57, 95, 105, 0.1);
+        }
+
+        .form-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        
+        /* Ajustar checkbox no formulário de cadastro */
+        #registerForm .form-checkbox {
+            margin-bottom: 12px;
+            margin-top: 4px;
+            font-size: 12px;
+        }
+        
+        /* Manter estilos originais no formulário de login */
+        #loginForm .form-checkbox {
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+        
+        #registerForm .checkbox-label {
+            font-size: 12px;
+        }
+        
+        /* Manter estilos originais no formulário de login */
+        #loginForm .checkbox-label {
+            font-size: 14px;
+        }
+
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            accent-color: #395f69;
+        }
+
+        .checkbox-label {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .form-button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #395f69 0%, #1e2723 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        /* Ajustar botão no formulário de cadastro */
+        #registerForm .form-button {
+            margin-top: 8px;
+            margin-bottom: 0;
+            padding: 13px;
+            font-size: 15px;
+        }
+
+        /* Adicionar espaçamento padronizado no final do formulário de cadastro */
+        #registerForm {
+            padding-bottom: 20px;
+            margin-bottom: 0;
+        }
+
+        .login-form.register-mode .form-content {
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+
+        /* Espaçamento padronizado após o botão no formulário de cadastro */
+        #registerForm .form-button:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Garantir que o container se ajuste ao conteúdo sem espaço extra */
+        .login-form.register-mode {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        /* Remover qualquer altura mínima que possa causar espaço extra */
+        .login-container.register-mode .login-form {
+            min-height: auto;
+        }
+
+        /* Garantir que não haja espaço extra após o último elemento do formulário */
+        .login-form.register-mode form:last-child {
+            margin-bottom: 0;
+        }
+        
+        /* Manter estilos originais no formulário de login */
+        #loginForm .form-button {
+            margin-top: 0;
+            margin-bottom: 20px;
+            padding: 16px;
+            font-size: 16px;
+        }
+
+        .form-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(57, 95, 105, 0.3);
+        }
+
+        .form-divider {
+            text-align: center;
+            margin: 25px 0;
+            position: relative;
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+        .form-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e5e7eb;
+            z-index: 1;
+        }
+
+        .form-divider span {
+            background: white;
+            padding: 0 15px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .social-login {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .social-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .social-btn:hover {
+            border-color: #395f69;
+            background: #f8fafc;
+        }
+
+        .form-footer {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .form-link {
+            color: #395f69;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .form-link:hover {
+            text-decoration: underline;
+        }
+
+        .back-home {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .back-home:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Garantir que form-content oculto não apareça */
+        .form-content.hidden {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            height: 0 !important;
+            overflow: hidden !important;
+        }
+
+        @media (max-width: 768px) {
+            .login-container {
+                grid-template-columns: 1fr;
+                max-width: 400px;
+            }
+
+            .login-brand {
+                display: none;
+            }
+
+            .brand-subtitle {
+                display: none;
+            }
+
+            .back-home {
+                display: none !important;
+            }
+
+            .login-form {
+                padding: 30px 20px;
+            }
+
+            .form-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                text-align: left;
+                margin-bottom: 25px;
+            }
+
+            .login-form:not(.register-mode) {
+                overflow: visible;
+                max-height: none;
+            }
+
+            .login-form.register-mode {
+                padding: 25px 20px 20px 20px;
+                max-height: calc(90vh - 20px);
+                overflow-y: auto;
+            }
+
+            .form-header-back {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: #f3f4f6;
+                border: none;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                flex-shrink: 0;
+            }
+
+            .form-header-back:hover {
+                background: #e5e7eb;
+            }
+
+            .form-header-back svg {
+                width: 20px;
+                height: 20px;
+                stroke: #1e2723;
+            }
+
+            .form-title {
+                font-size: 28px;
+                margin: 0;
+                flex: 1;
+                text-align: center;
+            }
+
+            .form-header-logo {
+                width: 40px;
+                height: 40px;
+                flex-shrink: 0;
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .form-header-logo img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+            }
+
+            .form-subtitle {
+                display: none;
+            }
+            
+            /* No mobile, formulário de cadastro volta para uma coluna */
+            #registerForm {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Ajustes para telas médias */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .login-container {
+                max-width: 1000px;
+            }
+            
+            .login-form {
+                padding: 50px 35px;
+            }
+        }
+        
+        /* Ajustes para desktop grande */
+        @media (min-width: 1025px) {
+            .login-container.register-mode {
+                max-width: 1300px;
+                min-height: auto;
+                max-height: 90vh;
+                height: auto;
+            }
+            
+            .login-form:not(.register-mode) {
+                padding: 60px 40px;
+                overflow: visible;
+                max-height: none;
+            }
+            
+            .login-form.register-mode {
+                padding: 30px 35px 20px 35px;
+                max-height: calc(90vh - 20px);
+                overflow-y: auto;
+                min-height: auto;
+            }
+            
+            /* Ajustar formulário de cadastro para caber melhor */
+            #registerForm {
+                gap: 16px;
+                padding-bottom: 20px;
+                margin-bottom: 0;
+            }
+            
+            #registerForm .form-group {
+                margin-bottom: 12px;
+            }
+        }
+
+        /* Estilos para upload de documentos */
+        .document-upload-container {
+            margin-top: 8px;
+        }
+
+        .document-upload-area {
+            position: relative;
+            border: 2px dashed #d1d5db;
+            border-radius: 12px;
+            padding: 20px;
+            background: #f9fafb;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Reduzir tamanho das áreas de upload no formulário de cadastro */
+        #registerForm .document-upload-area {
+            min-height: 110px;
+            padding: 14px;
+        }
+        
+        #registerForm .upload-icon {
+            font-size: 32px;
+            margin-bottom: 6px;
+        }
+        
+        #registerForm .upload-text {
+            font-size: 12px;
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+        
+        #registerForm .upload-text strong {
+            font-size: 12px;
+        }
+        
+        #registerForm .upload-formats {
+            font-size: 10px;
+            margin-top: 2px;
+        }
+        
+        #registerForm .preview-image {
+            max-height: 120px;
+        }
+        
+        #registerForm .image-preview-container {
+            max-height: 120px;
+            overflow: hidden;
+        }
+
+        .document-upload-area:hover {
+            border-color: #395f69;
+            background: #f3f4f6;
+        }
+
+        .document-upload-area.drag-over {
+            border-color: #395f69;
+            background: #e0f2fe;
+            border-style: solid;
+        }
+
+        .upload-placeholder {
+            text-align: center;
+            color: #6b7280;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .upload-text {
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #374151;
+        }
+
+        .upload-text strong {
+            color: #395f69;
+            font-weight: 600;
+        }
+
+        .upload-formats {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-top: 8px;
+        }
+
+        .image-preview-container {
+            position: relative;
+            width: 100%;
+            max-width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #f3f4f6;
+        }
+
+        .preview-image {
+            width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            display: block;
+        }
+
+        .remove-image-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+        }
+
+        .remove-image-btn:hover {
+            background: rgba(220, 38, 38, 1);
+            transform: scale(1.1);
+        }
+
+        .image-error {
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 6px;
+            color: #dc2626;
+            font-size: 13px;
+        }
+
+        @media (max-width: 768px) {
+            .document-upload-area {
+                padding: 16px;
+                min-height: 150px;
+            }
+
+            .upload-icon {
+                font-size: 36px;
+            }
+
+            .preview-image {
+                max-height: 200px;
+            }
+        }
+
+        /* Estilos do Modal de Termos de Uso */
+        .terms-modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+        }
+
+        .terms-modal-content {
+            background-color: #ffffff;
+            margin: 2% auto;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .terms-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 30px;
+            border-bottom: 2px solid #e5e7eb;
+            background: linear-gradient(135deg, #395f69 0%, #1e2723 100%);
+            color: white;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .terms-modal-header h2 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .terms-modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            line-height: 1;
+        }
+
+        .terms-modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .terms-modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            background: #f9fafb;
+        }
+
+        .terms-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            line-height: 1.8;
+            color: #374151;
+        }
+
+        .terms-content h3 {
+            color: #395f69;
+            font-size: 18px;
+            font-weight: 700;
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+
+        .terms-content h3:first-child {
+            margin-top: 0;
+        }
+
+        .terms-content p {
+            margin-bottom: 16px;
+            text-align: justify;
+        }
+
+        .terms-content ul {
+            margin-bottom: 16px;
+            padding-left: 24px;
+        }
+
+        .terms-content li {
+            margin-bottom: 8px;
+        }
+
+        .terms-content strong {
+            color: #1e2723;
+            font-weight: 600;
+        }
+
+        .terms-modal-footer {
+            padding: 20px 30px;
+            border-top: 2px solid #e5e7eb;
+            display: flex;
+            justify-content: flex-end;
+            background: white;
+            border-radius: 0 0 16px 16px;
+        }
+
+        .terms-modal-btn {
+            background: linear-gradient(135deg, #395f69 0%, #1e2723 100%);
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .terms-modal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(57, 95, 105, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .terms-modal-content {
+                width: 95%;
+                margin: 5% auto;
+                max-height: 85vh;
+            }
+
+            .terms-modal-header {
+                padding: 20px;
+            }
+
+            .terms-modal-header h2 {
+                font-size: 20px;
+            }
+
+            .terms-modal-body {
+                padding: 20px;
+            }
+
+            .terms-content {
+                padding: 20px;
+            }
+
+            .terms-content h3 {
+                font-size: 16px;
+            }
+
+            .terms-modal-footer {
+                padding: 16px 20px;
+            }
+        }
+
+        /* Estilos do Modal de Recuperação de Senha */
+        .forgot-password-modal {
+            display: none;
+            position: fixed;
+            z-index: 10001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+        }
+
+        .forgot-password-modal-content {
+            background-color: #ffffff;
+            margin: 10% auto;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        .forgot-password-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 30px;
+            border-bottom: 2px solid #e5e7eb;
+            background: linear-gradient(135deg, #395f69 0%, #1e2723 100%);
+            color: white;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .forgot-password-modal-header h2 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .forgot-password-modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            line-height: 1;
+        }
+
+        .forgot-password-modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .forgot-password-modal-body {
+            padding: 30px;
+        }
+
+        .error-message {
+            background-color: #fee2e2;
+            color: #dc2626;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            border-left: 4px solid #dc2626;
+        }
+
+        .success-message {
+            background-color: #d1fae5;
+            color: #059669;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            border-left: 4px solid #059669;
+        }
+
+        @media (max-width: 768px) {
+            .forgot-password-modal-content {
+                width: 95%;
+                margin: 15% auto;
+            }
+
+            .forgot-password-modal-header {
+                padding: 20px;
+            }
+
+            .forgot-password-modal-header h2 {
+                font-size: 20px;
+            }
+
+            .forgot-password-modal-body {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-brand">
+            <div class="brand-logo">DR</div>
+            <h1 class="brand-title">DrDerm</h1>
+            <p class="brand-subtitle">Plataforma especializada em produtos dermatológicos para profissionais da área médica e estética</p>
+        </div>
+
+        <div class="login-form">
+            <div class="form-header">
+                <button class="form-header-back" onclick="window.location.href='index.html'" aria-label="Voltar ao início">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 12H5"></path>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                </button>
+                <h2 class="form-title">Bem-vindo</h2>
+                <div class="form-header-logo">
+                    <img src="imagems/logo_dr_derm_cropped.png" alt="DrDerm">
+                </div>
+            </div>
+
+            <div class="form-tabs">
+                <button type="button" class="tab-btn active" id="loginTabBtn">Entrar</button>
+                <button type="button" class="tab-btn" id="registerTabBtn">Cadastrar</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="form-content">
+                <div class="form-group">
+                    <label class="form-label">E-mail</label>
+                    <input type="email" class="form-input" placeholder="seu@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Senha</label>
+                    <input type="password" class="form-input" placeholder="••••••••" required>
+                </div>
+
+                <div class="form-checkbox">
+                    <input type="checkbox" class="checkbox" id="remember">
+                    <label for="remember" class="checkbox-label">Lembrar de mim</label>
+                </div>
+
+                <button type="submit" class="form-button">Entrar</button>
+
+                <div class="form-footer">
+                    <a href="#" class="form-link" onclick="event.preventDefault(); window.showForgotPasswordModal(); return false;">Esqueceu sua senha?</a>
+                </div>
+            </form>
+
+            <!-- Register Form -->
+            <form id="registerForm" class="form-content hidden">
+                <!-- Coluna 1 -->
+                <div class="form-group">
+                    <label class="form-label">Nome Completo</label>
+                    <input type="text" class="form-input" placeholder="Dr. João Silva" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">E-mail</label>
+                    <input type="email" class="form-input" placeholder="seu@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Telefone</label>
+                    <input type="tel" class="form-input" placeholder="(11) 99999-9999" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Número do Conselho</label>
+                    <input type="text" class="form-input" id="councilNumber" placeholder="Ex.: CRM 123456" required>
+                </div>
+
+                <!-- Foto do Diploma -->
+                <div class="form-group">
+                    <label class="form-label">Foto do Diploma *</label>
+                    <div class="document-upload-container" id="diplomaUploadContainer">
+                        <div class="document-upload-area" id="diplomaUploadArea">
+                            <input type="file" class="document-file-input" id="diplomaImage" accept="image/*" required style="display: none;">
+                            <div class="upload-placeholder" id="diplomaPlaceholder">
+                                <div class="upload-icon">📄</div>
+                                <div class="upload-text">
+                                    <strong>Clique ou arraste</strong> a foto do diploma
+                                </div>
+                                <div class="upload-formats">PNG, JPG, JPEG, WEBP</div>
+                            </div>
+                            <div class="image-preview-container" id="diplomaPreviewContainer" style="display: none;">
+                                <img class="preview-image" id="diplomaPreview" src="" alt="Preview do Diploma">
+                                <button type="button" class="remove-image-btn" onclick="removeDocumentImage('diploma')">✕</button>
+                            </div>
+                            <div class="image-error" id="diplomaError" style="display: none;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coluna 2 -->
+                <!-- Foto da Carteira do Conselho -->
+                <div class="form-group">
+                    <label class="form-label">Foto da Carteira *</label>
+                    <div class="document-upload-container" id="councilCardUploadContainer">
+                        <div class="document-upload-area" id="councilCardUploadArea">
+                            <input type="file" class="document-file-input" id="councilCardImage" accept="image/*" required style="display: none;">
+                            <div class="upload-placeholder" id="councilCardPlaceholder">
+                                <div class="upload-icon">🆔</div>
+                                <div class="upload-text">
+                                    <strong>Clique ou arraste</strong> a foto da carteira
+                                </div>
+                                <div class="upload-formats">PNG, JPG, JPEG, WEBP</div>
+                            </div>
+                            <div class="image-preview-container" id="councilCardPreviewContainer" style="display: none;">
+                                <img class="preview-image" id="councilCardPreview" src="" alt="Preview da Carteira">
+                                <button type="button" class="remove-image-btn" onclick="removeDocumentImage('councilCard')">✕</button>
+                            </div>
+                            <div class="image-error" id="councilCardError" style="display: none;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Senha</label>
+                    <input type="password" class="form-input" id="registerPassword" placeholder="••••••••" required minlength="8">
+                    <div class="password-requirements" id="passwordRequirements" style="display: none; margin-top: 8px; padding: 12px; background: #f8fafc; border-radius: 8px; font-size: 12px; color: #6b7280;">
+                        <strong style="display: block; margin-bottom: 6px; color: #374151;">Requisitos de senha:</strong>
+                        <ul style="margin: 0; padding-left: 20px; list-style: none;">
+                            <li id="req-length" style="margin-bottom: 4px;">✓ Mínimo de 8 caracteres</li>
+                            <li id="req-upper" style="margin-bottom: 4px;">✓ Pelo menos uma letra maiúscula</li>
+                            <li id="req-lower" style="margin-bottom: 4px;">✓ Pelo menos uma letra minúscula</li>
+                            <li id="req-number" style="margin-bottom: 4px;">✓ Pelo menos um número</li>
+                            <li id="req-special" style="margin-bottom: 0;">✓ Pelo menos um caractere especial (!@#$%^&*...)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Confirmar Senha</label>
+                    <input type="password" class="form-input" id="registerConfirmPassword" placeholder="••••••••" required minlength="8">
+                </div>
+
+                <!-- Campos que ocupam toda a largura -->
+                <div class="form-checkbox full-width">
+                    <input type="checkbox" class="checkbox" id="terms" required>
+                    <label for="terms" class="checkbox-label">Aceito os <a href="#" class="form-link" onclick="event.preventDefault(); window.showTermsModal(); return false;">termos de uso</a></label>
+                </div>
+
+                <small class="full-width" style="color:#6b7280; font-size:10px; margin-top: -8px; margin-bottom: 8px; display: block; grid-column: 1 / -1; line-height: 1.4;">Sua conta será analisada e desbloqueada após validação dos documentos.</small>
+
+                <button type="submit" class="form-button">Criar Conta</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Termos de Uso -->
+    <div id="termsModal" class="terms-modal">
+        <div class="terms-modal-content">
+            <div class="terms-modal-header">
+                <h2>Termos de Uso - DrDerm</h2>
+                <button class="terms-modal-close" onclick="closeTermsModal()">&times;</button>
+            </div>
+            <div class="terms-modal-body">
+                <div class="terms-content">
+                    <h3>1. Aceitação dos Termos</h3>
+                    <p>Ao acessar e usar a plataforma DrDerm, você concorda em cumprir e estar vinculado aos seguintes termos e condições de uso. Se você não concorda com alguma parte destes termos, não deve usar nossa plataforma.</p>
+
+                    <h3>2. Descrição do Serviço</h3>
+                    <p>A DrDerm é uma plataforma especializada em produtos dermatológicos destinada exclusivamente a profissionais da área médica e estética. Nossa plataforma oferece:</p>
+                    <ul>
+                        <li>Catálogo de produtos dermatológicos profissionais</li>
+                        <li>Sistema de pedidos e compras online</li>
+                        <li>Gestão de conta pessoal para profissionais cadastrados</li>
+                        <li>Informações sobre produtos e suas aplicações</li>
+                    </ul>
+
+                    <h3>3. Elegibilidade e Cadastro</h3>
+                    <p>Para utilizar a plataforma DrDerm, você deve:</p>
+                    <ul>
+                        <li>Ser um profissional da área médica ou estética devidamente registrado em seu conselho profissional</li>
+                        <li>Fornecer informações verdadeiras, precisas e completas durante o cadastro</li>
+                        <li>Enviar documentos comprobatórios de sua qualificação profissional (diploma e carteira do conselho)</li>
+                        <li>Manter suas informações de cadastro atualizadas</li>
+                        <li>Ter pelo menos 18 anos de idade</li>
+                    </ul>
+                    <p>O cadastro está sujeito à aprovação pela administração da plataforma. A DrDerm reserva-se o direito de recusar ou cancelar qualquer cadastro a seu critério.</p>
+
+                    <h3>4. Conta de Usuário</h3>
+                    <p>Ao criar uma conta, você é responsável por:</p>
+                    <ul>
+                        <li>Manter a confidencialidade de suas credenciais de acesso (email e senha)</li>
+                        <li>Todas as atividades que ocorram sob sua conta</li>
+                        <li>Notificar imediatamente a DrDerm sobre qualquer uso não autorizado de sua conta</li>
+                        <li>Garantir que suas informações de contato estejam sempre atualizadas</li>
+                    </ul>
+
+                    <h3>5. Produtos e Preços</h3>
+                    <p>A DrDerm se esforça para fornecer informações precisas sobre produtos e preços. No entanto:</p>
+                    <ul>
+                        <li>Os preços estão sujeitos a alterações sem aviso prévio</li>
+                        <li>As imagens dos produtos são meramente ilustrativas</li>
+                        <li>A disponibilidade dos produtos está sujeita ao estoque</li>
+                        <li>Reservamos o direito de recusar ou cancelar pedidos a nosso critério</li>
+                    </ul>
+
+                    <h3>6. Pedidos e Pagamentos</h3>
+                    <p>Ao realizar um pedido, você concorda em:</p>
+                    <ul>
+                        <li>Fornecer informações de pagamento precisas e completas</li>
+                        <li>Autorizar o débito do valor total do pedido</li>
+                        <li>Respeitar as condições de pagamento estabelecidas</li>
+                        <li>Entender que o pedido só será processado após a confirmação do pagamento</li>
+                    </ul>
+
+                    <h3>7. Política de Devolução e Reembolso</h3>
+                    <p>As políticas de devolução e reembolso seguem as diretrizes estabelecidas pelo Código de Defesa do Consumidor e podem variar conforme o produto. Entre em contato conosco para mais informações sobre devoluções.</p>
+
+                    <h3>8. Uso Adequado da Plataforma</h3>
+                    <p>Você concorda em NÃO:</p>
+                    <ul>
+                        <li>Usar a plataforma para fins ilegais ou não autorizados</li>
+                        <li>Reproduzir, duplicar ou copiar qualquer parte da plataforma sem autorização</li>
+                        <li>Interferir ou interromper o funcionamento da plataforma</li>
+                        <li>Tentar acessar áreas restritas da plataforma</li>
+                        <li>Usar robôs, spiders ou outros métodos automatizados para acessar a plataforma</li>
+                        <li>Transmitir vírus, malware ou qualquer código malicioso</li>
+                        <li>Fazer engenharia reversa ou tentar extrair o código-fonte da plataforma</li>
+                    </ul>
+
+                    <h3>9. Propriedade Intelectual</h3>
+                    <p>Todo o conteúdo da plataforma DrDerm, incluindo textos, gráficos, logotipos, ícones, imagens, clipes de áudio, downloads digitais e compilações de dados, é propriedade da DrDerm ou de seus fornecedores de conteúdo e está protegido por leis de direitos autorais e outras leis de propriedade intelectual.</p>
+
+                    <h3>10. Privacidade</h3>
+                    <p>O uso da plataforma DrDerm também está sujeito à nossa Política de Privacidade. Ao usar a plataforma, você consente com a coleta e uso de informações conforme descrito na Política de Privacidade.</p>
+
+                    <h3>11. Limitação de Responsabilidade</h3>
+                    <p>A DrDerm não será responsável por:</p>
+                    <ul>
+                        <li>Danos diretos, indiretos, incidentais ou consequenciais resultantes do uso ou incapacidade de usar a plataforma</li>
+                        <li>Interrupções no serviço, erros ou omissões</li>
+                        <li>Perda de dados ou informações</li>
+                        <li>Danos resultantes de vírus ou outros componentes prejudiciais</li>
+                    </ul>
+
+                    <h3>12. Isenção de Garantias</h3>
+                    <p>A plataforma é fornecida "como está" e "conforme disponível", sem garantias de qualquer tipo, expressas ou implícitas. A DrDerm não garante que a plataforma estará sempre disponível, seja ininterrupta ou livre de erros.</p>
+
+                    <h3>13. Indenização</h3>
+                    <p>Você concorda em indenizar e isentar a DrDerm de qualquer reivindicação, dano, obrigação, perda, responsabilidade, custo ou dívida, e despesas (incluindo honorários advocatícios) decorrentes de seu uso da plataforma ou violação destes Termos de Uso.</p>
+
+                    <h3>14. Modificações dos Termos</h3>
+                    <p>A DrDerm reserva-se o direito de modificar estes Termos de Uso a qualquer momento. As alterações entrarão em vigor imediatamente após sua publicação na plataforma. É sua responsabilidade revisar periodicamente estes termos. O uso continuado da plataforma após as alterações constitui sua aceitação dos novos termos.</p>
+
+                    <h3>15. Rescisão</h3>
+                    <p>A DrDerm reserva-se o direito de suspender ou encerrar sua conta e acesso à plataforma, a seu critério, sem aviso prévio, por qualquer motivo, incluindo violação destes Termos de Uso.</p>
+
+                    <h3>16. Lei Aplicável</h3>
+                    <p>Estes Termos de Uso são regidos pelas leis da República Federativa do Brasil. Qualquer disputa relacionada a estes termos será resolvida nos tribunais competentes do Brasil.</p>
+
+                    <h3>17. Disposições Gerais</h3>
+                    <p>Se qualquer disposição destes Termos de Uso for considerada inválida ou inexequível, as disposições restantes permanecerão em pleno vigor e efeito. Estes Termos de Uso constituem o acordo completo entre você e a DrDerm em relação ao uso da plataforma.</p>
+
+                    <h3>18. Contato</h3>
+                    <p>Para questões sobre estes Termos de Uso, entre em contato conosco através dos canais de atendimento disponíveis na plataforma.</p>
+
+                    <p><strong>Data da última atualização:</strong> <span id="termsUpdateDate"></span></p>
+                </div>
+            </div>
+            <div class="terms-modal-footer">
+                <button class="terms-modal-btn" onclick="closeTermsModal()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Recuperação de Senha -->
+    <div id="forgotPasswordModal" class="forgot-password-modal">
+        <div class="forgot-password-modal-content">
+            <div class="forgot-password-modal-header">
+                <h2>Recuperar Senha</h2>
+                <button class="forgot-password-modal-close" onclick="window.closeForgotPasswordModal()">&times;</button>
+            </div>
+            <div class="forgot-password-modal-body">
+                <p style="color: #6b7280; margin-bottom: 20px; line-height: 1.6;">
+                    Digite seu email cadastrado e enviaremos sua senha por email.
+                </p>
+                <form id="forgotPasswordForm">
+                    <div class="form-group">
+                        <label class="form-label">E-mail</label>
+                        <input type="email" id="forgotPasswordEmail" class="form-input" placeholder="seu@email.com" required>
+                    </div>
+                    <div id="forgotPasswordError" class="error-message" style="display: none; margin-bottom: 16px;"></div>
+                    <div id="forgotPasswordSuccess" class="success-message" style="display: none; margin-bottom: 16px;"></div>
+                    <button type="submit" class="form-button" id="forgotPasswordSubmitBtn">
+                        Enviar Senha
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tornar a função global para garantir acesso
+        window.showTab = function(tab) {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const loginFormContainer = document.querySelector('.login-form');
+            const loginContainer = document.querySelector('.login-container');
+            
+            if (!loginForm || !registerForm) {
+                console.error('Formulários não encontrados');
+                return false;
+            }
+            
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Adicionar active ao botão correspondente
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                const btnText = btn.textContent.trim();
+                if ((tab === 'login' && btnText.includes('Entrar')) || 
+                    (tab === 'register' && btnText.includes('Cadastrar'))) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Ocultar TODOS os formulários primeiro
+            loginForm.classList.add('hidden');
+            registerForm.classList.add('hidden');
+
+            // Mostrar apenas o formulário correspondente
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+                // Remover modo de cadastro
+                if (loginFormContainer) loginFormContainer.classList.remove('register-mode');
+                if (loginContainer) loginContainer.classList.remove('register-mode');
+            } else if (tab === 'register') {
+                registerForm.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+                // Adicionar modo de cadastro para ajustar CSS
+                if (loginFormContainer) loginFormContainer.classList.add('register-mode');
+                if (loginContainer) loginContainer.classList.add('register-mode');
+            }
+            
+            return false;
+        };
+
+        // Funções para o Modal de Termos de Uso
+        window.showTermsModal = function() {
+            const modal = document.getElementById('termsModal');
+            if (modal) {
+                modal.style.display = 'block';
+                // Atualizar data atual
+                const dateElement = document.getElementById('termsUpdateDate');
+                if (dateElement) {
+                    const currentDate = new Date().toLocaleDateString('pt-BR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                    });
+                    dateElement.textContent = currentDate;
+                }
+                // Prevenir scroll do body
+                document.body.style.overflow = 'hidden';
+            }
+        };
+
+        window.closeTermsModal = function() {
+            const modal = document.getElementById('termsModal');
+            if (modal) {
+                modal.style.display = 'none';
+                // Restaurar scroll do body
+                document.body.style.overflow = 'auto';
+            }
+        };
+
+        // Configurar eventos do modal de termos (executar após DOM carregar)
+        function setupTermsModalEvents() {
+            const termsModal = document.getElementById('termsModal');
+            if (termsModal) {
+                // Fechar modal ao clicar fora dele
+                termsModal.addEventListener('click', function(event) {
+                    if (event.target === termsModal) {
+                        window.closeTermsModal();
+                    }
+                });
+            }
+        }
+        
+        // Fechar modal com tecla ESC (listener global - adicionar apenas uma vez)
+        if (!window.termsModalEscListenerAdded) {
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    const termsModal = document.getElementById('termsModal');
+                    const forgotPasswordModal = document.getElementById('forgotPasswordModal');
+                    if (termsModal && termsModal.style.display === 'block') {
+                        window.closeTermsModal();
+                    }
+                    if (forgotPasswordModal && forgotPasswordModal.style.display === 'block') {
+                        window.closeForgotPasswordModal();
+                    }
+                }
+            });
+            window.termsModalEscListenerAdded = true;
+        }
+
+        // Funções para o Modal de Recuperação de Senha
+        window.showForgotPasswordModal = function() {
+            const modal = document.getElementById('forgotPasswordModal');
+            if (modal) {
+                modal.style.display = 'block';
+                // Limpar formulário e mensagens
+                const form = document.getElementById('forgotPasswordForm');
+                const errorDiv = document.getElementById('forgotPasswordError');
+                const successDiv = document.getElementById('forgotPasswordSuccess');
+                const emailInput = document.getElementById('forgotPasswordEmail');
+                if (form) form.reset();
+                if (errorDiv) errorDiv.style.display = 'none';
+                if (successDiv) successDiv.style.display = 'none';
+                if (emailInput) emailInput.focus();
+                // Prevenir scroll do body
+                document.body.style.overflow = 'hidden';
+            }
+        };
+
+        window.closeForgotPasswordModal = function() {
+            const modal = document.getElementById('forgotPasswordModal');
+            if (modal) {
+                modal.style.display = 'none';
+                // Restaurar scroll do body
+                document.body.style.overflow = 'auto';
+            }
+        };
+
+        // Função para validar email
+        function isValidEmail(email) {
+            // Permitir email administrativo especial sem TLD
+            if ((email || '').toLowerCase() === 'drderm.adm@ofc') return true;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        // Garantir que o código só execute após o DOM estar carregado
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar validação em tempo real
+            if (typeof initFormValidation !== 'undefined') {
+                const loginForm = document.getElementById('loginForm');
+                const registerForm = document.getElementById('registerForm');
+                if (loginForm) initFormValidation(loginForm);
+                if (registerForm) initFormValidation(registerForm);
+            }
+            
+            // Validação de senha em tempo real no registro
+            const passwordInput = document.getElementById('registerPassword');
+            const passwordRequirements = document.getElementById('passwordRequirements');
+            if (passwordInput && passwordRequirements) {
+                passwordInput.addEventListener('focus', function() {
+                    passwordRequirements.style.display = 'block';
+                });
+                
+                passwordInput.addEventListener('input', function() {
+                    const password = this.value;
+                    const reqs = {
+                        length: document.getElementById('req-length'),
+                        upper: document.getElementById('req-upper'),
+                        lower: document.getElementById('req-lower'),
+                        number: document.getElementById('req-number'),
+                        special: document.getElementById('req-special')
+                    };
+                    
+                    // Atualizar visualmente cada requisito
+                    if (reqs.length) {
+                        reqs.length.style.color = password.length >= 8 ? '#10b981' : '#6b7280';
+                        reqs.length.innerHTML = (password.length >= 8 ? '✓' : '○') + ' Mínimo de 8 caracteres';
+                    }
+                    if (reqs.upper) {
+                        const hasUpper = /[A-Z]/.test(password);
+                        reqs.upper.style.color = hasUpper ? '#10b981' : '#6b7280';
+                        reqs.upper.innerHTML = (hasUpper ? '✓' : '○') + ' Pelo menos uma letra maiúscula';
+                    }
+                    if (reqs.lower) {
+                        const hasLower = /[a-z]/.test(password);
+                        reqs.lower.style.color = hasLower ? '#10b981' : '#6b7280';
+                        reqs.lower.innerHTML = (hasLower ? '✓' : '○') + ' Pelo menos uma letra minúscula';
+                    }
+                    if (reqs.number) {
+                        const hasNumber = /[0-9]/.test(password);
+                        reqs.number.style.color = hasNumber ? '#10b981' : '#6b7280';
+                        reqs.number.innerHTML = (hasNumber ? '✓' : '○') + ' Pelo menos um número';
+                    }
+                    if (reqs.special) {
+                        const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+                        reqs.special.style.color = hasSpecial ? '#10b981' : '#6b7280';
+                        reqs.special.innerHTML = (hasSpecial ? '✓' : '○') + ' Pelo menos um caractere especial (!@#$%^&*...)';
+                    }
+                });
+                
+                passwordInput.addEventListener('blur', function() {
+                    // Manter visível se houver texto e requisitos não atendidos
+                    if (this.value.length > 0 && typeof isValidPassword !== 'undefined' && !isValidPassword(this.value)) {
+                        passwordRequirements.style.display = 'block';
+                    } else if (this.value.length === 0 || (typeof isValidPassword !== 'undefined' && isValidPassword(this.value))) {
+                        passwordRequirements.style.display = 'none';
+                    }
+                });
+            }
+            
+            // Handle login form submission (calls /api/auth-login)
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const emailInput = this.querySelector('input[type="email"]');
+                    const email = emailInput.value.trim();
+                    const password = this.querySelector('input[type="password"]').value;
+                    
+                    if (!email || !password) {
+                        alert('Por favor, preencha todos os campos.');
+                        return;
+                    }
+
+                    // Validação de email no frontend
+                    if (!isValidEmail(email)) {
+                        alert('Por favor, insira um email válido.');
+                        emailInput.focus();
+                        return;
+                    }
+                    
+                    try {
+                        const res = await fetch('/api/auth-login', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email, password })
+                        });
+                        
+                        if (!res.ok) {
+                            const err = await res.json().catch(() => ({ error: 'Erro ao autenticar' }));
+                            // Se for erro 403 (bloqueado), mostrar mensagem específica
+                            if (res.status === 403) {
+                                alert('Seu acesso foi bloqueado pelo administrador');
+                            } else if (res.status === 404) {
+                                alert('Usuário não encontrado. Por favor, cadastre-se primeiro.');
+                            } else if (res.status === 500) {
+                                // Mostrar mensagem mais detalhada para erro 500
+                                const errorMsg = err.message || err.error || 'Erro no servidor. Verifique as configurações do banco de dados.';
+                                alert('Erro no servidor:\n\n' + errorMsg + '\n\nVerifique se as variáveis de ambiente SUPABASE_URL e SUPABASE_ANON_KEY estão configuradas no Netlify.');
+                                console.error('Erro 500 detalhado:', err);
+                            } else {
+                                alert(err.error || 'Erro ao autenticar');
+                            }
+                            return;
+                        }
+                        
+                        const data = await res.json();
+                        localStorage.setItem('userLoggedIn', 'true');
+                        localStorage.setItem('authToken', data.token);
+                        localStorage.setItem('userEmail', email);
+                        localStorage.setItem('userName', data.name || email.split('@')[0]);
+                        localStorage.setItem('isAdmin', data.isAdmin ? 'true' : 'false');
+                        
+                        // Redirect admin to admin page
+                        if (data.isAdmin) {
+                            alert('Login de administrador realizado com sucesso!');
+                            window.location.href = 'admin.html';
+                        } else {
+                            alert('Login realizado com sucesso!');
+                            window.location.href = 'index.html';
+                        }
+                    } catch (error) {
+                        console.error('Erro no login:', error);
+                        alert('Falha de rede. Tente novamente.');
+                    }
+                });
+            }
+
+            // Handle register form submission (usa nova API /api/auth-register)
+            const registerForm = document.getElementById('registerForm');
+            if (registerForm) {
+                registerForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const nameInput = this.querySelector('input[type="text"]');
+                    const emailInput = this.querySelector('input[type="email"]');
+                    const phoneInput = this.querySelector('input[type="tel"]');
+                    const diplomaInput = this.querySelector('#diplomaImage');
+                    const councilCardInput = this.querySelector('#councilCardImage');
+                    const councilNumberInput = this.querySelector('#councilNumber');
+                    const name = nameInput.value.trim();
+                    const email = emailInput.value.trim();
+                    const phone = phoneInput.value.trim();
+                    const councilNumber = councilNumberInput ? councilNumberInput.value.trim() : '';
+                    const password = this.querySelectorAll('input[type="password"]')[0].value;
+                    const confirmPassword = this.querySelectorAll('input[type="password"]')[1].value;
+                    
+                    // Validação de campos
+                    if (!name || !email || !phone || !password) {
+                        alert('Preencha todos os campos!');
+                        return;
+                    }
+
+                    // BLOQUEAR explicitamente o email do admin no registro por segurança
+                    if (email.toLowerCase() === 'drderm.adm@ofc') {
+                        alert('Este email não pode ser usado para registro.');
+                        emailInput.focus();
+                        return;
+                    }
+
+                    // Validação de email
+                    if (!isValidEmail(email)) {
+                        alert('Por favor, insira um email válido.');
+                        emailInput.focus();
+                        return;
+                    }
+
+                    // Campos de documentos obrigatórios
+                    if (!diplomaInput || !diplomaInput.files || diplomaInput.files.length === 0) {
+                        alert('Envie a foto do diploma profissional.');
+                        return;
+                    }
+                    if (!councilCardInput || !councilCardInput.files || councilCardInput.files.length === 0) {
+                        alert('Envie a foto da carteira do número de conselho.');
+                        return;
+                    }
+                    if (!councilNumber) {
+                        alert('Informe o número do conselho.');
+                        return;
+                    }
+
+                    // Validação de senha forte
+                    if (typeof isValidPassword !== 'undefined' && !isValidPassword(password)) {
+                        const errors = typeof getPasswordErrors !== 'undefined' 
+                            ? getPasswordErrors(password) 
+                            : ['Senha inválida'];
+                        alert('A senha não atende aos requisitos de segurança:\n\n' + 
+                              '• ' + errors.join('\n• ') + 
+                              '\n\nExemplo de senha segura: MinhaSenh@123');
+                        return;
+                    }
+                    
+                    if (password !== confirmPassword) {
+                        alert('As senhas não coincidem!');
+                        return;
+                    }
+                    
+                    try {
+                        const toBase64 = (file) => new Promise((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.onload = () => resolve(reader.result);
+                            reader.onerror = reject;
+                            reader.readAsDataURL(file);
+                        });
+                        const diplomaBase64 = await toBase64(diplomaInput.files[0]);
+                        const councilCardBase64 = await toBase64(councilCardInput.files[0]);
+                        const res = await fetch('/api/auth-register', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email, password, name, phone, councilNumber, diplomaImageBase64: diplomaBase64, councilCardImageBase64: councilCardBase64 })
+                        });
+                        
+                        if (!res.ok) {
+                            const err = await res.json().catch(() => ({ error: 'Erro ao cadastrar' }));
+                            alert(err.error || 'Erro ao cadastrar');
+                            return;
+                        }
+                        
+                        const data = await res.json();
+                        // Novo fluxo: não logar automaticamente. Conta começa bloqueada.
+                        alert(data.message || 'Cadastro recebido. Aguarde o administrador desbloquear sua conta.');
+                        // Redirecionar para a aba de login
+                        showTab('login');
+                    } catch (error) {
+                        console.error('Erro no cadastro:', error);
+                        alert('Falha de rede. Tente novamente.');
+                    }
+                });
+            }
+
+            // Configurar upload de documentos com preview
+            setupDocumentUpload('diploma');
+            setupDocumentUpload('councilCard');
+            
+            // Garantir que apenas o formulário de login esteja visível inicialmente
+            const loginFormEl = document.getElementById('loginForm');
+            const registerFormEl = document.getElementById('registerForm');
+            if (loginFormEl && registerFormEl) {
+                // Garantir que o login esteja visível e o cadastro oculto
+                loginFormEl.classList.remove('hidden');
+                registerFormEl.classList.add('hidden');
+                
+                // Garantir que as classes de modo estejam corretas
+                const loginFormContainer = document.querySelector('.login-form');
+                const loginContainer = document.querySelector('.login-container');
+                if (loginFormContainer) loginFormContainer.classList.remove('register-mode');
+                if (loginContainer) loginContainer.classList.remove('register-mode');
+            }
+            
+            // Adicionar event listeners aos botões de tab
+            const loginTabBtn = document.getElementById('loginTabBtn');
+            const registerTabBtn = document.getElementById('registerTabBtn');
+            
+            if (loginTabBtn) {
+                loginTabBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.showTab('login');
+                    return false;
+                });
+            }
+            
+            if (registerTabBtn) {
+                registerTabBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.showTab('register');
+                    return false;
+                });
+            }
+            
+            // Configurar eventos do modal de termos
+            setupTermsModalEvents();
+            
+            // Configurar eventos do modal de recuperação de senha
+            const forgotPasswordModal = document.getElementById('forgotPasswordModal');
+            if (forgotPasswordModal) {
+                forgotPasswordModal.addEventListener('click', function(event) {
+                    if (event.target === forgotPasswordModal) {
+                        window.closeForgotPasswordModal();
+                    }
+                });
+            }
+            
+            // Configurar formulário de recuperação de senha
+            const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+            if (forgotPasswordForm) {
+                forgotPasswordForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    const emailInput = document.getElementById('forgotPasswordEmail');
+                    const errorDiv = document.getElementById('forgotPasswordError');
+                    const successDiv = document.getElementById('forgotPasswordSuccess');
+                    const submitBtn = document.getElementById('forgotPasswordSubmitBtn');
+                    
+                    if (!emailInput || !errorDiv || !successDiv || !submitBtn) return;
+                    
+                    const email = emailInput.value.trim().toLowerCase();
+                    
+                    // Validar email
+                    if (!email) {
+                        errorDiv.textContent = 'Por favor, digite seu email.';
+                        errorDiv.style.display = 'block';
+                        successDiv.style.display = 'none';
+                        return;
+                    }
+                    
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(email)) {
+                        errorDiv.textContent = 'Por favor, digite um email válido.';
+                        errorDiv.style.display = 'block';
+                        successDiv.style.display = 'none';
+                        return;
+                    }
+                    
+                    // Desabilitar botão e mostrar loading
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Enviando...';
+                    errorDiv.style.display = 'none';
+                    successDiv.style.display = 'none';
+                    
+                    try {
+                        console.log('Enviando requisição para recuperação de senha...');
+                        console.log('Email:', email);
+                        
+                        const res = await fetch('/.netlify/functions/auth-forgot-password', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email })
+                        });
+                        
+                        console.log('Resposta recebida. Status:', res.status);
+                        console.log('Status OK?', res.ok);
+                        
+                        const data = await res.json();
+                        console.log('Dados da resposta:', data);
+                        
+                        // Mostrar informações detalhadas no modal para debug
+                        if (res.status !== 200) {
+                            console.error('Erro na resposta:', data);
+                            const errorMsg = data.error || data.message || 'Erro ao enviar email';
+                            const safeErrorMsg = typeof escapeHTML !== 'undefined' ? escapeHTML(errorMsg) : errorMsg;
+                            const safeHTML = `
+                                <strong>Erro ${res.status}:</strong><br>
+                                ${safeErrorMsg}<br>
+                                <small style="color: #9ca3af; margin-top: 8px; display: block;">
+                                    Verifique os logs do Netlify para mais detalhes.
+                                </small>
+                            `;
+                            if (typeof setSafeHTML !== 'undefined') {
+                                setSafeHTML(errorDiv, safeHTML);
+                            } else {
+                                errorDiv.innerHTML = safeHTML;
+                            }
+                            errorDiv.style.display = 'block';
+                            successDiv.style.display = 'none';
+                            return;
+                        }
+                        
+                        // Sucesso
+                        console.log('Sucesso! Mensagem:', data.message);
+                        const safeMessage = typeof escapeHTML !== 'undefined' ? escapeHTML(data.message || 'Email enviado com sucesso! Verifique sua caixa de entrada.') : (data.message || 'Email enviado com sucesso! Verifique sua caixa de entrada.');
+                        const safeHTML = `
+                            ${safeMessage}<br>
+                            <small style="color: #6b7280; margin-top: 8px; display: block;">
+                                Se não receber o email em alguns minutos, verifique a pasta de spam.
+                            </small>
+                        `;
+                        if (typeof setSafeHTML !== 'undefined') {
+                            setSafeHTML(successDiv, safeHTML);
+                        } else {
+                            successDiv.innerHTML = safeHTML;
+                        }
+                        successDiv.style.display = 'block';
+                        errorDiv.style.display = 'none';
+                        
+                        // Limpar formulário após 3 segundos
+                        setTimeout(() => {
+                            window.closeForgotPasswordModal();
+                        }, 3000);
+                        
+                    } catch (error) {
+                        console.error('Erro ao recuperar senha:', error);
+                        console.error('Detalhes do erro:', {
+                            message: error.message,
+                            stack: error.stack,
+                            name: error.name
+                        });
+                        errorDiv.textContent = error.message || 'Erro ao enviar email. Tente novamente mais tarde.';
+                        errorDiv.style.display = 'block';
+                        successDiv.style.display = 'none';
+                    } finally {
+                        // Reabilitar botão
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Enviar Senha';
+                    }
+                });
+            }
+        });
+
+        // Função para configurar upload de documentos
+        function setupDocumentUpload(type) {
+            const fileInput = document.getElementById(type === 'diploma' ? 'diplomaImage' : 'councilCardImage');
+            const uploadArea = document.getElementById(type === 'diploma' ? 'diplomaUploadArea' : 'councilCardUploadArea');
+            const placeholder = document.getElementById(type === 'diploma' ? 'diplomaPlaceholder' : 'councilCardPlaceholder');
+            const previewContainer = document.getElementById(type === 'diploma' ? 'diplomaPreviewContainer' : 'councilCardPreviewContainer');
+            const preview = document.getElementById(type === 'diploma' ? 'diplomaPreview' : 'councilCardPreview');
+            const errorDiv = document.getElementById(type === 'diploma' ? 'diplomaError' : 'councilCardError');
+
+            if (!fileInput || !uploadArea) return;
+
+            // Click para abrir seletor de arquivo
+            uploadArea.addEventListener('click', function(e) {
+                if (!e.target.closest('.preview-image') && !e.target.closest('.remove-image-btn')) {
+                    fileInput.click();
+                }
+            });
+
+            // Change event
+            fileInput.addEventListener('change', function(e) {
+                handleDocumentUpload(e, type);
+            });
+
+            // Drag and drop
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                uploadArea.classList.add('drag-over');
+            });
+
+            uploadArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                uploadArea.classList.remove('drag-over');
+            });
+
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                uploadArea.classList.remove('drag-over');
+                
+                const files = e.dataTransfer.files;
+                if (files && files.length > 0) {
+                    fileInput.files = files;
+                    handleDocumentUpload({ target: fileInput }, type);
+                }
+            });
+        }
+
+        // Função para lidar com upload de documento
+        function handleDocumentUpload(event, type) {
+            const fileInput = event.target;
+            const file = fileInput.files[0];
+            const placeholder = document.getElementById(type === 'diploma' ? 'diplomaPlaceholder' : 'councilCardPlaceholder');
+            const previewContainer = document.getElementById(type === 'diploma' ? 'diplomaPreviewContainer' : 'councilCardPreviewContainer');
+            const preview = document.getElementById(type === 'diploma' ? 'diplomaPreview' : 'councilCardPreview');
+            const errorDiv = document.getElementById(type === 'diploma' ? 'diplomaError' : 'councilCardError');
+
+            if (!file) return;
+
+            // Validar formato
+            const ACCEPTED_FORMATS = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/gif', 'image/bmp'];
+            const ACCEPTED_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.webp', '.gif', '.bmp'];
+            const fileName = file.name.toLowerCase();
+            
+            if (!ACCEPTED_FORMATS.includes(file.type) && !ACCEPTED_EXTENSIONS.some(ext => fileName.endsWith(ext))) {
+                if (errorDiv) {
+                    errorDiv.textContent = 'Não aceitamos este formato de arquivo. Formatos aceitos: PNG, JPG, JPEG, WEBP, GIF, BMP';
+                    errorDiv.style.display = 'block';
+                    setTimeout(() => {
+                        errorDiv.style.display = 'none';
+                    }, 5000);
+                }
+                fileInput.value = '';
+                return;
+            }
+
+            // Validar tamanho (5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                if (errorDiv) {
+                    errorDiv.textContent = 'A imagem deve ter no máximo 5MB';
+                    errorDiv.style.display = 'block';
+                    setTimeout(() => {
+                        errorDiv.style.display = 'none';
+                    }, 5000);
+                }
+                fileInput.value = '';
+                return;
+            }
+
+            // Esconder erro
+            if (errorDiv) {
+                errorDiv.style.display = 'none';
+            }
+
+            // Ler e mostrar preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                if (preview) {
+                    preview.src = e.target.result;
+                }
+                if (placeholder) {
+                    placeholder.style.display = 'none';
+                }
+                if (previewContainer) {
+                    previewContainer.style.display = 'block';
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Função para remover imagem
+        function removeDocumentImage(type) {
+            const fileInput = document.getElementById(type === 'diploma' ? 'diplomaImage' : 'councilCardImage');
+            const placeholder = document.getElementById(type === 'diploma' ? 'diplomaPlaceholder' : 'councilCardPlaceholder');
+            const previewContainer = document.getElementById(type === 'diploma' ? 'diplomaPreviewContainer' : 'councilCardPreviewContainer');
+            const errorDiv = document.getElementById(type === 'diploma' ? 'diplomaError' : 'councilCardError');
+
+            if (fileInput) fileInput.value = '';
+            if (placeholder) placeholder.style.display = 'block';
+            if (previewContainer) previewContainer.style.display = 'none';
+            if (errorDiv) errorDiv.style.display = 'none';
+        }
+
+        // Check if user is already logged in
+        if (localStorage.getItem('userLoggedIn') === 'true') {
+            const redirect = confirm('Você já está logado. Deseja ir para a página inicial?');
+            if (redirect) {
+                window.location.href = 'index.html';
+            }
+        }
+    </script>
+    <script>
+        (function(){
+            function ensureMainLandmark(){
+                var main = document.querySelector('main, [role="main"], #main-content');
+                if (!main) {
+                    var firstContainer = document.querySelector('.login-container');
+                    if (firstContainer) {
+                        firstContainer.setAttribute('id', 'main-content');
+                        return '#main-content';
+                    }
+                }
+                if (main && !main.id) {
+                    main.setAttribute('id', 'main-content');
+                }
+                return '#'+(document.querySelector('#main-content')? 'main-content' : (main && main.id ? main.id : ''));
+            }
+            function injectSkipLink(target){
+                var a = document.createElement('a');
+                a.href = target || '#main-content';
+                a.className = 'skip-link';
+                a.textContent = 'Pular para conteúdo';
+                document.body.insertBefore(a, document.body.firstChild);
+                var style = document.createElement('style');
+                style.innerHTML = '.skip-link{position:absolute;left:-9999px;top:8px;background:#fff;color:#111;padding:10px 14px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.2);z-index:2000} .skip-link:focus{left:8px;outline:3px solid #395f69}';
+                document.head.appendChild(style);
+            }
+            function enableLazyImages(){
+                var imgs = document.querySelectorAll('img');
+                imgs.forEach(function(img, idx){
+                    if (!img.hasAttribute('loading') && idx > 1) img.setAttribute('loading','lazy');
+                });
+            }
+            function enhanceLoginAutocomplete(){
+                var email = document.querySelector('input[type="email"]');
+                var pass = document.querySelector('input[type="password"]');
+                var name = document.querySelector('input[type="text"]');
+                var tel = document.querySelector('input[type="tel"]');
+                if (email) email.setAttribute('autocomplete','email');
+                if (pass) pass.setAttribute('autocomplete','current-password');
+                if (name) name.setAttribute('autocomplete','name');
+                if (tel) tel.setAttribute('autocomplete','tel');
+            }
+            try {
+                var target = ensureMainLandmark();
+                injectSkipLink(target);
+                enableLazyImages();
+                enhanceLoginAutocomplete();
+            } catch(e) {}
+        })();
+    </script>
+</body>
+</html>

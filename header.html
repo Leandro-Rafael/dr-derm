@@ -1,0 +1,72 @@
+<header class="header">
+    <div class="container">
+        <button class="mobile-menu-btn" onclick="toggleMobileNav()">☰</button>
+        <nav class="nav">
+            <div class="search-container">
+                <input type="text" class="search-bar" placeholder="Buscar produtos..." id="searchInput">
+                <button class="search-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1e2723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                </button>
+                <div class="search-results" id="searchResults"></div>
+            </div>
+            <div class="nav-actions">
+                <a href="favoritos.html" class="nav-icon" title="Favoritos">
+                    <span class="icon">♡</span>
+                    <span class="badge" id="favCount">0</span>
+                </a>
+                <a href="carrinho.html" class="nav-icon" title="Carrinho">
+                    <span class="icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                        </svg>
+                    </span>
+                    <span class="badge" id="cartCount">0</span>
+                </a>
+                <div class="user-menu" id="userMenu">
+                    <a href="#" class="nav-icon" title="Minha Conta" id="userAccount" onclick="toggleUserMenu(event)">
+                        <span class="icon" id="userIcon">◉</span>
+                    </a>
+                    <div class="user-dropdown" id="userDropdown">
+                        <!-- Menu items will be inserted here -->
+                    </div>
+                </div>
+                <div class="logo">
+                    <a href="index.html"><img src="imagems/logo_dr_derm_cropped.png" alt="Dr Derm" class="logo-img"></a>
+                </div>
+            </div>
+        </nav>
+        <div class="header-right-section">
+            <button class="mobile-favorites-icon" onclick="window.location.href='favoritos.html'" title="Favoritos">
+                ♡
+                <span class="mobile-favorites-badge" id="mobileFavCount">0</span>
+            </button>
+            <button class="mobile-cart-icon" onclick="window.location.href='carrinho.html'" title="Carrinho">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                </svg>
+                <span class="mobile-cart-badge" id="mobileCartCount">0</span>
+            </button>
+            <div class="logo mobile-logo">
+                <a href="index.html"><img src="imagems/logo_dr_derm_cropped.png" alt="Dr Derm" class="logo-img"></a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Mobile Search Bar -->
+<div class="mobile-search-container" id="mobileSearchContainer">
+    <div class="mobile-search-wrapper">
+        <input type="text" class="mobile-search-bar" placeholder="Buscar produtos..." id="mobileSearchInput">
+        <button class="mobile-search-btn" onclick="performMobileSearch()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1e2723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+            </svg>
+        </button>
+        <div class="mobile-search-results" id="mobileSearchResults"></div>
+    </div>
+</div>
+

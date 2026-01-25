@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dr Derm - Área Exclusiva para Especialistas</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests; block-all-mixed-content">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta name="Referrer-Policy" content="no-referrer">
+    <meta http-equiv="Permissions-Policy" content="geolocation=(), camera=(), microphone=(), payment=()">
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
+    <script src="security.js" defer></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #fafafa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            background-color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-bottom: 2px solid #1e40af;
+        }
+
+        .header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-img {
+            height: 50px;
+            width: auto;
+            max-width: 200px;
+            object-fit: contain;
+        }
+
+        .search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-icon {
+            width: 40px;
+            height: 40px;
+            background: #1e40af;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 10;
+        }
+
+        .search-icon:hover {
+            background: #3b82f6;
+            transform: scale(1.1);
+        }
+
+        .search-icon svg {
+            width: 18px;
+            height: 18px;
+            fill: white;
+        }
+
+        .search-bar {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 40px;
+            background: white;
+            border: 2px solid #1e40af;
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            opacity: 0;
+        }
+
+        .search-bar.active {
+            width: 300px;
+            opacity: 1;
+            padding-right: 50px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            outline: none;
+            padding: 0 20px;
+            font-size: 16px;
+            background: transparent;
+        }
+
+        .search-suggestions {
+            position: absolute;
+            top: 45px;
+            right: 0;
+            width: 300px;
+            background: white;
+            border: 2px solid #1e40af;
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: none;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .suggestion-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s ease;
+        }
+
+        .suggestion-item:hover {
+            background-color: #f8f8f8;
+            color: #1e40af;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 20px;
+        }
+
+        .user-actions a {
+            color: #1e40af;
+            text-decoration: none;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .icon-svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .cart-circle {
+            width: 40px;
+            height: 40px;
+            background: #1e40af;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .cart-circle:hover {
+            background: #3b82f6;
+            transform: scale(1.1);
+        }
+
+        .cart-circle svg {
+            width: 18px;
+            height: 18px;
+            fill: white;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ef4444;
+            color: white;
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        .profile-circle {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .profile-circle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(30, 64, 175, 0.3);
+        }
+
+        /* Navigation */
+        .nav {
+            background-color: white;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav a {
+            color: #333;
+            text-decoration: none;
+            padding: 10px 0;
+            transition: color 0.3s;
+        }
+
+        .nav a:hover {
+            color: #1e40af;
+        }
+
+        /* Banner */
+        .banner {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #06b6d4 100%);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .banner h2 {
+            font-size: 42px;
+            margin-bottom: 15px;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        .banner p {
+            font-size: 20px;
+            opacity: 0.9;
+        }
+
+        /* Carousel Section */
+        .carousel-section {
+            padding: 60px 0;
+            background: linear-gradient(to bottom, #f8f8f8, white);
+        }
+
+        .carousel-section h3 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 40px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .carousel-container {
+            position: relative;
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        .carousel {
+            overflow: hidden;
+            border-radius: 12px;
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            gap: 20px;
+            will-change: transform;
+        }
+
+        .carousel-item {
+            flex: 0 0 calc(33.333% - 14px);
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        .carousel-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        .carousel-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .carousel-item h4 {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .old-price {
+            color: #999;
+            text-decoration: line-through;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .price {
+            color: #1e40af;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .discount {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #06b6d4;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .exclusive-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        /* Main Content */
+        .main {
+            padding: 60px 0;
+        }
+
+        .main h3 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 40px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* Products Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            padding: 0;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: 1px solid #f0f0f0;
+            position: relative;
+            height: 420px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            border-color: #1e40af;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-details {
+            margin-bottom: 20px;
+        }
+
+        .product-details h4 {
+            color: #333;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            line-height: 1.3;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-details .price {
+            color: #1e40af;
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .product-buttons {
+            display: flex;
+            gap: 8px;
+            padding: 0 20px 20px 20px;
+        }
+
+        .btn-cart {
+            flex: 1;
+            background: transparent;
+            color: #1e40af;
+            border: 2px solid #1e40af;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            height: 40px;
+        }
+
+        .btn-cart:hover {
+            background: #1e40af;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+        }
+
+        .btn-buy {
+            flex: 1;
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+            height: 40px;
+        }
+
+        .btn-buy:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(30, 64, 175, 0.4);
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            z-index: 10000;
+            transform: translateX(400px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .notification-icon {
+            width: 24px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-icon svg {
+            width: 14px;
+            height: 14px;
+            fill: white;
+        }
+
+        /* Cart Sidebar */
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: white;
+            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
+            z-index: 10000;
+            transition: right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-sidebar.show {
+            right: 0;
+        }
+
+        .cart-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .cart-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        @media (max-width: 480px) {
+            .cart-sidebar {
+                width: 100vw;
+                right: -100vw;
+            }
+        }
+
+        .cart-sidebar-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .cart-sidebar-header h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1e40af;
+        }
+
+        .cart-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6b7280;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .cart-close:hover {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .cart-sidebar-body {
+            padding: 0;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .cart-items {
+            padding: 0;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            padding: 16px 24px;
+            border-bottom: 1px solid #f3f4f6;
+            gap: 16px;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .cart-item-image {
+            width: 60px;
+            height: 60px;
+            background: #1e40af;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 4px;
+        }
+
+        .cart-item-price {
+            color: #1e40af;
+            font-weight: 600;
+        }
+
+        .cart-item-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .quantity-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #d1d5db;
+            background: white;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .quantity-btn:hover {
+            background: #f9fafb;
+            border-color: #1e40af;
+        }
+
+        .quantity-display {
+            min-width: 24px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .remove-item {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .remove-item:hover {
+            background: #fef2f2;
+        }
+
+        .cart-empty {
+            text-align: center;
+            padding: 40px 24px;
+            color: #6b7280;
+        }
+
+        .cart-empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .cart-sidebar-footer {
+            padding: 20px 24px;
+            border-top: 1px solid #e5e7eb;
+            background: #f9fafb;
+            flex-shrink: 0;
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .cart-total-label {
+            color: #374151;
+        }
+
+        .cart-total-value {
+            color: #1e40af;
+        }
+
+        .cart-continue {
+            width: 100%;
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cart-continue:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(30, 64, 175, 0.4);
+        }
+
+        .cart-continue:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: white;
+            color: #333;
+            padding: 40px 0;
+            margin-top: 60px;
+            border-top: 2px solid #1e40af;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .footer-section h4 {
+            color: #1e40af;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .footer-section p {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header .container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .search-bar {
+                margin: 0;
+                max-width: 100%;
+            }
+            
+            .nav ul {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+            
+            .banner h2 {
+                font-size: 32px;
+            }
+            
+            .carousel-item {
+                flex: 0 0 calc(50% - 10px);
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .carousel-item {
+                flex: 0 0 calc(100% - 10px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <a href="exclusivo.html"><img src="images/logo_dr_derm_cropped.png" alt="Dr Derm" class="logo-img"></a>
+            </div>
+            <div class="user-actions">
+                <div class="search-container">
+                    <div class="search-icon" id="searchIcon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                        </svg>
+                    </div>
+                    <div class="search-bar" id="searchBar">
+                        <input type="text" id="search-input" placeholder="Buscar produtos profissionais..." autocomplete="off">
+                    </div>
+                    <div class="search-suggestions" id="search-suggestions"></div>
+                </div>
+                <a href="login.html">
+                    <div class="profile-circle" id="profileCircle">DR</div>
+                </a>
+                <a href="#" onclick="toggleCartSidebar()">
+                    <div class="cart-circle">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                        </svg>
+                        <span class="cart-count">0</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </header>
+
+
+
+    <!-- Banner -->
+    <section class="banner">
+        <div class="container">
+            <h2>Bem-vindos, Profissionais da Beleza</h2>
+            <p>Produtos exclusivos e equipamentos especializados para estética e dermatologia</p>
+        </div>
+    </section>
+
+    <!-- Carousel Section -->
+    <section class="carousel-section">
+        <div class="container">
+            <h3>Tecnologias Inovadoras em Destaque</h3>
+            <div class="carousel-container">
+                <div class="carousel">
+                    <div class="carousel-track" id="carousel-track">
+                        <div class="carousel-item">
+                            <img src="https://via.placeholder.com/300x200/1e40af/FFFFFF?text=Laser+CO2" alt="Laser CO2">
+                            <h4>Laser CO2 Fracionado 4.0</h4>
+                            <div class="old-price">R$ 45.999,90</div>
+                            <div class="price">R$ 39.999,90</div>
+                            <div class="discount">-13%</div>
+                            <div class="exclusive-badge">Exclusivo</div>
+                        </div>
+                        <div class="carousel-item">
+                            <img src="https://via.placeholder.com/300x200/1e40af/FFFFFF?text=Toxina+Premium" alt="Toxina Premium">
+                            <h4>Neurotoxina Avançada 200U</h4>
+                            <div class="old-price">R$ 2.499,90</div>
+                            <div class="price">R$ 2.199,90</div>
+                            <div class="discount">-12%</div>
+                            <div class="exclusive-badge">Exclusivo</div>
+                        </div>
+                        <div class="carousel-item">
+                            <img src="https://via.placeholder.com/300x200/1e40af/FFFFFF?text=RF+Smart" alt="RF Smart">
+                            <h4>RF Smart Multipolar</h4>
+                            <div class="old-price">R$ 28.999,90</div>
+                            <div class="price">R$ 24.999,90</div>
+                            <div class="discount">-14%</div>
+                            <div class="exclusive-badge">Exclusivo</div>
+                        </div>
+                        <div class="carousel-item">
+                            <img src="https://via.placeholder.com/300x200/1e40af/FFFFFF?text=HA+Pro" alt="HA Pro">
+                            <h4>Hialurônico Pro 2ml</h4>
+                            <div class="old-price">R$ 899,90</div>
+                            <div class="price">R$ 749,90</div>
+                            <div class="discount">-17%</div>
+                            <div class="exclusive-badge">Exclusivo</div>
+                        </div>
+                        <div class="carousel-item">
+                            <img src="https://via.placeholder.com/300x200/1e40af/FFFFFF?text=HIFU+Pro" alt="HIFU Pro">
+                            <h4>HIFU Pro Microfocado</h4>
+                            <div class="old-price">R$ 35.999,90</div>
+                            <div class="price">R$ 29.999,90</div>
+                            <div class="discount">-17%</div>
+                            <div class="exclusive-badge">Exclusivo</div>
+                        </div>
+                        <div class="carousel-item">
+                            <img src="https://via.placeholder.com/300x200/1e40af/FFFFFF?text=Peeling+Pro" alt="Peeling Pro">
+                            <h4>Peeling Pro TCA Advanced</h4>
+                            <div class="old-price">R$ 1.299,90</div>
+                            <div class="price">R$ 999,90</div>
+                            <div class="discount">-23%</div>
+                            <div class="exclusive-badge">Exclusivo</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <h3>Portfólio de Soluções Avançadas</h3>
+            <div class="products-grid">
+                <div class="product-card" onclick="viewProduct('CryoTech Pro')" style="cursor: pointer;">
+                    <div class="product-image">
+                        <img src="https://via.placeholder.com/250x200/1e40af/FFFFFF?text=CryoTech" alt="CryoTech">
+                        <div class="exclusive-badge">Pro</div>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-details">
+                            <h4>CryoTech Pro 4 Aplicadores</h4>
+                            <div class="price">R$ 89.999,90</div>
+                        </div>
+                    </div>
+                    <div class="product-buttons">
+                        <button class="btn-cart" onclick="event.stopPropagation(); addToCart('CryoTech Pro');">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                            </svg>
+                            Carrinho
+                        </button>
+                        <button class="btn-buy" onclick="event.stopPropagation(); buyNow('CryoTech Pro');">Comprar</button>
+                    </div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://via.placeholder.com/250x200/1e40af/FFFFFF?text=LipoEnzyme" alt="LipoEnzyme">
+                        <div class="exclusive-badge">Pro</div>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-details">
+                            <h4>LipoEnzyme Advanced 10ml</h4>
+                            <div class="price">R$ 1.299,90</div>
+                        </div>
+                    </div>
+                    <div class="product-buttons">
+                        <button class="btn-cart" onclick="addToCart('LipoEnzyme Advanced')">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                            </svg>
+                            Carrinho
+                        </button>
+                        <button class="btn-buy" onclick="buyNow('LipoEnzyme Advanced')">Comprar</button>
+                    </div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://via.placeholder.com/250x200/1e40af/FFFFFF?text=ThreadLift" alt="ThreadLift">
+                        <div class="exclusive-badge">Pro</div>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-details">
+                            <h4>ThreadLift PDO 3D 100un</h4>
+                            <div class="price">R$ 2.499,90</div>
+                        </div>
+                    </div>
+                    <div class="product-buttons">
+                        <button class="btn-cart" onclick="addToCart('ThreadLift PDO 3D')">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                            </svg>
+                            Carrinho
+                        </button>
+                        <button class="btn-buy" onclick="buyNow('ThreadLift PDO 3D')">Comprar</button>
+                    </div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://via.placeholder.com/250x200/1e40af/FFFFFF?text=CO2+Therapy" alt="CO2 Therapy">
+                        <div class="exclusive-badge">Pro</div>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-details">
+                            <h4>CO2 Therapy Smart System</h4>
+                            <div class="price">R$ 15.999,90</div>
+                        </div>
+                    </div>
+                    <div class="product-buttons">
+                        <button class="btn-cart" onclick="addToCart('CO2 Therapy Smart')">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                            </svg>
+                            Carrinho
+                        </button>
+                        <button class="btn-buy" onclick="buyNow('CO2 Therapy Smart')">Comprar</button>
+                    </div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://via.placeholder.com/250x200/1e40af/FFFFFF?text=CollaGen" alt="CollaGen">
+                        <div class="exclusive-badge">Pro</div>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-details">
+                            <h4>CollaGen Pro Bioestimulador 5ml</h4>
+                            <div class="price">R$ 1.899,90</div>
+                        </div>
+                    </div>
+                    <div class="product-buttons">
+                        <button class="btn-cart" onclick="addToCart('CollaGen Pro')">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                            </svg>
+                            Carrinho
+                        </button>
+                        <button class="btn-buy" onclick="buyNow('CollaGen Pro')">Comprar</button>
+                    </div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://via.placeholder.com/250x200/1e40af/FFFFFF?text=MicroPen" alt="MicroPen">
+                        <div class="exclusive-badge">Pro</div>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-details">
+                            <h4>MicroPen Pro Automático</h4>
+                            <div class="price">R$ 3.999,90</div>
+                        </div>
+                    </div>
+                    <div class="product-buttons">
+                        <button class="btn-cart" onclick="addToCart('MicroPen Pro')">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                            </svg>
+                            Carrinho
+                        </button>
+                        <button class="btn-buy" onclick="buyNow('MicroPen Pro')">Comprar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Dr Derm Pro</h4>
+                    <p>Plataforma avançada para profissionais da medicina estética</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Suporte Especializado</h4>
+                    <p>Segunda a Sexta: 7h às 20h</p>
+                    <p>Sábado: 8h às 16h</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Contato Pro</h4>
+                    <p>pro@drderm.com.br</p>
+                    <p>(11) 9999-7777</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Overlay -->
+    <div id="cartOverlay" class="cart-overlay" onclick="toggleCartSidebar()"></div>
+    
+    <!-- Cart Sidebar -->
+    <div id="cartSidebar" class="cart-sidebar">
+        <div class="cart-sidebar-header">
+            <h3>Meu Carrinho</h3>
+            <button class="cart-close" onclick="toggleCartSidebar()">&times;</button>
+        </div>
+        <div class="cart-sidebar-body">
+            <div class="cart-items" id="cartItemsList">
+                <div class="cart-empty" id="cartEmpty">
+                    <div class="cart-empty-icon">🛒</div>
+                    <p>Seu carrinho está vazio</p>
+                </div>
+            </div>
+        </div>
+        <div class="cart-sidebar-footer" id="cartFooter" style="display: none;">
+            <div class="cart-total">
+                <span class="cart-total-label">Total:</span>
+                <span class="cart-total-value" id="cartTotalValue">R$ 0,00</span>
+            </div>
+            <button class="cart-continue" onclick="goToCart()">Continuar</button>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced Carousel functionality
+        let currentSlide = 0;
+        const track = document.getElementById('carousel-track');
+        const slides = document.querySelectorAll('.carousel-item');
+        const totalSlides = slides.length;
+        const slideWidth = 100 / 3; // Show 3 items at once
+        let isAnimating = false;
+
+        // Clone first few slides to create infinite effect
+        function setupInfiniteCarousel() {
+            const firstSlides = Array.from(slides).slice(0, 3);
+            firstSlides.forEach(slide => {
+                const clone = slide.cloneNode(true);
+                track.appendChild(clone);
+            });
+        }
+
+        function moveCarousel() {
+            if (isAnimating) return;
+            
+            isAnimating = true;
+            currentSlide++;
+            
+            const translateX = -currentSlide * slideWidth;
+            track.style.transition = 'transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            track.style.transform = `translateX(${translateX}%)`;
+            
+            // Reset to beginning when reaching cloned slides
+            if (currentSlide >= totalSlides) {
+                setTimeout(() => {
+                    track.style.transition = 'none';
+                    currentSlide = 0;
+                    track.style.transform = 'translateX(0%)';
+                    
+                    // Re-enable transition after reset
+                    setTimeout(() => {
+                        track.style.transition = 'transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                        isAnimating = false;
+                    }, 50);
+                }, 800);
+            } else {
+                setTimeout(() => {
+                    isAnimating = false;
+                }, 800);
+            }
+        }
+
+        // Initialize infinite carousel
+        setupInfiniteCarousel();
+        
+        // Auto-slide every 3 seconds with smooth infinite loop
+        setInterval(moveCarousel, 3000);
+
+        // Enhanced Search functionality with expandable bar
+        const searchIcon = document.getElementById('searchIcon');
+        const searchBar = document.getElementById('searchBar');
+        const searchInput = document.getElementById('search-input');
+        const searchSuggestions = document.getElementById('search-suggestions');
+        let isSearchOpen = false;
+        
+        const products = [
+            'Laser CO2 Fracionado', 'Toxina Botulínica Premium', 'Radiofrequência Multipolar',
+            'Ácido Hialurônico Premium', 'Ultrassom Microfocado', 'Criolipolise Profissional',
+            'Enzimas Lipolíticas', 'Fios PDO Espiculados', 'Carboxiterapia CO2',
+            'Bioestimulador Colágeno', 'Microagulhamento Automático', 'Peeling TCA Profissional'
+        ];
+        
+        // Toggle search bar
+        searchIcon.addEventListener('click', function(e) {
+            e.stopPropagation();
+            
+            if (!isSearchOpen) {
+                searchBar.classList.add('active');
+                isSearchOpen = true;
+                setTimeout(() => {
+                    searchInput.focus();
+                }, 400);
+            } else {
+                closeSearch();
+            }
+        });
+        
+        function closeSearch() {
+            searchBar.classList.remove('active');
+            searchSuggestions.style.display = 'none';
+            searchInput.value = '';
+            isSearchOpen = false;
+        }
+        
+        // Search input functionality
+        searchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase().trim();
+            
+            if (query.length === 0) {
+                searchSuggestions.style.display = 'none';
+                return;
+            }
+            
+            const filteredProducts = products.filter(product => 
+                product.toLowerCase().includes(query)
+            ).slice(0, 5);
+            
+            if (filteredProducts.length > 0) {
+                searchSuggestions.innerHTML = filteredProducts
+                    .map(product => `<div class="suggestion-item">${product}</div>`)
+                    .join('');
+                searchSuggestions.style.display = 'block';
+                
+                document.querySelectorAll('.suggestion-item').forEach(item => {
+                    item.addEventListener('click', function() {
+                        searchInput.value = this.textContent;
+                        searchSuggestions.style.display = 'none';
+                        closeSearch();
+                    });
+                });
+            } else {
+                searchSuggestions.style.display = 'none';
+            }
+        });
+        
+        // Close search when clicking outside
+        document.addEventListener('click', function(e) {
+            const searchContainer = document.querySelector('.search-container');
+            if (!searchContainer.contains(e.target) && isSearchOpen) {
+                closeSearch();
+            }
+        });
+        
+        // Close search on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && isSearchOpen) {
+                closeSearch();
+            }
+        });
+
+        // Profile initials generator
+        function generateProfileInitials() {
+            // Simulated company/professional names - in real app this would come from login
+            const profiles = [
+                'Dr. Silva',
+                'Clínica Bella',
+                'Estética Pro',
+                'Med Center',
+                'Beauty Clinic',
+                'Dra. Santos',
+                'Skin Care',
+                'Laser Tech'
+            ];
+            
+            // Get random profile or use stored one
+            let currentProfile = localStorage.getItem('currentProfile');
+            if (!currentProfile) {
+                currentProfile = profiles[Math.floor(Math.random() * profiles.length)];
+                localStorage.setItem('currentProfile', currentProfile);
+            }
+            
+            // Generate initials
+            const words = currentProfile.split(' ');
+            let initials = '';
+            
+            if (words.length >= 2) {
+                initials = words[0].charAt(0) + words[1].charAt(0);
+            } else {
+                initials = words[0].substring(0, 2);
+            }
+            
+            // Update profile circle
+            document.getElementById('profileCircle').textContent = initials.toUpperCase();
+        }
+
+        // Initialize profile on page load
+        generateProfileInitials();
+        
+        // Pause carousel on hover
+        const carouselContainer = document.querySelector('.carousel-container');
+        let carouselInterval = setInterval(moveCarousel, 3000);
+        
+        carouselContainer.addEventListener('mouseenter', () => {
+            clearInterval(carouselInterval);
+        });
+        
+        carouselContainer.addEventListener('mouseleave', () => {
+            carouselInterval = setInterval(moveCarousel, 3000);
+        });
+        
+        // Prevent search from closing when clicking on search bar
+        searchBar.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+        
+        // Close sidebar with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const sidebar = document.getElementById('cartSidebar');
+                if (sidebar.classList.contains('show')) {
+                    toggleCartSidebar();
+                }
+            }
+        });
+        
+        // Cart functionality
+        let cartCount = 0;
+        let cartItems = [];
+        const cartCountElement = document.querySelector('.cart-count');
+        
+        function addToCart(productName) {
+            // Get product price from the card
+            const productCard = event.target.closest('.product-card');
+            const priceText = productCard.querySelector('.price').textContent;
+            const price = parseFloat(priceText.replace('R$ ', '').replace('.', '').replace(',', '.'));
+            
+            // Check if item already exists
+            const existingItem = cartItems.find(item => item.name === productName);
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cartItems.push({
+                    id: Date.now(),
+                    name: productName,
+                    price: price,
+                    quantity: 1
+                });
+            }
+            
+            cartCount++;
+            cartCountElement.textContent = cartCount;
+            updateCartModal();
+            
+            // Show notification
+            showNotification(`${productName} adicionado ao carrinho!`);
+            
+            // Visual feedback on button
+            const button = event.target.closest('.btn-cart');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg> Adicionado!';
+            button.style.background = '#10b981';
+            button.style.borderColor = '#10b981';
+            button.style.color = 'white';
+            
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.style.background = 'transparent';
+                button.style.borderColor = '#1e40af';
+                button.style.color = '#1e40af';
+            }, 1500);
+        }
+        
+        function toggleCartSidebar() {
+            const sidebar = document.getElementById('cartSidebar');
+            const overlay = document.getElementById('cartOverlay');
+            sidebar.classList.toggle('show');
+            overlay.classList.toggle('show');
+        }
+        
+        function updateCartModal() {
+            const cartItemsList = document.getElementById('cartItemsList');
+            const cartEmpty = document.getElementById('cartEmpty');
+            const cartFooter = document.getElementById('cartFooter');
+            const cartTotalValue = document.getElementById('cartTotalValue');
+            
+            if (cartItems.length === 0) {
+                cartItemsList.innerHTML = '<div class="cart-empty" id="cartEmpty"><div class="cart-empty-icon">🛒</div><p>Seu carrinho está vazio</p></div>';
+                cartFooter.style.display = 'none';
+            } else {
+                let total = 0;
+                cartItemsList.innerHTML = cartItems.map(item => {
+                    total += item.price * item.quantity;
+                    return `
+                        <div class="cart-item">
+                            <div class="cart-item-image">${item.name.substring(0, 3).toUpperCase()}</div>
+                            <div class="cart-item-info">
+                                <div class="cart-item-name">${item.name}</div>
+                                <div class="cart-item-price">R$ ${item.price.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
+                            </div>
+                            <div class="cart-item-controls">
+                                <div class="quantity-controls">
+                                    <button class="quantity-btn" onclick="changeQuantity(${item.id}, -1)">-</button>
+                                    <span class="quantity-display">${item.quantity}</span>
+                                    <button class="quantity-btn" onclick="changeQuantity(${item.id}, 1)">+</button>
+                                </div>
+                                <button class="remove-item" onclick="removeFromCart(${item.id})">🗑️</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                cartTotalValue.textContent = `R$ ${total.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+                cartFooter.style.display = 'block';
+            }
+        }
+        
+        function changeQuantity(itemId, change) {
+            const item = cartItems.find(item => item.id === itemId);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    removeFromCart(itemId);
+                } else {
+                    cartCount += change;
+                    cartCountElement.textContent = cartCount;
+                    updateCartModal();
+                }
+            }
+        }
+        
+        function removeFromCart(itemId) {
+            const itemIndex = cartItems.findIndex(item => item.id === itemId);
+            if (itemIndex > -1) {
+                cartCount -= cartItems[itemIndex].quantity;
+                cartItems.splice(itemIndex, 1);
+                cartCountElement.textContent = cartCount;
+                updateCartModal();
+            }
+        }
+        
+        function goToCart() {
+            if (cartItems.length > 0) {
+                window.location.href = 'carrinho.html';
+            }
+        }
+        
+        function showNotification(message) {
+            // Remove existing notification if any
+            const existingNotification = document.querySelector('.notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+            
+            // Create notification
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.innerHTML = `
+                <div class="notification-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+                    </svg>
+                </div>
+                <span>${message}</span>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Show notification
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+            
+            // Hide notification after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notification.remove();
+                }, 400);
+            }, 3000);
+        }
+        
+        function buyNow(productName) {
+            // Visual feedback
+            const button = event.target;
+            const originalText = button.textContent;
+            button.textContent = 'Processando...';
+            button.style.opacity = '0.7';
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.style.opacity = '1';
+                alert(`Redirecionando para checkout: ${productName}`);
+            }, 1000);
+            
+            console.log(`Compra direta: ${productName}`);
+        }
+        
+        // Initialize cart sidebar
+        updateCartModal();
+        
+        // View product details
+        function viewProduct(productName) {
+            window.location.href = `detalhe.html?produto=${encodeURIComponent(productName)}`;
+        }
+    </script>
+</body>
+</html>

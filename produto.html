@@ -1,0 +1,3433 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produto - DrDerm</title>
+    <meta name="theme-color" content="#395f69">
+    <link rel="manifest" href="manifest.json">
+    <meta name="description" content="Detalhes do produto, avaliações e ofertas na DrDerm.">
+    <meta property="og:site_name" content="DrDerm">
+    <meta property="og:title" content="Produto - DrDerm">
+    <meta property="og:description" content="Veja descrição, preço e avaliações deste dermocosmético.">
+    <meta property="og:type" content="product">
+    <meta name="twitter:card" content="summary_large_image">
+    <script>
+        (function () {
+            try {
+                var origin = window.location.origin || '';
+                var href = origin + window.location.pathname + window.location.search;
+                var link = document.querySelector('link[rel="canonical"]');
+                if (!link) {
+                    link = document.createElement('link');
+                    link.setAttribute('rel', 'canonical');
+                    document.head.appendChild(link);
+                }
+                link.setAttribute('href', href.split('#')[0]);
+                var ogUrl = document.querySelector('meta[property="og:url"]');
+                if (!ogUrl) {
+                    ogUrl = document.createElement('meta');
+                    ogUrl.setAttribute('property', 'og:url');
+                    document.head.appendChild(ogUrl);
+                }
+                ogUrl.setAttribute('content', href);
+            } catch (e) {}
+        })();
+    </script>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: http:; font-src 'self' data:; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests; block-all-mixed-content">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta name="Referrer-Policy" content="no-referrer">
+    <meta http-equiv="Permissions-Policy" content="geolocation=(), camera=(), microphone=(), payment=()">
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
+    <!-- Scripts de segurança temporariamente desabilitados para resolver problema de carregamento -->
+    <!-- <script src="crypto-utils.js" async></script> -->
+    <!-- <script src="code-protection.js" async></script> -->
+    <!-- <script src="integrity-check.js" async></script> -->
+    <script src="security.js" defer></script>
+    <script src="utils.js" defer></script>
+    <script src="error-handler.js" defer></script>
+    <link rel="stylesheet" href="header-styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            color: #1e2723;
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding-top: 140px; /* Header + mobile search */
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header - Usa header-styles.css compartilhado */
+        /* Header já está definido como fixed no header-styles.css */
+
+        .header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+        }
+        
+        .logo a {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            flex: 1;
+            justify-content: flex-end;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            background: rgba(255,255,255,0.1);
+            border-radius: 25px;
+            padding: 0.5rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            position: relative;
+        }
+
+        .search-bar {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            width: 250px;
+            outline: none;
+            font-size: 0.9rem;
+        }
+
+        .search-bar::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .search-btn {
+            background: #dcbb92;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-btn::before {
+            content: '🔎';
+            font-size: 16px;
+            color: #1e2723;
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            margin-top: 5px;
+        }
+
+        .search-results.show {
+            display: block;
+        }
+
+        .search-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .search-item:hover {
+            background: #f8fafc;
+        }
+
+        .search-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-item-image {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #395f69, #748d8c);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .search-item-info {
+            flex: 1;
+        }
+
+        .search-item-name {
+            font-weight: 600;
+            color: #1e2723;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .search-item-category {
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        .search-item-price {
+            font-weight: 600;
+            color: #395f69;
+            font-size: 14px;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-icon {
+            position: relative;
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-icon:hover {
+            background: rgba(220, 187, 146, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border: 2px solid white;
+        }
+
+        /* User Menu */
+        .user-menu {
+            position: relative;
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            min-width: 200px;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .user-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .user-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: #374151;
+            text-decoration: none;
+            transition: background 0.2s ease;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .user-dropdown-item:hover {
+            background: #f8fafc;
+        }
+
+        .user-dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .user-dropdown-item span {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .user-dropdown-item.logout {
+            color: #e74c3c;
+        }
+
+        .user-dropdown-item.logout:hover {
+            background: #fef2f2;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+        }
+        
+        .mobile-cart-icon {
+            display: none;
+            position: relative;
+            background: rgba(57, 95, 105, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+            margin-right: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        .mobile-cart-icon:hover {
+            background: #395f69;
+            transform: scale(1.1);
+        }
+        
+        .mobile-cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+        
+
+
+        .logo-img {
+            height: 60px;
+            width: auto;
+            max-width: 200px;
+            object-fit: contain;
+            filter: brightness(0) invert(1);
+        }
+
+
+
+        /* Product Page */
+        .product-page {
+            padding: 40px 0;
+        }
+
+        .breadcrumb {
+            margin-bottom: 30px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #395f69;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-link:hover {
+            background: #395f69;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(57, 95, 105, 0.3);
+        }
+
+        .product-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .product-gallery {
+            background: transparent;
+            border-radius: 20px;
+            padding: 0;
+            box-shadow: none;
+        }
+
+        .thumbnail:hover {
+            border-color: #395f69 !important;
+            transform: scale(1.05);
+        }
+
+        .thumbnail.active {
+            border-color: #395f69 !important;
+            box-shadow: 0 0 10px rgba(57, 95, 105, 0.3);
+        }
+
+        .main-product-image {
+            width: 100%;
+            height: 500px;
+            background: transparent;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 20px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            position: relative;
+            padding: 0;
+        }
+
+        .product-info {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Estilos para produtos relacionados - scroll horizontal */
+        .related-products-container {
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 10px 0 20px 0;
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+            /* Garantir scroll horizontal no mobile */
+            touch-action: pan-x;
+            -ms-overflow-style: -ms-autohiding-scrollbar;
+        }
+
+        .related-products-container::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .related-products-container::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+
+        .related-products-container::-webkit-scrollbar-thumb {
+            background: #395f69;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+
+        .related-products-container::-webkit-scrollbar-thumb:hover {
+            background: #2d4a52;
+        }
+
+        .related-products-grid {
+            display: flex;
+            gap: 24px;
+            padding: 0;
+            min-width: min-content;
+            flex-wrap: nowrap !important;
+            overflow-x: visible;
+            width: max-content;
+        }
+
+        .related-product-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            min-width: 280px;
+            max-width: 280px;
+            width: 280px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .related-product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .related-product-card:active {
+            transform: translateY(-4px);
+        }
+
+        /* Estilos para seções colapsáveis */
+        .section-content.collapsed {
+            max-height: calc(1.5em * 3) !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            display: -webkit-box !important;
+            -webkit-line-clamp: 3 !important;
+            -webkit-box-orient: vertical !important;
+            line-height: 1.5em !important;
+        }
+
+        .section-content.expanded {
+            max-height: none !important;
+            overflow: visible !important;
+            display: block !important;
+            -webkit-line-clamp: none !important;
+            -webkit-box-orient: horizontal !important;
+        }
+
+        .section-content.collapsed > * {
+            margin-bottom: 0.5em;
+        }
+
+        .section-content.collapsed > *:last-child {
+            margin-bottom: 0;
+        }
+
+        .product-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1e2723;
+            margin-bottom: 15px;
+        }
+
+        .product-category {
+            background: #395f69;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .product-price {
+            font-size: 36px;
+            font-weight: 700;
+            color: #395f69;
+            margin-bottom: 30px;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background: #395f69;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1e2723;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #dcbb92;
+            color: #1e2723;
+        }
+
+        .btn-secondary:hover {
+            background: #c9a67a;
+            transform: translateY(-2px);
+        }
+
+        /* Tabs */
+        .product-tabs {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .tab-buttons {
+            display: flex;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 20px;
+            background: none;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: #395f69;
+            border-bottom: 3px solid #395f69;
+        }
+
+        .tab-content {
+            padding: 30px;
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .tab-content h3 {
+            font-size: 24px;
+            color: #1e2723;
+            margin-bottom: 20px;
+        }
+
+        .tab-content p {
+            line-height: 1.6;
+            color: #4b5563;
+            margin-bottom: 15px;
+        }
+
+        .tab-content ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .tab-content li {
+            padding: 8px 0;
+            border-bottom: 1px solid #f1f5f9;
+            color: #4b5563;
+        }
+
+        .tab-content li:before {
+            content: "✓";
+            color: #22c55e;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        /* Body Map */
+        .body-map {
+            display: grid;
+            grid-template-columns: 1fr 500px;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .body-diagram {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            min-height: 900px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            border: 2px solid #e5e7eb;
+        }
+
+        .body-figure {
+            width: 180px;
+            height: 450px;
+            margin: 0 auto;
+            position: relative;
+            cursor: pointer;
+            background: white;
+        }
+
+        .body-figure::before {
+            display: none;
+        }
+
+        .body-figure::after {
+            display: none;
+        }
+
+        .body-arms {
+            position: absolute;
+            top: 95px;
+            width: 100%;
+            height: 130px;
+        }
+
+        .body-arms::before,
+        .body-arms::after {
+            display: none;
+        }
+
+        .body-arms::before {
+            left: 10px;
+            transform: rotate(-20deg);
+        }
+
+        .body-arms::after {
+            right: 10px;
+            transform: rotate(20deg);
+        }
+
+        .body-legs {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90px;
+            height: 190px;
+        }
+
+        .body-legs::before,
+        .body-legs::after {
+            display: none;
+        }
+
+        .body-legs::before {
+            left: 8px;
+        }
+
+        .body-legs::after {
+            right: 8px;
+        }
+
+        .face-figure {
+            width: 200px;
+            height: 250px;
+            margin: 0 auto;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .face-outline {
+            width: 180px;
+            height: 220px;
+            background: linear-gradient(145deg, #fef7ed 0%, #fed7aa 50%, #fdba74 100%);
+            border-radius: 90px 90px 80px 80px;
+            margin: 0 auto;
+            position: relative;
+            box-shadow: inset 0 4px 15px rgba(0,0,0,0.08), 0 8px 25px rgba(0,0,0,0.12);
+            border: 2px solid rgba(255,255,255,0.8);
+        }
+
+        .face-features {
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 120px;
+        }
+
+        .face-eyes {
+            position: absolute;
+            top: 30px;
+            width: 100%;
+            height: 20px;
+        }
+
+        .face-eyes::before,
+        .face-eyes::after {
+            content: '●';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            color: #1f2937;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .face-eyes::before {
+            left: 30px;
+        }
+
+        .face-eyes::after {
+            right: 30px;
+        }
+
+        .face-nose {
+            position: absolute;
+            top: 55px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 12px solid #d97706;
+        }
+
+        .face-mouth {
+            position: absolute;
+            top: 85px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 15px;
+            border: 2px solid #dc2626;
+            border-top: none;
+            border-radius: 0 0 15px 15px;
+            background: transparent;
+        }
+
+        .body-point {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(145deg, #e53e3e 0%, #c53030 50%, #9c2626 100%);
+            border-radius: 50%;
+            cursor: pointer;
+            animation: pulse 2s infinite;
+            border: 4px solid rgba(255,255,255,0.9);
+            box-shadow: 0 4px 12px rgba(229, 62, 62, 0.4), inset 0 2px 4px rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .body-point:hover {
+            transform: scale(1.15);
+            box-shadow: 0 6px 20px rgba(229, 62, 62, 0.6), inset 0 2px 4px rgba(255,255,255,0.4);
+        }
+
+        .body-point.active {
+            background: linear-gradient(145deg, #22c55e 0%, #16a34a 50%, #15803d 100%);
+            box-shadow: 0 6px 20px rgba(34, 197, 94, 0.6), inset 0 2px 4px rgba(255,255,255,0.4);
+        }
+
+        @keyframes pulse {
+            0% { 
+                transform: scale(1);
+                box-shadow: 0 4px 12px rgba(229, 62, 62, 0.4), inset 0 2px 4px rgba(255,255,255,0.3);
+            }
+            50% { 
+                transform: scale(1.1);
+                box-shadow: 0 6px 18px rgba(229, 62, 62, 0.6), inset 0 2px 4px rgba(255,255,255,0.4);
+            }
+            100% { 
+                transform: scale(1);
+                box-shadow: 0 4px 12px rgba(229, 62, 62, 0.4), inset 0 2px 4px rgba(255,255,255,0.3);
+            }
+        }
+
+        .application-info {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .application-info h4 {
+            color: #395f69;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .application-info p {
+            color: #4b5563;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        .info-balloon {
+            position: absolute;
+            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+            border: 2px solid #395f69;
+            border-radius: 12px;
+            padding: 12px 16px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            z-index: 100;
+            min-width: 200px;
+            max-width: 280px;
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.8);
+            transition: all 0.3s ease;
+        }
+
+        .info-balloon.show {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+
+        .info-balloon::before {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid #395f69;
+        }
+
+        .balloon-title {
+            font-weight: 600;
+            color: #395f69;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        .balloon-text {
+            color: #4b5563;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        /* Reviews */
+        .rating-summary {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+
+        .rating-overview {
+            text-align: center;
+        }
+
+        .rating-score {
+            font-size: 48px;
+            font-weight: 700;
+            color: #395f69;
+            margin-bottom: 10px;
+        }
+
+        .rating-stars {
+            font-size: 24px;
+            color: #fbbf24;
+            margin-bottom: 10px;
+        }
+
+        .rating-count {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .rating-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .rating-bar span {
+            width: 40px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .bar {
+            flex: 1;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .fill {
+            height: 100%;
+            background: #fbbf24;
+            transition: width 0.3s ease;
+        }
+
+        .review-form {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .review-form h4 {
+            margin-bottom: 15px;
+            color: #1e2723;
+        }
+
+        .star-rating {
+            margin-bottom: 15px;
+        }
+
+        .star-rating .star {
+            font-size: 24px;
+            color: #e5e7eb;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .star-rating .star:hover,
+        .star-rating .star.active {
+            color: #fbbf24;
+        }
+
+        .review-text {
+            width: 100%;
+            min-height: 100px;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
+            margin-bottom: 15px;
+        }
+
+        .review-text:focus {
+            outline: none;
+            border-color: #395f69;
+        }
+
+        .review-item {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .reviewer-name {
+            font-weight: 600;
+            color: #1e2723;
+        }
+
+        .review-date {
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        .review-rating {
+            color: #fbbf24;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .review-comment {
+            color: #4b5563;
+            line-height: 1.5;
+        }
+
+        /* Mobile Navigation */
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            left: -320px;
+            width: 320px;
+            height: 100vh;
+            background: linear-gradient(135deg, #1e2723 0%, #395f69 100%);
+            z-index: 2000;
+            transition: left 0.3s ease;
+            padding: 0;
+            box-shadow: 2px 0 20px rgba(0,0,0,0.4);
+        }
+
+        .mobile-nav.active {
+            left: 0;
+        }
+
+        .mobile-nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 25px 20px 20px;
+            border-bottom: 1px solid rgba(220, 187, 146, 0.2);
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 10px;
+            border-radius: 12px;
+        }
+
+        .user-profile:hover {
+            background: rgba(220, 187, 146, 0.1);
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            background: #dcbb92;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1e2723;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .user-email {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+        }
+
+        .close-mobile-nav {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .mobile-nav-menu {
+            list-style: none;
+            padding: 20px 0;
+        }
+
+        .mobile-nav-menu li {
+            margin-bottom: 5px;
+        }
+
+        .mobile-nav-menu .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 16px 20px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+        }
+
+        .mobile-nav-menu .nav-item:hover {
+            background: rgba(220, 187, 146, 0.1);
+            color: white;
+            border-left-color: rgba(220, 187, 146, 0.3);
+        }
+
+        .mobile-nav-menu .nav-item.active {
+            background: rgba(220, 187, 146, 0.15);
+            color: #dcbb92;
+            border-left-color: #dcbb92;
+        }
+
+        .mobile-nav-menu .nav-item span {
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .mobile-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1500;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        @media (max-width: 1024px) {
+            .mobile-cart-icon {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .logo {
+                display: flex;
+                align-items: center;
+            }
+            
+            .nav {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .header .container {
+                padding: 1rem;
+            }
+            
+            .product-page {
+                padding: 20px 0;
+            }
+            
+            .breadcrumb {
+                margin-bottom: 20px;
+            }
+            
+            .back-link {
+                padding: 10px 16px;
+                font-size: 14px;
+            }
+            
+            .container {
+                padding: 0 15px;
+            }
+            
+            .product-header {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .product-gallery,
+            .product-info {
+                padding: 20px;
+            }
+            
+            .main-product-image {
+                height: auto;
+                font-size: 16px;
+            }
+            
+            .main-product-image .main-image {
+                aspect-ratio: 1 !important;
+            }
+            
+            .product-title {
+                font-size: 24px;
+                margin-bottom: 10px;
+            }
+            
+            .product-price {
+                font-size: 28px;
+                margin-bottom: 20px;
+            }
+            
+            .product-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .btn {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+            
+            .tab-buttons {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0;
+            }
+            
+            .tab-btn {
+                padding: 15px 10px;
+                font-size: 14px;
+            }
+            
+            .tab-content {
+                padding: 20px;
+            }
+            
+            .tab-content h3 {
+                font-size: 20px;
+                margin-bottom: 15px;
+            }
+            
+            .body-map {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .body-diagram {
+                padding: 20px;
+                min-height: 600px;
+            }
+            
+            .body-figure {
+                width: 300px;
+                height: 600px;
+            }
+            
+            .face-figure {
+                width: 160px;
+                height: 200px;
+            }
+            
+            .face-outline {
+                width: 130px;
+                height: 160px;
+            }
+            
+            .application-info {
+                padding: 15px;
+            }
+            
+            .rating-summary {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .review-form {
+                padding: 15px;
+            }
+            
+            .review-item {
+                padding: 15px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .tab-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .tab-btn {
+                padding: 12px;
+                font-size: 13px;
+            }
+            
+            .product-title {
+                font-size: 20px;
+            }
+            
+            .product-price {
+                font-size: 24px;
+            }
+            
+            .main-product-image {
+                height: auto;
+                font-size: 14px;
+            }
+            
+            .main-product-image .product-gallery-main {
+                width: 100%;
+            }
+            
+            .main-product-image .main-image-container {
+                aspect-ratio: 1;
+                width: 100%;
+            }
+            
+            .main-product-image .main-image {
+                aspect-ratio: 1 !important;
+                width: 100%;
+                height: 100%;
+            }
+            
+            /* Produtos relacionados - mobile */
+            .related-products-section {
+                padding: 30px 0 !important;
+                margin-top: 60px !important;
+            }
+            
+            .related-products-section .section-title {
+                font-size: 22px !important;
+                margin-bottom: 20px !important;
+            }
+            
+            .related-products-container {
+                padding: 10px 0 15px 0;
+                overflow-x: auto !important;
+                overflow-y: hidden !important;
+                -webkit-overflow-scrolling: touch !important;
+                scroll-behavior: smooth !important;
+                width: 100%;
+                /* Garantir que o scroll funcione no mobile */
+                -ms-overflow-style: -ms-autohiding-scrollbar;
+            }
+            
+            .related-products-grid {
+                display: flex !important;
+                gap: 16px;
+                flex-wrap: nowrap !important;
+                min-width: min-content !important;
+            }
+            
+            .related-product-card {
+                min-width: 240px !important;
+                max-width: 240px !important;
+                width: 240px !important;
+                padding: 16px;
+                flex-shrink: 0 !important;
+            }
+            
+            .related-product-card h3 {
+                font-size: 14px;
+            }
+            
+            .body-figure {
+                width: 250px;
+                height: 500px;
+            }
+            
+            .face-figure {
+                width: 130px;
+                height: 160px;
+            }
+            
+            .face-outline {
+                width: 110px;
+                height: 140px;
+            }
+            
+            .body-point {
+                width: 16px;
+                height: 16px;
+            }
+            
+            .tab-content {
+                padding: 15px;
+            }
+            
+            .tab-content h3 {
+                font-size: 18px;
+            }
+            
+            .application-info h4 {
+                font-size: 16px;
+            }
+        }
+    </style>
+<script>
+    (function(){
+        try {
+            var logged = localStorage.getItem('userLoggedIn') === 'true';
+            if (!logged) {
+                window.location.replace('login.html');
+            }
+        } catch (e) {}
+    })();
+</script>
+</head>
+<body>
+    <!-- Header será carregado dinamicamente -->
+    <div id="header-placeholder"></div>
+
+    <!-- Product Page -->
+    <section class="product-page">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="index.html" class="back-link">← Voltar para o catálogo</a>
+            </div>
+            <div class="product-header">
+                <div class="product-gallery">
+                    <div class="main-product-image" id="productImage">Produto</div>
+                </div>
+                <div class="product-info">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+                        <div style="flex: 1;">
+                            <h1 class="product-title" id="productTitle">Nome do Produto</h1>
+                            <span class="product-category" id="productCategory">Categoria</span>
+                        </div>
+                        <button class="favorite-btn" id="productFavoriteBtn" onclick="toggleFavoriteProduct()" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid #e5e7eb; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 24px; transition: all 0.2s;">
+                            ♡
+                        </button>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <div class="product-price" id="productPrice" style="margin-bottom: 8px;">R$ 0,00</div>
+                        <div id="productStockTotal" style="font-size: 14px; color: #6b7280; font-weight: 500; margin-bottom: 12px;">
+                            <span id="stockCount">-</span> unidades disponíveis
+                        </div>
+                    </div>
+                    <div class="product-quantity" style="margin-bottom: 20px;">
+                        <label for="productQuantity" style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px;">Quantidade:</label>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <button type="button" onclick="decreaseQuantity()" style="width: 40px; height: 40px; border: 2px solid #e5e7eb; background: white; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: bold; color: #395f69; transition: all 0.2s;" onmouseover="this.style.borderColor='#395f69'; this.style.background='#f9fafb';" onmouseout="this.style.borderColor='#e5e7eb'; this.style.background='white';">-</button>
+                            <input type="number" id="productQuantity" min="1" value="1" style="width: 80px; height: 40px; text-align: center; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 16px; font-weight: 600; color: #1e2723;" onchange="validateQuantity(); updateTotalPrice();" oninput="validateQuantity(); updateTotalPrice();">
+                            <button type="button" onclick="increaseQuantity()" style="width: 40px; height: 40px; border: 2px solid #e5e7eb; background: white; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: bold; color: #395f69; transition: all 0.2s;" onmouseover="this.style.borderColor='#395f69'; this.style.background='#f9fafb';" onmouseout="this.style.borderColor='#e5e7eb'; this.style.background='white';">+</button>
+                        </div>
+                        <div id="totalPriceContainer" style="margin-top: 12px; padding: 12px; background: #f9fafb; border-radius: 8px; border-left: 4px solid #395f69;">
+                            <div style="font-size: 13px; color: #6b7280; margin-bottom: 4px;">Total:</div>
+                            <div id="totalPrice" style="font-size: 20px; font-weight: 700; color: #395f69;">R$ 0,00</div>
+                        </div>
+                    </div>
+                    <div class="product-actions">
+                        <button class="btn btn-primary" onclick="addToCart()">Adicionar ao Carrinho</button>
+                        <button class="btn btn-secondary" onclick="buyNow()">Comprar Agora</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-tabs">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" onclick="showTab('sobre')">Sobre o Produto</button>
+                    <button class="tab-btn" onclick="showTab('uso')">Como Usar</button>
+                    <button class="tab-btn" onclick="showTab('aplicacao')">Áreas de Aplicação</button>
+                    <button class="tab-btn" onclick="showTab('avaliacoes')">Avaliações</button>
+                </div>
+
+                <div class="tab-content active" id="sobre">
+                    <h3>Sobre o Produto</h3>
+                    <div class="collapsible-section">
+                        <div class="section-content collapsed" id="sobreContent">
+                            <p id="productDescription">Descrição detalhada do produto...</p>
+                        </div>
+                        <button class="toggle-section-btn" id="toggleSobre" onclick="toggleSection('sobre')" style="display: none; margin-top: 12px; padding: 8px 16px; background: #395f69; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Ver tudo</button>
+                    </div>
+                    <h4 style="margin-top: 20px;">Características:</h4>
+                    <ul id="productFeatures">
+                        <li>Característica 1</li>
+                        <li>Característica 2</li>
+                        <li>Característica 3</li>
+                    </ul>
+                </div>
+
+                <div class="tab-content" id="uso">
+                    <h3>Como Usar</h3>
+                    <div class="collapsible-section">
+                        <div class="section-content collapsed" id="usoContent">
+                            <p id="productUsage">Instruções de uso do produto...</p>
+                        </div>
+                        <button class="toggle-section-btn" id="toggleUso" onclick="toggleSection('uso')" style="display: none; margin-top: 12px; padding: 8px 16px; background: #395f69; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Ver tudo</button>
+                    </div>
+                    <h4 style="margin-top: 20px;">Precauções:</h4>
+                    <ul id="productPrecautions">
+                        <li>Precaução 1</li>
+                        <li>Precaução 2</li>
+                        <li>Precaução 3</li>
+                    </ul>
+                </div>
+
+                <div class="tab-content" id="aplicacao">
+                    <h3>Áreas de Aplicação</h3>
+                    <div class="collapsible-section">
+                        <div class="section-content collapsed" id="aplicacaoContent" style="width: 100%;">
+                            <div id="diagramContainer" style="background: white; border: 2px solid #e5e7eb; border-radius: 12px; padding: 20px; min-height: 200px; width: 100%;">
+                                <!-- Lista de áreas será inserida aqui -->
+                            </div>
+                            <div class="application-info" id="applicationInfo" style="display: none;">
+                                <!-- Este container não é mais necessário, mas mantido para compatibilidade -->
+                            </div>
+                        </div>
+                        <button class="toggle-section-btn" id="toggleAplicacao" onclick="toggleSection('aplicacao')" style="display: none; margin-top: 12px; padding: 8px 16px; background: #395f69; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Ver tudo</button>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="avaliacoes">
+                    <h3>Avaliações dos Clientes</h3>
+                    
+                    <div class="rating-summary">
+                        <div class="rating-overview">
+                            <div class="rating-score" id="averageRating">4.5</div>
+                            <div class="rating-stars" id="averageStars">★★★★☆</div>
+                            <div class="rating-count" id="reviewCount">12 avaliações</div>
+                        </div>
+                        <div class="rating-bars">
+                            <div class="rating-bar">
+                                <span>5 ★</span>
+                                <div class="bar"><div class="fill"></div></div>
+                                <span>0</span>
+                            </div>
+                            <div class="rating-bar">
+                                <span>4 ★</span>
+                                <div class="bar"><div class="fill"></div></div>
+                                <span>0</span>
+                            </div>
+                            <div class="rating-bar">
+                                <span>3 ★</span>
+                                <div class="bar"><div class="fill"></div></div>
+                                <span>0</span>
+                            </div>
+                            <div class="rating-bar">
+                                <span>2 ★</span>
+                                <div class="bar"><div class="fill"></div></div>
+                                <span>0</span>
+                            </div>
+                            <div class="rating-bar">
+                                <span>1 ★</span>
+                                <div class="bar"><div class="fill"></div></div>
+                                <span>0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="review-form" id="reviewForm">
+                        <h4>Deixe sua avaliação</h4>
+                        <div class="star-rating">
+                            <span class="star" data-rating="1">★</span>
+                            <span class="star" data-rating="2">★</span>
+                            <span class="star" data-rating="3">★</span>
+                            <span class="star" data-rating="4">★</span>
+                            <span class="star" data-rating="5">★</span>
+                        </div>
+                        <textarea class="review-text" id="reviewText" placeholder="Compartilhe sua experiência com este produto..."></textarea>
+                        <button class="btn btn-primary" onclick="submitReview()">Enviar Avaliação</button>
+                    </div>
+
+                    <div class="reviews-list" id="reviewsList">
+                        <!-- Avaliações serão carregadas aqui -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Produtos Relacionados -->
+            <div class="related-products-section" style="margin-top: 80px; padding: 40px 0; border-top: 2px solid #e5e7eb;">
+                <h2 class="section-title" style="font-size: 28px; margin-bottom: 30px; color: #1e2723;">Produtos Relacionados</h2>
+                <div class="related-products-container">
+                    <div class="related-products-grid" id="relatedProductsGrid">
+                        <!-- Produtos relacionados serão carregados aqui -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Menu hamburger será carregado dinamicamente -->
+    <div id="mobile-nav-placeholder"></div>
+
+    <script>
+        let currentProduct = null;
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let allProducts = [];
+        
+        // Sistema de reserva temporária de estoque
+        const STOCK_RESERVATION_TIMEOUT = 30 * 60 * 1000; // 30 minutos
+        
+        function getStockReservations() {
+            const reservations = JSON.parse(localStorage.getItem('stockReservations')) || {};
+            // Limpar reservas expiradas
+            const now = Date.now();
+            const validReservations = {};
+            for (const [productId, reservation] of Object.entries(reservations)) {
+                if (now - reservation.timestamp < STOCK_RESERVATION_TIMEOUT) {
+                    validReservations[productId] = reservation;
+                }
+            }
+            if (Object.keys(validReservations).length !== Object.keys(reservations).length) {
+                localStorage.setItem('stockReservations', JSON.stringify(validReservations));
+            }
+            return validReservations;
+        }
+        
+        function getAvailableStock(productId, totalStock) {
+            const reservations = getStockReservations();
+            const reservation = reservations[String(productId)];
+            const reserved = reservation ? reservation.quantity : 0;
+            return Math.max(0, totalStock - reserved);
+        }
+        
+        function reserveStock(productId, quantity) {
+            const reservations = getStockReservations();
+            const productIdStr = String(productId);
+            const currentReserved = reservations[productIdStr] ? reservations[productIdStr].quantity : 0;
+            reservations[productIdStr] = {
+                quantity: currentReserved + quantity,
+                timestamp: Date.now()
+            };
+            localStorage.setItem('stockReservations', JSON.stringify(reservations));
+        }
+        
+        function releaseStock(productId, quantity) {
+            const reservations = getStockReservations();
+            const productIdStr = String(productId);
+            if (reservations[productIdStr]) {
+                reservations[productIdStr].quantity = Math.max(0, reservations[productIdStr].quantity - quantity);
+                if (reservations[productIdStr].quantity === 0) {
+                    delete reservations[productIdStr];
+                }
+            }
+            localStorage.setItem('stockReservations', JSON.stringify(reservations));
+        }
+
+        // Carregar produtos do backend
+        async function loadProductsFromBackend() {
+            try {
+                const response = await fetch('/api/products-public');
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar produtos');
+                }
+                const data = await response.json();
+                allProducts = data.products || [];
+            } catch (error) {
+                console.error('Erro ao carregar produtos:', error);
+            }
+        }
+
+        const productData = {
+            1: {
+                name: "Ácido Hialurônico Premium",
+                category: "Preenchimento",
+                price: 299.90,
+                description: "Ácido hialurônico de alta qualidade para preenchimento facial. Produto desenvolvido com tecnologia avançada para garantir resultados naturais e duradouros em tratamentos estéticos.",
+                features: ["Concentração de 20mg/ml", "Tecnologia de reticulação avançada", "Duração de 12-18 meses", "Biocompatível e biodegradável"],
+                usage: "Aplicar por via intradérmica nas áreas desejadas. Realizar assepsia adequada antes do procedimento. Utilizar agulhas estéreis de calibre apropriado.",
+                precautions: ["Uso exclusivo por profissionais qualificados", "Não aplicar em áreas inflamadas", "Evitar exposição solar intensa pós-procedimento"],
+                applicationAreas: [
+                    { top: "15%", left: "50%", area: "Testa", info: "Ideal para suavizar rugas de expressão na região frontal" },
+                    { top: "40%", left: "25%", area: "Olhos", info: "Tratamento de linhas de expressão ao redor dos olhos" },
+                    { top: "40%", left: "75%", area: "Olhos", info: "Tratamento de linhas de expressão ao redor dos olhos" },
+                    { top: "55%", left: "50%", area: "Nariz", info: "Correção de imperfeições e harmonização nasal" },
+                    { top: "75%", left: "50%", area: "Lábios", info: "Aumento e definição dos lábios" }
+                ]
+            },
+            2: {
+                name: "Toxina Botulínica Tipo A",
+                category: "Neurotoxina",
+                price: 1299.90,
+                description: "Toxina botulínica de alta pureza para tratamento de rugas dinâmicas e hiperidrose. Produto premium com eficácia comprovada para resultados excepcionais.",
+                features: ["100 unidades por frasco", "Alta pureza e potência", "Início de ação em 3-7 dias", "Duração de 4-6 meses"],
+                usage: "Reconstituir com soro fisiológico estéril. Aplicar por via intramuscular nas áreas desejadas. Dosagem conforme protocolo médico.",
+                precautions: ["Uso restrito a médicos especializados", "Não aplicar durante gravidez ou amamentação", "Evitar exercícios intensos nas primeiras 24h"],
+                applicationAreas: [
+                    { top: "15%", left: "50%", area: "Testa", info: "Tratamento de rugas horizontais da testa" },
+                    { top: "30%", left: "50%", area: "Glabela", info: "Suavização de rugas entre as sobrancelhas" },
+                    { top: "40%", left: "20%", area: "Pés de Galinha", info: "Redução de linhas ao redor dos olhos" },
+                    { top: "40%", left: "80%", area: "Pés de Galinha", info: "Redução de linhas ao redor dos olhos" }
+                ]
+            },
+            3: {
+                name: "Agulhas 30G Ultra Finas",
+                category: "Instrumentos",
+                price: 89.90,
+                description: "Agulhas descartáveis ultra finas para procedimentos estéticos. Desenvolvidas para proporcionar máximo conforto ao paciente durante aplicações.",
+                features: ["Calibre 30G", "Comprimento 13mm", "Ponta biselada", "Estéreis e descartáveis"],
+                usage: "Utilizar uma agulha nova para cada aplicação. Descartar adequadamente após uso único. Verificar integridade antes do uso.",
+                precautions: ["Uso único", "Descartar em recipiente apropriado", "Não reutilizar"],
+                applicationAreas: [
+                    { top: "25%", left: "45%", area: "Face", info: "Ideal para aplicações faciais precisas" },
+                    { top: "45%", left: "45%", area: "Lábios", info: "Perfeita para preenchimento labial" }
+                ]
+            },
+            4: {
+                name: "Sérum Vitamina C",
+                category: "Cosmecêuticos",
+                price: 159.90,
+                description: "Sérum concentrado de vitamina C para tratamento antioxidante e clareador. Fórmula estabilizada para máxima eficácia.",
+                features: ["Concentração 20%", "Vitamina C estabilizada", "Ação antioxidante", "Clareador de manchas"],
+                usage: "Aplicar sobre a pele limpa, preferencialmente à noite. Usar protetor solar durante o dia. Evitar contato com os olhos.",
+                precautions: ["Teste de sensibilidade antes do uso", "Usar protetor solar", "Armazenar ao abrigo da luz"],
+                applicationAreas: [
+                    { top: "45%", left: "50%", area: "Face Completa", info: "Aplicação em toda face para ação antioxidante" },
+                    { top: "50%", left: "30%", area: "Manchas", info: "Tratamento específico de manchas" },
+                    { top: "50%", left: "70%", area: "Manchas", info: "Tratamento específico de manchas" }
+                ]
+            },
+            5: {
+                name: "Bioestimulador de Colágeno",
+                category: "Bioestimulação",
+                price: 899.90,
+                description: "Bioestimulador para produção natural de colágeno. Promove rejuvenescimento gradual e natural da pele.",
+                features: ["Estimula colágeno próprio", "Resultados graduais", "Efeito duradouro", "Biocompatível"],
+                usage: "Aplicar por via subcutânea em pontos estratégicos. Realizar massagem pós-aplicação. Sessões mensais recomendadas.",
+                precautions: ["Uso por profissionais qualificados", "Evitar áreas inflamadas", "Acompanhamento médico necessário"],
+                applicationAreas: [
+                    { top: "25%", left: "45%", area: "Face", info: "Estimulação de colágeno facial" },
+                    { top: "60%", left: "45%", area: "Pescoço", info: "Rejuvenescimento do pescoço" }
+                ]
+            },
+            6: {
+                name: "Peeling Químico TCA",
+                category: "Peelings",
+                price: 189.90,
+                description: "Peeling químico com ácido tricloroacético para renovação celular profunda. Indicado para tratamento de manchas e cicatrizes.",
+                features: ["Concentração 15%", "Ação profunda", "Renovação celular", "Clareamento de manchas"],
+                usage: "Aplicar em pele limpa e seca. Neutralizar conforme protocolo. Usar protetor solar rigorosamente após o procedimento.",
+                precautions: ["Uso exclusivo profissional", "Proteção solar obrigatória", "Teste de sensibilidade"],
+                applicationAreas: [
+                    { top: "45%", left: "50%", area: "Face Completa", info: "Renovação da pele facial" },
+                    { top: "50%", left: "30%", area: "Manchas", info: "Tratamento específico de hiperpigmentação" },
+                    { top: "50%", left: "70%", area: "Manchas", info: "Tratamento específico de hiperpigmentação" }
+                ]
+            }
+        };
+
+        async function getProductFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id');
+            
+            if (!productId) return null;
+            
+            // Primeiro tentar buscar do backend
+            if (allProducts.length > 0) {
+                const product = allProducts.find(p => String(p.id) === String(productId));
+                if (product) {
+                    return product;
+                }
+            }
+            
+            // Fallback para dados hardcoded (se ainda houver)
+            return productData[productId] || null;
+        }
+
+        async function loadProduct() {
+            // Aguardar produtos carregarem
+            if (allProducts.length === 0) {
+                await loadProductsFromBackend();
+            }
+            
+            const product = await getProductFromURL();
+            if (!product) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            currentProduct = product;
+            
+            // Atualizar imagens (galeria de múltiplas imagens)
+            const productImage = document.getElementById('productImage');
+            // Obter imagens e posições de crop
+            const images = product.images || (product.image_url ? [product.image_url] : []);
+            const cropPositions = product.image_crop_positions || [];
+            
+            // Função auxiliar para obter posição de crop
+            const getCropPosition = (idx) => {
+                if (cropPositions && cropPositions[idx]) {
+                    return `${cropPositions[idx].x}% ${cropPositions[idx].y}%`;
+                }
+                return '50% 50%'; // Padrão centralizado
+            };
+            
+            if (images.length > 0) {
+                // Criar galeria de imagens com miniaturas à esquerda no mobile
+                const isMobile = window.innerWidth <= 768;
+                let galleryHTML = '';
+                
+                if (isMobile && images.length > 1) {
+                    // Mobile: mesmo layout do desktop (miniaturas à esquerda, imagem principal à direita)
+                    galleryHTML = `
+                        <div class="product-gallery-main" style="width: 100%; display: flex; gap: 12px;">
+                            <div class="thumbnail-column" style="display: flex; flex-direction: column; gap: 8px; min-width: 60px;">
+                                ${images.map((img, idx) => `
+                                    <div class="thumbnail ${idx === 0 ? 'active' : ''}" 
+                                         onclick="changeMainImage('${img}', ${idx})"
+                                         style="width: 60px; height: 60px; aspect-ratio: 1; background-image: url('${img}'); background-size: cover; background-position: ${getCropPosition(idx)}; border-radius: 8px; cursor: pointer; border: 2px solid ${idx === 0 ? '#395f69' : '#e5e7eb'}; transition: all 0.3s; flex-shrink: 0;">
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div class="main-image-container" style="flex: 1; position: relative; aspect-ratio: 1; overflow: hidden; border-radius: 16px;">
+                                <div class="main-image" style="width: 100%; height: 100%; aspect-ratio: 1; background-image: url('${images[0]}'); background-size: cover; background-position: ${getCropPosition(0)}; border-radius: 16px;"></div>
+                            </div>
+                        </div>
+                    `;
+                } else if (isMobile && images.length === 1) {
+                    // Mobile: apenas uma imagem
+                    galleryHTML = `
+                        <div class="product-gallery-main" style="width: 100%; position: relative; aspect-ratio: 1; overflow: hidden; border-radius: 16px;">
+                            <div class="main-image" style="width: 100%; height: 100%; aspect-ratio: 1; background-image: url('${images[0]}'); background-size: cover; background-position: ${getCropPosition(0)}; border-radius: 16px;"></div>
+                        </div>
+                    `;
+                } else {
+                    // Desktop: miniaturas à esquerda (estilo Kabum, todas quadradas)
+                    if (images.length > 1) {
+                        galleryHTML = `
+                            <div class="product-gallery-main" style="width: 100%; display: flex; gap: 16px;">
+                                <div class="thumbnail-column" style="display: flex; flex-direction: column; gap: 10px; min-width: 90px;">
+                                    ${images.map((img, idx) => `
+                                        <div class="thumbnail ${idx === 0 ? 'active' : ''}" 
+                                             onclick="changeMainImage('${img}', ${idx})"
+                                             style="width: 90px; height: 90px; aspect-ratio: 1; background-image: url('${img}'); background-size: cover; background-position: ${getCropPosition(idx)}; border-radius: 8px; cursor: pointer; border: 2px solid ${idx === 0 ? '#395f69' : '#e5e7eb'}; transition: all 0.3s; flex-shrink: 0;">
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                <div class="main-image-container" style="flex: 1; position: relative; aspect-ratio: 1; overflow: hidden; border-radius: 16px;">
+                                    <div class="main-image" style="width: 100%; height: 100%; aspect-ratio: 1; background-image: url('${images[0]}'); background-size: cover; background-position: ${getCropPosition(0)}; border-radius: 16px;"></div>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        galleryHTML = `
+                            <div class="product-gallery-main" style="width: 100%; height: 100%; position: relative; aspect-ratio: 1; overflow: hidden; border-radius: 16px;">
+                                <div class="main-image" style="width: 100%; height: 100%; aspect-ratio: 1; background-image: url('${images[0]}'); background-size: cover; background-position: ${getCropPosition(0)}; border-radius: 16px;"></div>
+                            </div>
+                        `;
+                    }
+                }
+                if (typeof setSafeHTML !== 'undefined') {
+                    setSafeHTML(productImage, galleryHTML);
+                } else {
+                    productImage.innerHTML = galleryHTML;
+                }
+                
+                // Armazenar imagens globalmente para função changeMainImage
+                window.productImages = images;
+            } else {
+                productImage.style.backgroundImage = 'none';
+                const safeName = typeof escapeHTML !== 'undefined' ? escapeHTML(product.name) : product.name;
+                if (typeof setSafeHTML !== 'undefined') {
+                    setSafeHTML(productImage, safeName);
+                } else {
+                    productImage.innerHTML = safeName;
+                }
+            }
+            
+            document.getElementById('productTitle').textContent = product.name;
+            document.getElementById('productCategory').textContent = product.category || 'Sem categoria';
+            
+            // Preço com desconto se houver
+            const priceEl = document.getElementById('productPrice');
+            if (product.discount_percentage > 0 && product.original_price) {
+                const safeHTML = `
+                    <span style="text-decoration: line-through; color: #9ca3af; font-size: 18px; display: block; margin-bottom: 8px;">
+                        De: R$ ${product.original_price.toFixed(2).replace('.', ',')}
+                    </span>
+                    <span style="color: #ef4444; font-size: 32px; font-weight: bold;">
+                        R$ ${product.price.toFixed(2).replace('.', ',')}
+                    </span>
+                    <span style="background: #ef4444; color: white; padding: 4px 12px; border-radius: 6px; font-size: 14px; margin-left: 12px;">
+                        ${Math.round(product.discount_percentage)}% OFF
+                    </span>
+                `;
+                if (typeof setSafeHTML !== 'undefined') {
+                    setSafeHTML(priceEl, safeHTML);
+                } else {
+                    priceEl.innerHTML = safeHTML;
+                }
+            } else {
+                const safeHTML = `<span style="font-size: 32px; font-weight: bold;">R$ ${product.price.toFixed(2).replace('.', ',')}</span>`;
+                if (typeof setSafeHTML !== 'undefined') {
+                    setSafeHTML(priceEl, safeHTML);
+                } else {
+                    priceEl.innerHTML = safeHTML;
+                }
+            }
+            
+            // Total de unidades disponíveis
+            const stockCount = document.getElementById('stockCount');
+            if (stockCount) {
+                const stock = product.stock || 0;
+                stockCount.textContent = stock;
+            }
+            
+            // Atualizar total inicial
+            setTimeout(() => {
+                updateTotalPrice();
+            }, 100);
+            
+            // Descrição completa (dentro do colapso)
+            const fullDescription = product.description || 'Produto profissional de alta qualidade para uso em tratamentos estéticos.';
+            document.getElementById('productDescription').textContent = fullDescription;
+            
+            // Features - FORA do colapso, sempre visíveis
+            const featuresList = document.getElementById('productFeatures');
+            if (product.features && Array.isArray(product.features)) {
+                const safeFeatures = product.features.map(feature => {
+                    const safeFeature = typeof escapeHTML !== 'undefined' ? escapeHTML(feature) : feature;
+                    return `<li>${safeFeature}</li>`;
+                }).join('');
+                if (typeof setSafeHTML !== 'undefined') {
+                    setSafeHTML(featuresList, safeFeatures);
+                } else {
+                    featuresList.innerHTML = safeFeatures;
+                }
+            } else {
+                const safeBrand = product.brand ? (typeof escapeHTML !== 'undefined' ? escapeHTML(product.brand) : product.brand) : '';
+                const safeCategory = product.category ? (typeof escapeHTML !== 'undefined' ? escapeHTML(product.category) : product.category) : '';
+                const safeHTML = `
+                    <li>Produto profissional de alta qualidade</li>
+                    <li>Certificado e aprovado para uso médico</li>
+                    <li>Armazenamento adequado garantido</li>
+                    ${safeBrand ? `<li>Marca: ${safeBrand}</li>` : ''}
+                    ${safeCategory ? `<li>Categoria: ${safeCategory}</li>` : ''}
+                `;
+                if (typeof setSafeHTML !== 'undefined') {
+                    setSafeHTML(featuresList, safeHTML);
+                } else {
+                    featuresList.innerHTML = safeHTML;
+                }
+            }
+            
+            // Usar campo how_to_use do backend (dentro do colapso)
+            let usageText = '';
+            if (product.how_to_use) {
+                usageText = product.how_to_use;
+            } else if (product.usage) {
+                usageText = product.usage;
+            } else {
+                usageText = 'Consulte as instruções do fabricante e utilize conforme protocolo médico estabelecido para cada procedimento.';
+            }
+            // Não limitar o texto aqui - deixar o CSS e o botão "Ver tudo" fazerem o trabalho
+            document.getElementById('productUsage').textContent = usageText;
+            
+            // Precautions - FORA do colapso, sempre visíveis
+            const precautionsList = document.getElementById('productPrecautions');
+            if (product.precautions && Array.isArray(product.precautions)) {
+                const safePrecautions = product.precautions.map(precaution => {
+                    const safePrecaution = typeof escapeHTML !== 'undefined' ? escapeHTML(precaution) : precaution;
+                    return `<li>${safePrecaution}</li>`;
+                }).join('');
+                if (typeof setSafeHTML !== 'undefined') {
+                    setSafeHTML(precautionsList, safePrecautions);
+                } else {
+                    precautionsList.innerHTML = safePrecautions;
+                }
+            } else {
+                const safeHTML = `
+                    <li>Uso exclusivo por profissionais qualificados</li>
+                    <li>Manter em local seco e arejado</li>
+                    <li>Verificar validade antes do uso</li>
+                    <li>Seguir protocolo médico adequado</li>
+                `;
+                if (typeof setSafeHTML !== 'undefined') {
+                    setSafeHTML(precautionsList, safeHTML);
+                } else {
+                    precautionsList.innerHTML = safeHTML;
+                }
+            }
+            
+            // Application areas - renderizar boneco com áreas destacadas
+            // Garantir que está dentro do container colapsável
+            const diagramContainer = document.getElementById('diagramContainer');
+            if (product.application_area && Array.isArray(product.application_area) && product.application_area.length > 0) {
+                loadApplicationAreasFromArray(product.application_area);
+            } else if (product.applicationAreas && Array.isArray(product.applicationAreas)) {
+                loadApplicationAreas(product.applicationAreas);
+            } else {
+                if (diagramContainer) {
+                    const safeHTML = `
+                        <div style="text-align: center; padding: 40px; color: #6b7280;">
+                            <p style="font-size: 16px; margin: 0;">Nenhuma área específica definida para este produto.</p>
+                        </div>
+                    `;
+                    if (typeof setSafeHTML !== 'undefined') {
+                        setSafeHTML(diagramContainer, safeHTML);
+                    } else {
+                        diagramContainer.innerHTML = safeHTML;
+                    }
+                }
+            }
+
+            // Verificar e colapsar seções longas após carregar conteúdo
+            setTimeout(() => {
+                checkAndCollapseSections();
+            }, 500);
+            
+            // Carregar produtos relacionados
+            loadRelatedProducts(product);
+            
+            // Atualizar botão de favorito
+            updateFavoriteButton();
+            
+            // Carregar avaliações
+            loadReviews();
+        }
+
+        // Carregar produtos relacionados (mesma categoria ou marca)
+        function loadRelatedProducts(currentProduct) {
+            const relatedGrid = document.getElementById('relatedProductsGrid');
+            if (!relatedGrid) return;
+            
+            if (allProducts.length === 0) {
+                const safeHTML = '<p style="text-align: center; color: #6b7280;">Carregando produtos relacionados...</p>';
+                if (typeof setSafeHTML !== 'undefined') {
+                    setSafeHTML(relatedGrid, safeHTML);
+                } else {
+                    relatedGrid.innerHTML = safeHTML;
+                }
+                setTimeout(() => loadRelatedProducts(currentProduct), 500);
+                return;
+            }
+            
+            // Filtrar produtos relacionados (mesma categoria ou marca, excluindo o atual)
+            const related = allProducts.filter(p => {
+                const isActive = p.is_active === true || p.is_active === 1 || p.is_active === undefined;
+                return p.id !== currentProduct.id && 
+                       isActive &&
+                       (p.category === currentProduct.category || p.brand === currentProduct.brand);
+            }).slice(0, 4); // Máximo 4 produtos
+            
+            if (related.length === 0) {
+                // Se não houver relacionados por categoria/marca, pegar outros produtos
+                const otherProducts = allProducts.filter(p => {
+                    const isActive = p.is_active === true || p.is_active === 1 || p.is_active === undefined;
+                    return p.id !== currentProduct.id && isActive;
+                })
+                    .slice(0, 4);
+                
+                displayRelatedProducts(otherProducts);
+            } else {
+                displayRelatedProducts(related);
+            }
+        }
+
+        function displayRelatedProducts(products) {
+            const relatedGrid = document.getElementById('relatedProductsGrid');
+            if (!relatedGrid) return;
+            
+            if (products.length === 0) {
+                const safeHTML = '<p style="text-align: center; color: #6b7280; padding: 40px;">Nenhum produto relacionado encontrado.</p>';
+                if (typeof setSafeHTML !== 'undefined') {
+                    setSafeHTML(relatedGrid, safeHTML);
+                } else {
+                    relatedGrid.innerHTML = safeHTML;
+                }
+                return;
+            }
+            
+            const safeProductsHTML = products.map(product => {
+                const safeName = typeof escapeHTML !== 'undefined' ? escapeHTML(product.name || '') : (product.name || '');
+                const safeBrand = typeof escapeHTML !== 'undefined' ? escapeHTML(product.brand || 'marca não identificada') : (product.brand || 'marca não identificada');
+                const productSafe = JSON.stringify(product).replace(/"/g, '&quot;');
+                const priceDisplay = product.discount_percentage > 0 && product.original_price
+                    ? `<span style="text-decoration: line-through; color: #9ca3af; font-size: 12px;">R$ ${product.original_price.toFixed(2).replace('.', ',')}</span><br>
+                       <span style="color: #ef4444; font-weight: bold;">R$ ${product.price.toFixed(2).replace('.', ',')}</span>`
+                    : `<span>R$ ${product.price.toFixed(2).replace('.', ',')}</span>`;
+                
+                // Obter posição de crop para a imagem
+                const cropPositions = product.image_crop_positions || [];
+                const cropPos = cropPositions[0] || { x: 50, y: 50 };
+                const cropPosition = `${cropPos.x}% ${cropPos.y}%`;
+                
+                const imageUrl = (product.images && product.images.length > 0) ? product.images[0] : (product.image_url || '');
+                const hasImage = !!(product.images && product.images.length > 0) || !!product.image_url;
+                
+                return `
+                    <div class="related-product-card" 
+                         onclick="window.location.href='produto.html?id=${product.id}'">
+                        <div style="width: 100%; aspect-ratio: 1; background: linear-gradient(135deg, #395f69, #748d8c); ${imageUrl ? `background-image: url('${imageUrl}'); background-size: cover; background-position: ${cropPosition}; background-repeat: no-repeat;` : ''} border-radius: 8px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; color: ${hasImage ? 'transparent' : 'white'}; font-weight: 600;">
+                            ${!hasImage ? safeName : ''}
+                        </div>
+                        <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 8px; color: #1e2723; flex: 1;">${safeName}</h3>
+                        <div style="font-size: 12px; color: #6b7280; margin-bottom: 8px;">${safeBrand}</div>
+                        <div style="font-size: 18px; font-weight: bold; color: #1e2723; margin-bottom: 15px;">
+                            ${priceDisplay}
+                        </div>
+                        <button class="btn btn-primary" style="width: 100%; margin-top: auto;" onclick="event.stopPropagation(); window.location.href='produto.html?id=${product.id}'">
+                            Ver Detalhes
+                        </button>
+                    </div>
+                `;
+            }).join('');
+            
+            if (typeof setSafeHTML !== 'undefined') {
+                setSafeHTML(relatedGrid, safeProductsHTML);
+            } else {
+                relatedGrid.innerHTML = safeProductsHTML;
+            }
+        }
+
+        // Áreas de aplicação disponíveis (mesmo do admin)
+        const applicationAreasMap = {
+            // Face (topo da silhueta)
+            'testa': { name: 'Testa', top: '5%', left: '50%', size: '45px' },
+            'sobrancelhas': { name: 'Sobrancelhas', top: '10%', left: '50%', size: '50px' },
+            'olhos': { name: 'Olhos', top: '13%', left: '50%', size: '55px' },
+            'olhos_inferior': { name: 'Parte Inferior dos Olhos', top: '16%', left: '50%', size: '50px' },
+            'bochechas': { name: 'Bochechas (Esquerda)', top: '17%', left: '40%', size: '55px' },
+            'bochechas_d': { name: 'Bochechas (Direita)', top: '17%', left: '60%', size: '55px' },
+            'nariz': { name: 'Nariz', top: '18%', left: '50%', size: '35px' },
+            'labios': { name: 'Lábios', top: '20%', left: '50%', size: '40px' },
+            'queixo': { name: 'Queixo', top: '23%', left: '50%', size: '45px' },
+            'pescoco': { name: 'Pescoço', top: '26%', left: '50%', size: '50px' },
+            // Braços (laterais, bem afastados do corpo)
+            'ombros': { name: 'Ombros', top: '27%', left: '50%', size: '55px' },
+            'bracos_superiores': { name: 'Braços Superiores (Esquerdo)', top: '30%', left: '15%', size: '55px' },
+            'bracos_superiores_d': { name: 'Braços Superiores (Direito)', top: '30%', left: '85%', size: '55px' },
+            'antebracos': { name: 'Antebraços (Esquerdo)', top: '42%', left: '12%', size: '50px' },
+            'antebracos_d': { name: 'Antebraços (Direito)', top: '42%', left: '88%', size: '50px' },
+            'maos': { name: 'Mãos (Esquerda)', top: '55%', left: '8%', size: '45px' },
+            'maos_d': { name: 'Mãos (Direita)', top: '55%', left: '92%', size: '45px' },
+            // Torso (centro do corpo)
+            'peito': { name: 'Peito', top: '32%', left: '50%', size: '65px' },
+            'abdomen': { name: 'Abdômen', top: '46%', left: '50%', size: '60px' },
+            'cintura': { name: 'Cintura', top: '54%', left: '50%', size: '55px' },
+            // Pernas (separadas, uma em cada perna)
+            'coxas': { name: 'Coxas (Esquerda)', top: '62%', left: '42%', size: '65px' },
+            'coxas_d': { name: 'Coxas (Direita)', top: '62%', left: '58%', size: '65px' },
+            'joelhos': { name: 'Joelhos (Esquerdo)', top: '74%', left: '42%', size: '50px' },
+            'joelhos_d': { name: 'Joelhos (Direito)', top: '74%', left: '58%', size: '50px' },
+            'pernas': { name: 'Pernas (Esquerda)', top: '82%', left: '42%', size: '55px' },
+            'pernas_d': { name: 'Pernas (Direita)', top: '82%', left: '58%', size: '55px' },
+            'pes': { name: 'Pés (Esquerdo)', top: '94%', left: '38%', size: '45px' },
+            'pes_d': { name: 'Pés (Direito)', top: '94%', left: '62%', size: '45px' }
+        };
+
+        // Carregar áreas de aplicação do array do backend
+        function loadApplicationAreasFromArray(areaIds) {
+            const diagramContainer = document.getElementById('diagramContainer');
+            
+            if (!diagramContainer) return;
+
+            const selectedAreas = areaIds.map(id => applicationAreasMap[id]).filter(Boolean);
+            
+            if (selectedAreas.length === 0) {
+                const safeHTML = `
+                    <div style="text-align: center; padding: 40px; color: #6b7280;">
+                        <p style="font-size: 16px; margin: 0;">Nenhuma área específica definida para este produto.</p>
+                    </div>
+                `;
+                if (typeof setSafeHTML !== 'undefined') {
+                    setSafeHTML(diagramContainer, safeHTML);
+                } else {
+                    diagramContainer.innerHTML = safeHTML;
+                }
+                return;
+            }
+
+            // Organizar áreas por categoria (similar ao admin)
+            const faceAreas = selectedAreas.filter(a => ['testa', 'sobrancelhas', 'olhos', 'olhos_inferior', 'bochechas', 'bochechas_d', 'nariz', 'labios', 'queixo', 'pescoco'].includes(a.id || ''));
+            const armAreas = selectedAreas.filter(a => ['ombros', 'bracos_superiores', 'bracos_superiores_d', 'antebracos', 'antebracos_d', 'maos', 'maos_d'].includes(a.id || ''));
+            const torsoAreas = selectedAreas.filter(a => ['peito', 'abdomen', 'cintura'].includes(a.id || ''));
+            const legAreas = selectedAreas.filter(a => ['coxas', 'coxas_d', 'joelhos', 'joelhos_d', 'pernas', 'pernas_d', 'pes', 'pes_d'].includes(a.id || ''));
+
+            // Se não conseguir organizar por categoria (áreas antigas), mostrar lista simples
+            const hasCategories = faceAreas.length > 0 || armAreas.length > 0 || torsoAreas.length > 0 || legAreas.length > 0;
+            
+            if (hasCategories) {
+                const safeFaceAreas = faceAreas.map(area => {
+                    const safeName = typeof escapeHTML !== 'undefined' ? escapeHTML(area.name || '') : (area.name || '');
+                    return `<li style="padding: 8px 0; border-bottom: 1px solid #f3f4f6;"><span style="font-size: 14px; color: #374151;">${safeName}</span></li>`;
+                }).join('');
+                const safeArmAreas = armAreas.map(area => {
+                    const safeName = typeof escapeHTML !== 'undefined' ? escapeHTML(area.name || '') : (area.name || '');
+                    return `<li style="padding: 8px 0; border-bottom: 1px solid #f3f4f6;"><span style="font-size: 14px; color: #374151;">${safeName}</span></li>`;
+                }).join('');
+                const safeTorsoAreas = torsoAreas.map(area => {
+                    const safeName = typeof escapeHTML !== 'undefined' ? escapeHTML(area.name || '') : (area.name || '');
+                    return `<li style="padding: 8px 0; border-bottom: 1px solid #f3f4f6;"><span style="font-size: 14px; color: #374151;">${safeName}</span></li>`;
+                }).join('');
+                const safeLegAreas = legAreas.map(area => {
+                    const safeName = typeof escapeHTML !== 'undefined' ? escapeHTML(area.name || '') : (area.name || '');
+                    return `<li style="padding: 8px 0; border-bottom: 1px solid #f3f4f6;"><span style="font-size: 14px; color: #374151;">${safeName}</span></li>`;
+                }).join('');
+                
+                const safeHTML = `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
+                        ${faceAreas.length > 0 ? `
+                            <div>
+                                <h4 style="margin: 0 0 12px 0; color: #374151; font-size: 16px; font-weight: 600; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">Cabeça e Pescoço</h4>
+                                <ul style="list-style: none; padding: 0; margin: 0;">${safeFaceAreas}</ul>
+                            </div>
+                        ` : ''}
+                        ${armAreas.length > 0 ? `
+                            <div>
+                                <h4 style="margin: 0 0 12px 0; color: #374151; font-size: 16px; font-weight: 600; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">Braços e Mãos</h4>
+                                <ul style="list-style: none; padding: 0; margin: 0;">${safeArmAreas}</ul>
+                            </div>
+                        ` : ''}
+                        ${torsoAreas.length > 0 ? `
+                            <div>
+                                <h4 style="margin: 0 0 12px 0; color: #374151; font-size: 16px; font-weight: 600; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">Torso</h4>
+                                <ul style="list-style: none; padding: 0; margin: 0;">${safeTorsoAreas}</ul>
+                            </div>
+                        ` : ''}
+                        ${legAreas.length > 0 ? `
+                            <div>
+                                <h4 style="margin: 0 0 12px 0; color: #374151; font-size: 16px; font-weight: 600; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">Pernas e Pés</h4>
+                                <ul style="list-style: none; padding: 0; margin: 0;">${safeLegAreas}</ul>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+                if (typeof setSafeHTML !== 'undefined') {
+                    setSafeHTML(diagramContainer, safeHTML);
+                } else {
+                    diagramContainer.innerHTML = safeHTML;
+                }
+            } else {
+                // Fallback: lista simples se não conseguir categorizar
+                const safeAreas = selectedAreas.map(area => {
+                    const safeName = typeof escapeHTML !== 'undefined' ? escapeHTML(area.name || '') : (area.name || '');
+                    return `<li style="padding: 10px; background: #f9fafb; border-radius: 8px; border-left: 4px solid #3b82f6;"><span style="font-size: 14px; color: #374151; font-weight: 500;">${safeName}</span></li>`;
+                }).join('');
+                const safeHTML = `
+                    <div>
+                        <ul style="list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px;">
+                            ${safeAreas}
+                        </ul>
+                    </div>
+                `;
+                if (typeof setSafeHTML !== 'undefined') {
+                    setSafeHTML(diagramContainer, safeHTML);
+                } else {
+                    diagramContainer.innerHTML = safeHTML;
+                }
+            }
+        }
+
+        // Função para trocar imagem principal
+        function changeMainImage(imageUrl, index) {
+            const mainImage = document.querySelector('.main-image');
+            const thumbnails = document.querySelectorAll('.thumbnail');
+            
+            if (mainImage && currentProduct) {
+                // Obter posição de crop
+                const cropPositions = currentProduct.image_crop_positions || [];
+                const cropPos = cropPositions[index] || { x: 50, y: 50 };
+                const cropPosition = `${cropPos.x}% ${cropPos.y}%`;
+                
+                // Verificar se é mobile
+                const isMobile = window.innerWidth <= 768;
+                
+                mainImage.style.backgroundImage = `url('${imageUrl}')`;
+                mainImage.style.backgroundPosition = cropPosition;
+                
+                // Ajustar background-size baseado no dispositivo
+                // No mobile, usar cover para manter formato quadrado como no admin
+                if (isMobile) {
+                    mainImage.style.backgroundSize = 'cover';
+                    mainImage.style.backgroundRepeat = 'no-repeat';
+                } else {
+                    mainImage.style.backgroundSize = 'cover';
+                    mainImage.style.backgroundRepeat = 'no-repeat';
+                }
+            }
+            
+            // Atualizar thumbnail ativo
+            thumbnails.forEach((thumb, idx) => {
+                if (idx === index) {
+                    thumb.classList.add('active');
+                    const isMobile = window.innerWidth <= 768;
+                    thumb.style.borderColor = isMobile ? '#395f69' : '#395f69';
+                } else {
+                    thumb.classList.remove('active');
+                    const isMobile = window.innerWidth <= 768;
+                    thumb.style.borderColor = isMobile ? 'rgba(255,255,255,0.8)' : '#e5e7eb';
+                }
+            });
+        }
+
+        // Função para colapsar/expandir seções longas
+        function checkAndCollapseSections() {
+            // Sobre o Produto - só a descrição
+            const sobreContent = document.getElementById('sobreContent');
+            const toggleSobre = document.getElementById('toggleSobre');
+            if (sobreContent && toggleSobre) {
+                sobreContent.classList.remove('collapsed', 'expanded');
+                const fullHeight = sobreContent.scrollHeight;
+                const lineHeight = parseFloat(window.getComputedStyle(sobreContent).lineHeight) || 24;
+                const maxHeight = lineHeight * 3;
+                if (fullHeight > maxHeight) {
+                    sobreContent.classList.add('collapsed');
+                    toggleSobre.style.display = 'block';
+                    toggleSobre.textContent = 'Ver tudo';
+                } else {
+                    toggleSobre.style.display = 'none';
+                }
+            }
+
+            // Como Usar - só as instruções
+            const usoContent = document.getElementById('usoContent');
+            const toggleUso = document.getElementById('toggleUso');
+            if (usoContent && toggleUso) {
+                // Função para verificar e aplicar colapso
+                const checkUsoContent = () => {
+                    // Remover classes e estilos inline temporariamente para medir altura real
+                    usoContent.classList.remove('collapsed', 'expanded');
+                    usoContent.style.maxHeight = '';
+                    usoContent.style.overflow = '';
+                    usoContent.style.display = '';
+                    usoContent.style.webkitLineClamp = '';
+                    usoContent.style.textOverflow = '';
+                    usoContent.style.webkitBoxOrient = '';
+                    
+                    // Forçar reflow
+                    void usoContent.offsetHeight;
+                    
+                    // Medir altura real
+                    const fullHeight = usoContent.scrollHeight;
+                    const lineHeight = parseFloat(window.getComputedStyle(usoContent).lineHeight) || 24;
+                    const maxHeight = lineHeight * 3;
+                    
+                    // Também verificar pelo tamanho do texto como fallback
+                    const textElement = usoContent.querySelector('p#productUsage');
+                    const textLength = textElement ? textElement.textContent.length : 0;
+                    
+                    // Se altura exceder 3 linhas OU texto tiver mais de ~150 caracteres, mostrar botão
+                    if (fullHeight > maxHeight || textLength > 150) {
+                        // Limpar todos os estilos inline para que o CSS funcione
+                        usoContent.style.maxHeight = '';
+                        usoContent.style.overflow = '';
+                        usoContent.style.display = '';
+                        usoContent.style.webkitLineClamp = '';
+                        usoContent.style.textOverflow = '';
+                        usoContent.style.webkitBoxOrient = '';
+                        
+                        // Aplicar classe collapsed
+                        usoContent.classList.remove('expanded');
+                        usoContent.classList.add('collapsed');
+                        
+                        toggleUso.style.display = 'block';
+                        toggleUso.textContent = 'Ver tudo';
+                    } else {
+                        usoContent.classList.remove('collapsed');
+                        toggleUso.style.display = 'none';
+                    }
+                };
+                
+                // Verificar imediatamente e depois de alguns delays para garantir
+                setTimeout(checkUsoContent, 100);
+                setTimeout(checkUsoContent, 300);
+                setTimeout(checkUsoContent, 600);
+            }
+
+            // Áreas de Aplicação - verificar altura do diagramContainer
+            const aplicacaoContent = document.getElementById('aplicacaoContent');
+            const toggleAplicacao = document.getElementById('toggleAplicacao');
+            const diagramContainer = document.getElementById('diagramContainer');
+            if (aplicacaoContent && toggleAplicacao && diagramContainer) {
+                aplicacaoContent.classList.remove('collapsed', 'expanded');
+                // Esperar um pouco para o conteúdo renderizar
+                setTimeout(() => {
+                    const fullHeight = aplicacaoContent.scrollHeight;
+                    const lineHeight = parseFloat(window.getComputedStyle(aplicacaoContent).lineHeight) || 24;
+                    const maxHeight = lineHeight * 3;
+                    if (fullHeight > maxHeight) {
+                        aplicacaoContent.classList.add('collapsed');
+                        toggleAplicacao.style.display = 'block';
+                        toggleAplicacao.textContent = 'Ver tudo';
+                    } else {
+                        toggleAplicacao.style.display = 'none';
+                    }
+                }, 100);
+            }
+        }
+
+        function toggleSection(sectionId) {
+            const sections = {
+                'sobre': { contentId: 'sobreContent', toggleId: 'toggleSobre' },
+                'uso': { contentId: 'usoContent', toggleId: 'toggleUso' },
+                'aplicacao': { contentId: 'aplicacaoContent', toggleId: 'toggleAplicacao' }
+            };
+
+            const section = sections[sectionId];
+            if (!section) return;
+
+            const contentEl = document.getElementById(section.contentId);
+            const toggleBtn = document.getElementById(section.toggleId);
+            
+            if (!contentEl || !toggleBtn) return;
+
+            if (contentEl.classList.contains('collapsed')) {
+                // Expandir: remover estilos inline e classe collapsed, adicionar expanded
+                contentEl.style.maxHeight = '';
+                contentEl.style.overflow = '';
+                contentEl.style.display = '';
+                contentEl.style.webkitLineClamp = '';
+                contentEl.style.textOverflow = '';
+                contentEl.style.webkitBoxOrient = '';
+                
+                contentEl.classList.remove('collapsed');
+                contentEl.classList.add('expanded');
+                toggleBtn.textContent = 'Ver menos';
+            } else {
+                // Colapsar: remover estilos inline e classe expanded, adicionar collapsed
+                contentEl.style.maxHeight = '';
+                contentEl.style.overflow = '';
+                contentEl.style.display = '';
+                contentEl.style.webkitLineClamp = '';
+                contentEl.style.textOverflow = '';
+                contentEl.style.webkitBoxOrient = '';
+                
+                contentEl.classList.remove('expanded');
+                contentEl.classList.add('collapsed');
+                toggleBtn.textContent = 'Ver tudo';
+            }
+        }
+
+        function loadApplicationAreas(areas) {
+            const diagramContainer = document.getElementById('diagramContainer');
+            
+            if (!diagramContainer) return;
+            
+            if (!areas || areas.length === 0) {
+                const safeHTML = `
+                    <div style="text-align: center; padding: 40px; color: #6b7280;">
+                        <p style="font-size: 16px; margin: 0;">Nenhuma área específica definida para este produto.</p>
+                    </div>
+                `;
+                if (typeof setSafeHTML !== 'undefined') {
+                    setSafeHTML(diagramContainer, safeHTML);
+                } else {
+                    diagramContainer.innerHTML = safeHTML;
+                }
+                return;
+            }
+
+            // Criar lista simples de áreas
+            const safeAreasList = areas.map(area => {
+                const safeName = typeof escapeHTML !== 'undefined' ? escapeHTML(area.name || area || '') : (area.name || area || '');
+                return `<li style="padding: 10px; background: #f9fafb; border-radius: 8px; border-left: 4px solid #3b82f6;"><span style="font-size: 14px; color: #374151; font-weight: 500;">${safeName}</span></li>`;
+            }).join('');
+            const safeHTML = `
+                <div>
+                    <ul style="list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px;">
+                        ${safeAreasList}
+                    </ul>
+                </div>
+            `;
+            if (typeof setSafeHTML !== 'undefined') {
+                setSafeHTML(diagramContainer, safeHTML);
+            } else {
+                diagramContainer.innerHTML = safeHTML;
+            }
+        }
+
+        function showApplicationInfo(area, info, event) {
+            // Remove existing balloons
+            document.querySelectorAll('.info-balloon').forEach(balloon => balloon.remove());
+            
+            // Remove active class from all points
+            document.querySelectorAll('.body-point').forEach(point => point.classList.remove('active'));
+            
+            // Add active class to clicked point
+            event.target.classList.add('active');
+            
+            // Create balloon
+            const balloon = document.createElement('div');
+            balloon.className = 'info-balloon';
+            balloon.innerHTML = `
+                <div class="balloon-title">${area}</div>
+                <div class="balloon-text">${info}</div>
+            `;
+            
+            // Position balloon
+            const rect = event.target.getBoundingClientRect();
+            const diagramRect = event.target.closest('.body-diagram').getBoundingClientRect();
+            
+            balloon.style.left = (rect.left - diagramRect.left - 100) + 'px';
+            balloon.style.top = (rect.top - diagramRect.top - 60) + 'px';
+            
+            event.target.closest('.body-diagram').appendChild(balloon);
+            
+            // Show balloon
+            setTimeout(() => balloon.classList.add('show'), 50);
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                if (balloon.parentElement) {
+                    balloon.classList.remove('show');
+                    setTimeout(() => balloon.remove(), 300);
+                }
+            }, 5000);
+        }
+
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Se for a aba "Como Usar", verificar novamente o colapso
+            if (tabName === 'uso') {
+                setTimeout(() => {
+                    const usoContent = document.getElementById('usoContent');
+                    const toggleUso = document.getElementById('toggleUso');
+                    if (usoContent && toggleUso) {
+                        // Remover classes e estilos inline temporariamente para medir altura real
+                        usoContent.classList.remove('collapsed', 'expanded');
+                        usoContent.style.maxHeight = '';
+                        usoContent.style.overflow = '';
+                        usoContent.style.display = '';
+                        usoContent.style.webkitLineClamp = '';
+                        usoContent.style.textOverflow = '';
+                        usoContent.style.webkitBoxOrient = '';
+                        
+                        // Forçar reflow
+                        void usoContent.offsetHeight;
+                        
+                        // Medir altura real
+                        const fullHeight = usoContent.scrollHeight;
+                        const lineHeight = parseFloat(window.getComputedStyle(usoContent).lineHeight) || 24;
+                        const maxHeight = lineHeight * 3;
+                        
+                        // Também verificar pelo tamanho do texto como fallback
+                        const textElement = usoContent.querySelector('p#productUsage');
+                        const textLength = textElement ? textElement.textContent.length : 0;
+                        
+                        // Se altura exceder 3 linhas OU texto tiver mais de ~150 caracteres, mostrar botão
+                        if (fullHeight > maxHeight || textLength > 150) {
+                            // Limpar todos os estilos inline para que o CSS funcione
+                            usoContent.style.maxHeight = '';
+                            usoContent.style.overflow = '';
+                            usoContent.style.display = '';
+                            usoContent.style.webkitLineClamp = '';
+                            usoContent.style.textOverflow = '';
+                            usoContent.style.webkitBoxOrient = '';
+                            
+                            // Aplicar classe collapsed
+                            usoContent.classList.remove('expanded');
+                            usoContent.classList.add('collapsed');
+                            
+                            toggleUso.style.display = 'block';
+                            toggleUso.textContent = 'Ver tudo';
+                        } else {
+                            usoContent.classList.remove('collapsed');
+                            toggleUso.style.display = 'none';
+                        }
+                    }
+                }, 200);
+            }
+        }
+
+        // Funções de quantidade
+        function increaseQuantity() {
+            const quantityInput = document.getElementById('productQuantity');
+            if (quantityInput) {
+                const current = parseInt(quantityInput.value) || 1;
+                quantityInput.value = current + 1;
+                validateQuantity();
+                updateTotalPrice();
+            }
+        }
+
+        function decreaseQuantity() {
+            const quantityInput = document.getElementById('productQuantity');
+            if (quantityInput) {
+                const current = parseInt(quantityInput.value) || 1;
+                if (current > 1) {
+                    quantityInput.value = current - 1;
+                    validateQuantity();
+                    updateTotalPrice();
+                }
+            }
+        }
+
+        function validateQuantity() {
+            const quantityInput = document.getElementById('productQuantity');
+            if (quantityInput) {
+                const value = parseInt(quantityInput.value) || 1;
+                if (value < 1) {
+                    quantityInput.value = 1;
+                }
+                // Verificar estoque disponível
+                const stockCount = document.getElementById('stockCount');
+                if (stockCount) {
+                    const stock = parseInt(stockCount.textContent) || 0;
+                    if (value > stock) {
+                        quantityInput.value = stock > 0 ? stock : 1;
+                    }
+                }
+            }
+        }
+
+        // Função para atualizar o total baseado na quantidade
+        function updateTotalPrice() {
+            if (!currentProduct) return;
+            
+            const quantityInput = document.getElementById('productQuantity');
+            const totalPriceEl = document.getElementById('totalPrice');
+            
+            if (!quantityInput || !totalPriceEl) return;
+            
+            const quantity = parseInt(quantityInput.value) || 1;
+            const price = currentProduct.price || 0;
+            const total = price * quantity;
+            
+            totalPriceEl.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+        }
+
+        function addToCart() {
+            if (!currentProduct) return;
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id');
+            
+            // Buscar produto completo do allProducts se disponível
+            const fullProduct = allProducts.find(p => String(p.id) === String(productId)) || currentProduct;
+            
+            // Verificar estoque disponível
+            const totalStock = parseInt(fullProduct.stock) || 0;
+            if (totalStock <= 0) {
+                alert('Este produto não possui mais estoque disponível!');
+                return;
+            }
+            
+            // Buscar quantidade selecionada
+            const quantityInput = document.getElementById('productQuantity');
+            const quantity = quantityInput ? parseInt(quantityInput.value) || 1 : 1;
+            
+            const existingItem = cart.find(item => String(item.id) === String(productId));
+            const currentCartQuantity = existingItem ? existingItem.quantity : 0;
+            const newQuantity = currentCartQuantity + quantity;
+            
+            // Validar se a quantidade não excede o estoque total
+            if (newQuantity > totalStock) {
+                alert(`Quantidade máxima disponível: ${totalStock} unidades!`);
+                return;
+            }
+            
+            // Reservar estoque - sempre substituir pela nova quantidade total
+            reserveStock(fullProduct.id, newQuantity);
+            
+            if (existingItem) {
+                existingItem.quantity = newQuantity;
+            } else {
+                cart.push({
+                    id: fullProduct.id,
+                    name: fullProduct.name,
+                    price: fullProduct.price,
+                    original_price: fullProduct.original_price,
+                    discount_percentage: fullProduct.discount_percentage,
+                    category: fullProduct.category,
+                    brand: fullProduct.brand,
+                    image_url: fullProduct.image_url || (fullProduct.images && fullProduct.images.length > 0 ? fullProduct.images[0] : ''),
+                    images: fullProduct.images || [],
+                    stock: fullProduct.stock,
+                    quantity: quantity
+                });
+            }
+            
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartBadge();
+            const message = quantity > 1 
+                ? `${quantity} unidades de ${fullProduct.name} adicionadas ao carrinho!`
+                : `${fullProduct.name} adicionado ao carrinho!`;
+            alert(message);
+        }
+
+        function buyNow() {
+            addToCart();
+            window.location.href = 'carrinho.html';
+        }
+
+        let selectedRating = 0;
+        let productReviews = [];
+
+        // Avaliações pré-definidas (mesmo do index.html)
+        const predefinedReviews = {
+            1: { rating: 4.8, count: 6, reviews: [
+                { name: "Dr. Silva", rating: 5, comment: "Excelente produto, resultados visíveis em poucos dias.", date: "15/12/2023" },
+                { name: "Dra. Santos", rating: 5, comment: "Qualidade excepcional, recomendo para todos os colegas.", date: "10/12/2023" },
+                { name: "Dr. Costa", rating: 4, comment: "Bom produto, mas o preço poderia ser melhor.", date: "08/12/2023" },
+                { name: "Dra. Lima", rating: 5, comment: "Perfeito para preenchimentos faciais, muito natural.", date: "05/12/2023" },
+                { name: "Dr. Oliveira", rating: 5, comment: "Durabilidade excelente, pacientes muito satisfeitos.", date: "02/12/2023" },
+                { name: "Dra. Ferreira", rating: 4, comment: "Produto de qualidade, fácil aplicação.", date: "28/11/2023" }
+            ]},
+            2: { rating: 4.7, count: 5, reviews: [
+                { name: "Dr. Martins", rating: 5, comment: "Toxina de altíssima qualidade, resultados excepcionais.", date: "12/12/2023" },
+                { name: "Dra. Rocha", rating: 4, comment: "Muito boa, mas demora um pouco para fazer efeito.", date: "09/12/2023" },
+                { name: "Dr. Alves", rating: 5, comment: "Melhor toxina que já usei, super recomendo.", date: "06/12/2023" },
+                { name: "Dra. Pereira", rating: 5, comment: "Pacientes adoram os resultados, muito natural.", date: "03/12/2023" },
+                { name: "Dr. Cardoso", rating: 4, comment: "Boa qualidade, preço justo para o mercado.", date: "30/11/2023" }
+            ]},
+            3: { rating: 4.5, count: 4, reviews: [
+                { name: "Dra. Mendes", rating: 5, comment: "Agulhas muito finas, pacientes não sentem dor.", date: "11/12/2023" },
+                { name: "Dr. Barbosa", rating: 4, comment: "Qualidade boa, mas poderia ter mais unidades.", date: "07/12/2023" },
+                { name: "Dra. Ribeiro", rating: 4, comment: "Excelente para procedimentos delicados.", date: "04/12/2023" },
+                { name: "Dr. Nascimento", rating: 5, comment: "Perfeitas para aplicações faciais precisas.", date: "01/12/2023" }
+            ]},
+            4: { rating: 4.6, count: 7, reviews: [
+                { name: "Dra. Campos", rating: 5, comment: "Sérum incrível, clareou manchas rapidamente.", date: "14/12/2023" },
+                { name: "Dr. Moreira", rating: 4, comment: "Bom produto, mas precisa usar protetor solar.", date: "11/12/2023" },
+                { name: "Dra. Teixeira", rating: 5, comment: "Resultados visíveis em 2 semanas, recomendo.", date: "08/12/2023" },
+                { name: "Dr. Araújo", rating: 4, comment: "Qualidade boa, fórmula estabilizada funciona.", date: "05/12/2023" },
+                { name: "Dra. Correia", rating: 5, comment: "Melhor vitamina C que já testei.", date: "02/12/2023" },
+                { name: "Dr. Dias", rating: 5, comment: "Pacientes adoram, pele fica luminosa.", date: "29/11/2023" },
+                { name: "Dra. Sousa", rating: 4, comment: "Produto eficaz, mas o cheiro poderia ser melhor.", date: "26/11/2023" }
+            ]},
+            5: { rating: 4.4, count: 3, reviews: [
+                { name: "Dr. Freitas", rating: 4, comment: "Bioestimulador eficaz, resultados graduais.", date: "10/12/2023" },
+                { name: "Dra. Monteiro", rating: 5, comment: "Excelente para rejuvenescimento natural.", date: "06/12/2023" },
+                { name: "Dr. Carvalho", rating: 4, comment: "Bom produto, mas demora para ver resultados.", date: "03/12/2023" }
+            ]},
+            6: { rating: 4.3, count: 4, reviews: [
+                { name: "Dra. Gomes", rating: 4, comment: "Peeling eficaz, mas precisa de cuidados pós.", date: "13/12/2023" },
+                { name: "Dr. Lopes", rating: 4, comment: "Bom para manchas, concentração adequada.", date: "09/12/2023" },
+                { name: "Dra. Reis", rating: 5, comment: "Resultados excelentes em melasma.", date: "06/12/2023" },
+                { name: "Dr. Castro", rating: 4, comment: "Produto profissional, requer experiência.", date: "03/12/2023" }
+            ]}
+        };
+
+        function setupStarRating() {
+            const stars = document.querySelectorAll('.star-rating .star');
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    selectedRating = parseInt(this.dataset.rating);
+                    updateStarDisplay();
+                });
+                
+                star.addEventListener('mouseover', function() {
+                    const rating = parseInt(this.dataset.rating);
+                    highlightStars(rating);
+                });
+            });
+            
+            document.querySelector('.star-rating').addEventListener('mouseleave', function() {
+                updateStarDisplay();
+            });
+        }
+
+        function highlightStars(rating) {
+            const stars = document.querySelectorAll('.star-rating .star');
+            stars.forEach((star, index) => {
+                star.classList.toggle('active', index < rating);
+            });
+        }
+
+        function updateStarDisplay() {
+            highlightStars(selectedRating);
+        }
+
+        async function submitReview() {
+            const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+            if (!isLoggedIn) {
+                alert('Você precisa estar logado para avaliar um produto.');
+                return;
+            }
+
+            if (selectedRating === 0) {
+                alert('Por favor, selecione uma nota de 1 a 5 estrelas.');
+                return;
+            }
+
+            const reviewText = document.getElementById('reviewText').value.trim();
+            if (!reviewText) {
+                alert('Por favor, escreva um comentário sobre o produto.');
+                return;
+            }
+
+            const userName = localStorage.getItem('userName') || 'Usuário Anônimo';
+            const userEmail = localStorage.getItem('userEmail') || 'usuario@email.com';
+            const productId = new URLSearchParams(window.location.search).get('id');
+            
+            try {
+                const response = await fetch('/api/product-reviews', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        product_id: productId,
+                        user_email: userEmail,
+                        user_name: userName,
+                        rating: selectedRating,
+                        comment: reviewText
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json().catch(() => ({ error: 'Erro ao enviar avaliação' }));
+                    throw new Error(error.error || 'Erro ao enviar avaliação');
+                }
+
+                // Reset form
+                selectedRating = 0;
+                document.getElementById('reviewText').value = '';
+                updateStarDisplay();
+
+                // Reload reviews
+                await loadReviews();
+                alert('Avaliação enviada com sucesso!');
+            } catch (error) {
+                console.error('Erro ao enviar avaliação:', error);
+                alert('Erro ao enviar avaliação. Tente novamente.');
+            }
+        }
+
+        async function loadReviews() {
+            const productId = new URLSearchParams(window.location.search).get('id');
+            
+            try {
+                const response = await fetch(`/api/product-reviews?product_id=${productId}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    productReviews = (data.reviews || []).map(review => ({
+                        id: review.id,
+                        productId: review.product_id,
+                        userName: review.user_name,
+                        rating: review.rating,
+                        comment: review.comment,
+                        date: new Date(review.created_at).toLocaleDateString('pt-BR')
+                    }));
+                    
+                    // Usar dados do backend
+                    updateRatingSummary(data);
+                    displayReviews();
+                } else {
+                    // Fallback para avaliações pré-definidas
+                    const predefined = predefinedReviews[productId] || { rating: 4.0, count: 0, reviews: [] };
+                    productReviews = predefined.reviews;
+                    updateRatingSummary(predefined);
+                    displayReviews();
+                }
+            } catch (error) {
+                console.error('Erro ao carregar avaliações:', error);
+                // Fallback para avaliações pré-definidas
+                const predefined = predefinedReviews[productId] || { rating: 4.0, count: 0, reviews: [] };
+                productReviews = predefined.reviews;
+                updateRatingSummary(predefined);
+                displayReviews();
+            }
+        }
+
+        function updateRatingSummary(data) {
+            let rating = 0;
+            let count = 0;
+            let reviews = [];
+            
+            if (data && typeof data.averageRating !== 'undefined') {
+                // Dados do backend
+                rating = data.averageRating || 0;
+                count = data.totalReviews || 0;
+                reviews = productReviews || [];
+            } else if (data && data.rating !== undefined) {
+                // Dados pré-definidos
+                rating = data.rating || 0;
+                count = data.count || 0;
+                reviews = data.reviews || [];
+            } else {
+                // Calcular dos reviews carregados
+                if (productReviews && productReviews.length > 0) {
+                    const totalRating = productReviews.reduce((sum, review) => sum + review.rating, 0);
+                    rating = totalRating / productReviews.length;
+                    count = productReviews.length;
+                    reviews = productReviews;
+                }
+            }
+            
+            if (count === 0) {
+                document.getElementById('averageRating').textContent = '0.0';
+                document.getElementById('averageStars').textContent = '☆☆☆☆☆';
+                document.getElementById('reviewCount').textContent = '0 avaliações';
+                return;
+            }
+            
+            document.getElementById('averageRating').textContent = rating.toFixed(1);
+            document.getElementById('reviewCount').textContent = `${count} avaliação${count !== 1 ? 'ões' : ''}`;
+            
+            // Update stars
+            let starsHtml = '';
+            for (let i = 1; i <= 5; i++) {
+                starsHtml += i <= Math.round(rating) ? '★' : '☆';
+            }
+            document.getElementById('averageStars').textContent = starsHtml;
+            
+            // Update rating bars
+            updateRatingBars(reviews);
+        }
+
+        function updateRatingBars(reviews) {
+            const ratingCounts = [0, 0, 0, 0, 0]; // 1-5 stars
+            reviews.forEach(review => {
+                ratingCounts[review.rating - 1]++;
+            });
+            
+            const total = reviews.length;
+            const bars = document.querySelectorAll('.rating-bar');
+            
+            bars.forEach((bar, index) => {
+                const starLevel = 5 - index; // 5, 4, 3, 2, 1
+                const count = ratingCounts[starLevel - 1];
+                const percentage = total > 0 ? (count / total) * 100 : 0;
+                
+                const fill = bar.querySelector('.fill');
+                const countSpan = bar.querySelector('span:last-child');
+                
+                fill.style.width = `${percentage}%`;
+                countSpan.textContent = count;
+            });
+        }
+
+        function displayReviews() {
+            const reviewsList = document.getElementById('reviewsList');
+            
+            if (productReviews.length === 0) {
+                reviewsList.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">Nenhuma avaliação ainda. Seja o primeiro a avaliar!</p>';
+                return;
+            }
+
+            reviewsList.innerHTML = productReviews
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .map(review => {
+                    let starsHtml = '';
+                    for (let i = 1; i <= 5; i++) {
+                        starsHtml += i <= review.rating ? '★' : '☆';
+                    }
+                    
+                    return `
+                        <div class="review-item">
+                            <div class="review-header">
+                                <span class="reviewer-name">${review.userName}</span>
+                                <span class="review-date">${review.date}</span>
+                            </div>
+                            <div class="review-rating">${starsHtml}</div>
+                            <div class="review-comment">${review.comment}</div>
+                        </div>
+                    `;
+                }).join('');
+        }
+
+        function updateCartBadge() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const mobileCartCount = document.getElementById('mobileCartCount');
+            if (mobileCartCount) {
+                mobileCartCount.textContent = totalItems;
+            }
+        }
+
+        let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+
+        function toggleFavoriteProduct() {
+            if (!currentProduct) return;
+            
+            const productId = currentProduct.id || new URLSearchParams(window.location.search).get('id');
+            const prodId = typeof productId === 'string' ? parseInt(productId) : productId;
+            const index = favorites.indexOf(prodId);
+            
+            if (index > -1) {
+                favorites.splice(index, 1);
+            } else {
+                favorites.push(prodId);
+            }
+            
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            updateFavoriteButton();
+            updateFavoritesBadge();
+            
+            // Notificação
+            alert(favorites.includes(prodId) 
+                ? `${currentProduct.name} adicionado aos favoritos!` 
+                : `${currentProduct.name} removido dos favoritos`);
+        }
+
+        function updateFavoriteButton() {
+            if (!currentProduct) return;
+            const productId = currentProduct.id || new URLSearchParams(window.location.search).get('id');
+            const prodId = typeof productId === 'string' ? parseInt(productId) : productId;
+            const favoriteBtn = document.getElementById('productFavoriteBtn');
+            
+            if (favoriteBtn) {
+                if (favorites.includes(prodId)) {
+                    favoriteBtn.innerHTML = '♥';
+                    favoriteBtn.style.borderColor = '#ef4444';
+                    favoriteBtn.style.color = '#ef4444';
+                    favoriteBtn.classList.add('active');
+                } else {
+                    favoriteBtn.innerHTML = '♡';
+                    favoriteBtn.style.borderColor = '#e5e7eb';
+                    favoriteBtn.style.color = '#1e2723';
+                    favoriteBtn.classList.remove('active');
+                }
+            }
+        }
+
+        function updateFavoritesBadge() {
+            document.getElementById('favCount').textContent = favorites.length;
+            
+            const mobileFavCount = document.getElementById('mobileFavCount');
+            if (mobileFavCount) {
+                mobileFavCount.textContent = favorites.length;
+            }
+        }
+
+        function toggleMobileNav() {
+            const mobileNav = document.getElementById('mobileNav');
+            const overlay = document.getElementById('mobileOverlay');
+            mobileNav.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function closeMobileNav() {
+            const mobileNav = document.getElementById('mobileNav');
+            const overlay = document.getElementById('mobileOverlay');
+            mobileNav.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+
+        function toggleUserMenu(event) {
+            event.preventDefault();
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        function closeUserMenu() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.remove('show');
+        }
+
+        function handleLogin() {
+            closeUserMenu();
+            window.location.href = 'login.html';
+        }
+
+        function handleLogout() {
+            closeUserMenu();
+            localStorage.removeItem('userLoggedIn');
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('userName');
+            localStorage.removeItem('userPhone');
+            updateUserStatus();
+            alert('Logout realizado com sucesso!');
+        }
+
+        function viewProfile() {
+            closeUserMenu();
+            window.location.href = 'perfil.html';
+        }
+
+        function updateUserStatus() {
+            const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+            const userIcon = document.getElementById('userIcon');
+            const userAccount = document.getElementById('userAccount');
+            const dropdown = document.getElementById('userDropdown');
+            const mobileUserOptions = document.getElementById('mobileUserOptions');
+            
+            // Update mobile profile
+            updateMobileProfile(isLoggedIn);
+            
+            if (isLoggedIn) {
+                const userName = localStorage.getItem('userName') || 'Usuário';
+                userIcon.textContent = userName.charAt(0).toUpperCase();
+                userAccount.title = `Logado como: ${userName}`;
+                userAccount.style.background = 'rgba(34, 197, 94, 0.2)';
+                
+                dropdown.innerHTML = `
+                    <a href="#" class="user-dropdown-item" onclick="viewProfile()">
+                        <span>◉</span>
+                        Ver Perfil
+                    </a>
+                    <a href="#" class="user-dropdown-item logout" onclick="handleLogout()">
+                        <span>→</span>
+                        Sair
+                    </a>
+                `;
+                
+                if (mobileUserOptions) {
+                    mobileUserOptions.innerHTML = `
+                    <li><a href="#" class="nav-item" onclick="closeMobileNav(); handleLogout();"><span>→</span> Sair</a></li>
+                    `;
+                }
+            } else {
+                userIcon.textContent = '◉';
+                userAccount.title = 'Minha Conta';
+                userAccount.style.background = '';
+                
+                dropdown.innerHTML = `
+                    <a href="#" class="user-dropdown-item" onclick="handleLogin()">
+                        <span>→</span>
+                        Entrar
+                    </a>
+                    <a href="login.html" class="user-dropdown-item" onclick="closeUserMenu()">
+                        <span>+</span>
+                        Cadastrar
+                    </a>
+                `;
+                
+                if (mobileUserOptions) {
+                    mobileUserOptions.innerHTML = `
+                        <li><a href="#" class="nav-item" onclick="closeMobileNav(); handleLogin();"><span>→</span> Entrar</a></li>
+                        <li><a href="login.html" class="nav-item" onclick="closeMobileNav();"><span>+</span> Cadastrar</a></li>
+                    `;
+                }
+            }
+        }
+
+        function updateMobileProfile(isLoggedIn) {
+            const mobileUserProfile = document.getElementById('mobileUserProfile');
+            const mobileUserAvatar = document.getElementById('mobileUserAvatar');
+            const mobileUserName = document.getElementById('mobileUserName');
+            const mobileUserEmail = document.getElementById('mobileUserEmail');
+            
+            if (isLoggedIn) {
+                const userName = localStorage.getItem('userName') || 'Usuário';
+                const userEmail = localStorage.getItem('userEmail') || 'usuario@email.com';
+                
+                mobileUserAvatar.textContent = userName.charAt(0).toUpperCase();
+                mobileUserName.textContent = userName;
+                mobileUserEmail.textContent = userEmail;
+                
+                // Add click handler to go to profile
+                mobileUserProfile.onclick = function() {
+                    closeMobileNav();
+                    window.location.href = 'perfil.html';
+                };
+            } else {
+                mobileUserAvatar.textContent = 'DR';
+                mobileUserName.textContent = 'Visitante';
+                mobileUserEmail.textContent = 'Faça login para acessar';
+                
+                // Add click handler to go to login
+                mobileUserProfile.onclick = function() {
+                    closeMobileNav();
+                    window.location.href = 'login.html';
+                };
+            }
+        }
+
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const searchResults = document.getElementById('searchResults');
+            const allProducts = JSON.parse(localStorage.getItem('allProducts')) || [];
+            
+            if (!searchInput) return;
+            
+            searchInput.addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase().trim();
+                
+                if (query.length === 0) {
+                    searchResults.classList.remove('show');
+                    return;
+                }
+                
+                const filteredProducts = allProducts.filter(product => 
+                    product.name.toLowerCase().includes(query) ||
+                    product.category.toLowerCase().includes(query) ||
+                    product.brand.toLowerCase().includes(query)
+                );
+                
+                if (filteredProducts.length > 0) {
+                    searchResults.innerHTML = filteredProducts.slice(0, 5).map(product => `
+                        <div class="search-item" onclick="selectSearchProduct(${product.id})">
+                            <div class="search-item-image">${product.name}</div>
+                            <div class="search-item-info">
+                                <div class="search-item-name">${product.name}</div>
+                                <div class="search-item-category">${product.category}</div>
+                            </div>
+                            <div class="search-item-price">R$ ${product.price.toFixed(2).replace('.', ',')}</div>
+                        </div>
+                    `).join('');
+                    searchResults.classList.add('show');
+                } else {
+                    searchResults.innerHTML = '<div class="search-item"><div class="search-item-info"><div class="search-item-name">Nenhum produto encontrado</div></div></div>';
+                    searchResults.classList.add('show');
+                }
+            });
+            
+            // Fechar resultados ao clicar fora
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.search-container')) {
+                    searchResults.classList.remove('show');
+                }
+            });
+        }
+        
+        function selectSearchProduct(productId) {
+            const searchInput = document.getElementById('searchInput');
+            const searchResults = document.getElementById('searchResults');
+            
+            if (searchInput) searchInput.value = '';
+            if (searchResults) searchResults.classList.remove('show');
+            
+            window.location.href = `produto.html?id=${productId}`;
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const userMenu = document.getElementById('userMenu');
+            if (userMenu && !userMenu.contains(event.target)) {
+                closeUserMenu();
+            }
+        });
+        
+
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadProductsFromBackend();
+            await loadProduct();
+            setupStarRating();
+            // loadReviews será chamado após loadProduct
+            updateCartBadge();
+            updateFavoritesBadge();
+            updateUserStatus();
+            setupSearch();
+            try {
+                (function addJsonLd(){
+                    var params = new URLSearchParams(window.location.search);
+                    var id = params.get('id');
+                    var products = JSON.parse(localStorage.getItem('allProducts')||'[]');
+                    var p = products.find(function(x){ return String(x.id)===String(id); });
+                    if (!p) return;
+                    var origin = window.location.origin || '';
+                    var url = origin + '/produto.html?id=' + encodeURIComponent(p.id);
+                    var data = {
+                        '@context': 'https://schema.org',
+                        '@type': 'Product',
+                        name: p.name,
+                        brand: p.brand ? { '@type': 'Brand', name: p.brand } : undefined,
+                        sku: p.id,
+                        category: p.category,
+                        description: p.description || undefined,
+                        image: p.image || undefined,
+                        offers: {
+                            '@type': 'Offer',
+                            priceCurrency: 'BRL',
+                            price: typeof p.price==='number' ? p.price.toFixed(2) : p.price,
+                            availability: 'https://schema.org/InStock',
+                            url: url
+                        }
+                    };
+                    var breadcrumbs = {
+                        '@context': 'https://schema.org',
+                        '@type': 'BreadcrumbList',
+                        itemListElement: [
+                            { '@type': 'ListItem', position: 1, name: 'Início', item: origin + '/index.html' },
+                            { '@type': 'ListItem', position: 2, name: 'Produtos', item: origin + '/produtos.html' },
+                            { '@type': 'ListItem', position: 3, name: p.name, item: url }
+                        ]
+                    };
+                    var s1 = document.createElement('script');
+                    s1.type = 'application/ld+json';
+                    s1.text = JSON.stringify(data);
+                    document.head.appendChild(s1);
+                    var s2 = document.createElement('script');
+                    s2.type = 'application/ld+json';
+                    s2.text = JSON.stringify(breadcrumbs);
+                    document.head.appendChild(s2);
+                })();
+            } catch(e) {}
+        });
+    </script>
+    <script>
+        (function(){
+            try {
+                var imgs = document.querySelectorAll('img');
+                imgs.forEach(function(img){
+                    if (img.complete) {
+                        if (!img.hasAttribute('width') && img.naturalWidth) img.setAttribute('width', img.naturalWidth);
+                        if (!img.hasAttribute('height') && img.naturalHeight) img.setAttribute('height', img.naturalHeight);
+                    } else {
+                        img.addEventListener('load', function(){
+                            if (!img.hasAttribute('width') && img.naturalWidth) img.setAttribute('width', img.naturalWidth);
+                            if (!img.hasAttribute('height') && img.naturalHeight) img.setAttribute('height', img.naturalHeight);
+                        }, { once: true });
+                    }
+                });
+            } catch(e) {}
+        })();
+    </script>
+    <script>
+        (function(){
+            function ensureMainLandmark(){
+                var main = document.querySelector('main, [role="main"], #main-content');
+                if (!main) {
+                    var firstContainer = document.querySelector('.container');
+                    if (firstContainer) {
+                        firstContainer.setAttribute('id', 'main-content');
+                        return '#main-content';
+                    }
+                }
+                if (main && !main.id) {
+                    main.setAttribute('id', 'main-content');
+                }
+                return '#'+(document.querySelector('#main-content')? 'main-content' : (main && main.id ? main.id : ''));
+            }
+            function injectSkipLink(target){
+                var a = document.createElement('a');
+                a.href = target || '#main-content';
+                a.className = 'skip-link';
+                a.textContent = 'Pular para conteúdo';
+                document.body.insertBefore(a, document.body.firstChild);
+                var style = document.createElement('style');
+                style.innerHTML = '.skip-link{position:absolute;left:-9999px;top:8px;background:#fff;color:#111;padding:10px 14px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.2);z-index:2000} .skip-link:focus{left:8px;outline:3px solid #395f69}';
+                document.head.appendChild(style);
+            }
+            function enableLazyImages(){
+                var imgs = document.querySelectorAll('img');
+                imgs.forEach(function(img, idx){
+                    if (!img.hasAttribute('loading') && idx > 1) img.setAttribute('loading','lazy');
+                });
+            }
+            try {
+                var target = ensureMainLandmark();
+                injectSkipLink(target);
+                enableLazyImages();
+            } catch(e) {}
+        })();
+    </script>
+    
+    <!-- Script para carregar header e menu compartilhados -->
+    <script src="load-header.js"></script>
+</body>
+</html>

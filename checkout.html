@@ -1,0 +1,3009 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - DrDerm</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.mercadopago.com.br https://sdk.mercadopago.com https://*.mercadopago.com https://www.mercadolibre.com https://*.mercadolibre.com; style-src 'self' 'unsafe-inline' https://www.mercadopago.com.br https://*.mercadopago.com https://www.mercadolibre.com https://*.mercadolibre.com; img-src 'self' data: https: http:; font-src 'self' data: https://www.mercadopago.com.br https://*.mercadopago.com https://www.mercadolibre.com https://*.mercadolibre.com https://r2cdn.perplexity.ai; connect-src 'self' https://api.mercadopago.com https://www.mercadopago.com.br https://*.mercadopago.com https://api.mercadolibre.com https://www.mercadolibre.com https://*.mercadolibre.com wss://*.mercadopago.com wss://*.mercadolibre.com; frame-src 'self' https://www.mercadopago.com.br https://*.mercadopago.com https://www.mercadolibre.com https://*.mercadolibre.com; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests; block-all-mixed-content">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta name="Referrer-Policy" content="no-referrer">
+    <meta http-equiv="Permissions-Policy" content="geolocation=(), camera=(), microphone=(), payment=()">
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
+    <script src="security.js" defer></script>
+    <script src="utils.js" defer></script>
+    <script src="form-validation.js" defer></script>
+    <script src="error-handler.js" defer></script>
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            color: #1e2723;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1e2723 0%, #395f69 100%);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            border-bottom: 3px solid #dcbb92;
+        }
+
+        .header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+        }
+
+        .logo a {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-img {
+            height: 60px;
+            width: auto;
+            max-width: 200px;
+            object-fit: contain;
+            filter: brightness(0) invert(1);
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            background: rgba(220, 187, 146, 0.3);
+        }
+
+        /* Checkout */
+        .checkout-page {
+            padding: 40px 0;
+        }
+
+        .checkout-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .checkout-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1e2723;
+            margin-bottom: 10px;
+        }
+
+        /* Progress Steps */
+        .progress-steps {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 25%;
+            right: 25%;
+            height: 2px;
+            background: #e5e7eb;
+            z-index: 1;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 20px;
+            left: 25%;
+            height: 2px;
+            background: #395f69;
+            z-index: 2;
+            transition: width 0.5s ease;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 3;
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-circle {
+            background: #395f69;
+            color: white;
+        }
+
+        .step.completed .step-circle {
+            background: #22c55e;
+            color: white;
+        }
+
+        .step-label {
+            font-size: 14px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .step.active .step-label {
+            color: #395f69;
+            font-weight: 600;
+        }
+
+        /* Content */
+        .checkout-content {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .step-content {
+            padding: 40px;
+            display: none;
+        }
+
+        .step-content.active {
+            display: block;
+        }
+
+        .step-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e2723;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #395f69;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(57, 95, 105, 0.1);
+        }
+
+        .card-form-input {
+            margin-bottom: 10px;
+        }
+
+        .card-form-input:invalid:not(:placeholder-shown) {
+            border-color: #ef4444;
+        }
+
+        .card-form-input:valid:not(:placeholder-shown) {
+            border-color: #10b981;
+        }
+
+        /* Estilo profissional para campos de dados do cartão (sem bordas visíveis) */
+        .card-form-input.professional {
+            border: none;
+            border-bottom: 2px solid #e5e7eb;
+            border-radius: 0;
+            background: transparent;
+            padding: 12px 0;
+            font-size: 15px;
+            transition: border-color 0.3s ease;
+        }
+
+        .card-form-input.professional:focus {
+            outline: none;
+            border-bottom-color: #395f69;
+            background: transparent;
+            box-shadow: none;
+        }
+
+        .card-form-input.professional.error {
+            border-bottom-color: #ef4444;
+            background-color: transparent;
+        }
+
+        .card-form-input.professional.valid {
+            border-bottom-color: #10b981;
+            background-color: transparent;
+        }
+
+        /* Estilo para selects profissionais */
+        .card-form-input.professional select,
+        select.card-form-input.professional {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23395f69' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0 center;
+            padding-right: 20px;
+            cursor: pointer;
+        }
+
+        .field-wrapper {
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .field-error {
+            color: #ef4444;
+            font-size: 12px;
+            margin-top: 4px;
+            display: block;
+            min-height: 18px;
+        }
+
+        .field-error:empty {
+            display: none;
+        }
+
+        .field-wrapper .form-input.error {
+            border-color: #ef4444;
+            background-color: #fef2f2;
+        }
+
+        .field-wrapper .form-input.valid {
+            border-color: #10b981;
+            background-color: #f0fdf4;
+        }
+
+        /* Sobrescrever estilos para campos profissionais */
+        .field-wrapper .form-input.professional.error {
+            border-bottom-color: #ef4444;
+            background-color: transparent;
+        }
+
+        .field-wrapper .form-input.professional.valid {
+            border-bottom-color: #10b981;
+            background-color: transparent;
+        }
+
+        .field-wrapper-card {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .field-wrapper-card .field-error {
+            margin-top: 4px;
+            font-size: 11px;
+        }
+
+        #form-checkout__cardNumber,
+        #form-checkout__expirationDate,
+        #form-checkout__securityCode {
+            margin-bottom: 0;
+        }
+
+        #form-checkout__cardNumber iframe,
+        #form-checkout__expirationDate iframe,
+        #form-checkout__securityCode iframe {
+            width: 100% !important;
+            height: 48px !important;
+        }
+
+        /* Ajustar campos do Mercado Pago para ficarem mais compactos */
+        #form-checkout__cardNumber > div,
+        #form-checkout__expirationDate > div,
+        #form-checkout__securityCode > div {
+            height: 48px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 15px;
+        }
+
+        .address-card {
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .address-card:hover {
+            border-color: #395f69;
+        }
+
+        .address-card.selected {
+            border-color: #395f69;
+            background: #f0f9ff;
+        }
+
+        .address-name {
+            font-weight: 600;
+            color: #1e2723;
+            margin-bottom: 5px;
+        }
+
+        .address-info {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .payment-methods {
+            display: grid;
+            gap: 15px;
+        }
+
+        .payment-method {
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .payment-method:hover {
+            border-color: #395f69;
+        }
+
+        .payment-method.selected {
+            border-color: #395f69;
+            background: #f0f9ff;
+        }
+
+        .payment-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #395f69, #748d8c);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .payment-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .payment-icon svg path[fill],
+        .payment-icon svg rect[fill] {
+            fill: currentColor;
+        }
+        
+        .payment-icon svg path[stroke],
+        .payment-icon svg rect[stroke] {
+            stroke: currentColor;
+        }
+
+        .payment-info h4 {
+            color: #1e2723;
+            margin-bottom: 4px;
+        }
+
+        .payment-info p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .order-summary {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .summary-title {
+            font-weight: 600;
+            color: #1e2723;
+            margin-bottom: 15px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            color: #6b7280;
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 700;
+            color: #1e2723;
+            font-size: 18px;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+
+        .step-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #395f69 0%, #1e2723 100%);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(57, 95, 105, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #395f69;
+            border: 2px solid #395f69;
+        }
+
+        .btn-secondary:hover {
+            background: #395f69;
+            color: white;
+        }
+
+        /* Success Animation */
+        .success-animation {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .success-icon {
+            width: 120px;
+            height: 120px;
+            background: #22c55e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            animation: successPulse 1s ease-out;
+        }
+
+        .success-icon::before {
+            content: '✓';
+            font-size: 60px;
+            color: white;
+            font-weight: bold;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes successPulse {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+
+        .success-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e2723;
+            margin-bottom: 15px;
+        }
+
+        .success-message {
+            color: #6b7280;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .order-number {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .order-number h4 {
+            color: #395f69;
+            margin-bottom: 5px;
+        }
+
+        .order-number p {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e2723;
+        }
+
+        @media (max-width: 768px) {
+            .progress-steps {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .progress-steps::before,
+            .progress-line {
+                display: none;
+            }
+
+            .step-content {
+                padding: 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .step-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+<script>
+    (function(){
+        try {
+            var logged = localStorage.getItem('userLoggedIn') === 'true';
+            var token = localStorage.getItem('authToken') || localStorage.getItem('userToken') || localStorage.getItem('supabaseAuthToken');
+            if (!logged || !token) {
+                window.location.replace('login.html');
+            }
+        } catch (e) {}
+    })();
+</script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <a href="index.html"><img src="imagems/logo_dr_derm_cropped.png" alt="Dr Derm" class="logo-img"></a>
+            </div>
+            <a href="index.html" class="back-btn">← Voltar</a>
+        </div>
+    </header>
+
+    <!-- Checkout -->
+    <section class="checkout-page">
+        <div class="container">
+            <div class="checkout-header">
+                <h1 class="checkout-title">Finalizar Compra</h1>
+            </div>
+
+            <!-- Progress Steps -->
+            <div class="progress-steps">
+                <div class="progress-line" id="progressLine"></div>
+                <div class="step active" id="step1">
+                    <div class="step-circle">1</div>
+                    <div class="step-label">Entrega</div>
+                </div>
+                <div class="step" id="step2">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">Pagamento</div>
+                </div>
+                <div class="step" id="step3">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">Confirmação</div>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="checkout-content">
+                <!-- Step 1: Delivery -->
+                <div class="step-content active" id="content1">
+                    <h2 class="step-title">Dados de Entrega</h2>
+                    
+                    <div id="savedAddresses">
+                        <!-- Endereços salvos serão carregados aqui -->
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Nome Completo</label>
+                        <input type="text" class="form-input" id="deliveryName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">CPF</label>
+                        <input type="text" class="form-input" id="deliveryCpf" placeholder="000.000.000-00" maxlength="14" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">CEP</label>
+                        <input type="text" class="form-input" id="deliveryCep" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Endereço</label>
+                        <input type="text" class="form-input" id="deliveryAddress" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Bairro</label>
+                            <input type="text" class="form-input" id="deliveryNeighborhood" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Número</label>
+                            <input type="text" class="form-input" id="deliveryNumber" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Cidade</label>
+                            <input type="text" class="form-input" id="deliveryCity" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Estado</label>
+                            <input type="text" class="form-input" id="deliveryState" maxlength="2" required>
+                        </div>
+                    </div>
+
+                    <div class="step-actions">
+                        <button class="btn btn-primary" onclick="nextStep()">Continuar para Pagamento</button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Payment -->
+                <div class="step-content" id="content2">
+                    <h2 class="step-title">Forma de Pagamento</h2>
+
+                    <div class="payment-methods">
+                        <div class="payment-method" onclick="selectPayment('credit', this)">
+                            <div class="payment-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M20 4H4C2.89 4 2.01 4.89 2.01 6L2 18C2 19.11 2.89 20 4 20H20C21.11 20 22 19.11 22 18V6C22 4.89 21.11 4 20 4ZM20 18H4V12H20V18ZM20 8H4V6H20V8Z" fill="currentColor"/>
+                                </svg>
+                            </div>
+                            <div class="payment-info">
+                                <h4>Cartão de Crédito</h4>
+                                <p>Visa, Mastercard, Elo</p>
+                            </div>
+                        </div>
+                        <div class="payment-method" onclick="selectPayment('pix', this)">
+                            <div class="payment-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                                    <rect x="6" y="6" width="3" height="3" fill="currentColor"/>
+                                    <rect x="11" y="6" width="3" height="3" fill="currentColor"/>
+                                    <rect x="16" y="6" width="3" height="3" fill="currentColor"/>
+                                    <rect x="6" y="11" width="3" height="3" fill="currentColor"/>
+                                    <rect x="11" y="11" width="3" height="3" fill="currentColor"/>
+                                    <rect x="16" y="11" width="3" height="3" fill="currentColor"/>
+                                    <rect x="6" y="16" width="3" height="3" fill="currentColor"/>
+                                    <rect x="11" y="16" width="3" height="3" fill="currentColor"/>
+                                    <rect x="16" y="16" width="3" height="3" fill="currentColor"/>
+                                    <rect x="8" y="8" width="8" height="8" rx="1" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                                </svg>
+                            </div>
+                            <div class="payment-info">
+                                <h4>PIX</h4>
+                                <p>Pagamento instantâneo</p>
+                            </div>
+                        </div>
+                        <div class="payment-method" onclick="selectPayment('boleto', this)">
+                            <div class="payment-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.89 22 5.99 22H18C19.1 22 20 21.1 20 20V8L14 2ZM18 20H6V4H13V9H18V20Z" fill="currentColor"/>
+                                </svg>
+                            </div>
+                            <div class="payment-info">
+                                <h4>Boleto Bancário</h4>
+                                <p>Vencimento em 3 dias úteis</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Container para QR Code PIX -->
+                    <div id="pixContainer" style="display: none; margin-top: 30px; text-align: center;">
+                        <div id="pixQrCode" style="margin: 20px 0;"></div>
+                        <p id="pixInstructions" style="color: #6b7280; margin-top: 15px; display: none;">Escaneie o QR Code com o app do seu banco para pagar</p>
+                        <button class="btn btn-secondary" onclick="copyPixCode()" id="copyPixBtn" style="margin-top: 15px; display: none;">Copiar Código PIX</button>
+                        <div id="pixStatus" style="margin-top: 20px; padding: 15px; background: #f0f9ff; border-radius: 8px; display: none;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="animation: spin 2s linear infinite;">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z" fill="#0ea5e9"/>
+                                </svg>
+                                <p style="color: #1e2723; margin: 0; font-weight: 500;">Aguardando confirmação do pagamento...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Container para Formulário de Cartão de Crédito -->
+                    <div id="creditCardContainer" style="display: none; margin-top: 30px;">
+                        <h3 style="margin-bottom: 15px; color: #1e2723;">Dados do Cartão</h3>
+                        <form id="cardForm" style="max-width: 600px; margin: 0 auto;">
+                            <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                <!-- Campos do cartão em grid compacto -->
+                                <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px; margin-bottom: 10px;">
+                                    <div class="field-wrapper-card">
+                                    <div id="form-checkout__cardNumber" style="min-height: 48px;"></div>
+                                        <div class="field-error" id="error-cardNumber" style="display: none;"></div>
+                                    </div>
+                                    <div class="field-wrapper-card">
+                                    <div id="form-checkout__expirationDate" style="min-height: 48px;"></div>
+                                        <div class="field-error" id="error-expirationDate" style="display: none;"></div>
+                                    </div>
+                                    <div class="field-wrapper-card">
+                                    <div id="form-checkout__securityCode" style="min-height: 48px;"></div>
+                                        <div class="field-error" id="error-securityCode" style="display: none;"></div>
+                                </div>
+                                </div>
+                                <div class="field-wrapper">
+                                    <input type="text" id="form-checkout__cardholderName" placeholder="Nome do titular" class="form-input card-form-input professional" maxlength="50" />
+                                    <div class="field-error" id="error-cardholderName" style="display: none;"></div>
+                                </div>
+                                <select id="form-checkout__issuer" class="form-input card-form-input" style="display: none;">
+                                    <option value="">Banco emissor</option>
+                                </select>
+                                <div class="field-wrapper">
+                                    <select id="form-checkout__installments" class="form-input card-form-input professional" required>
+                                    <option value="">Selecione as parcelas</option>
+                                </select>
+                                    <div class="field-error" id="error-installments" style="display: none;"></div>
+                                </div>
+                                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 10px;">
+                                    <div class="field-wrapper">
+                                        <select id="form-checkout__identificationType" class="form-input card-form-input professional" required>
+                                        <option value="">Tipo</option>
+                                        <option value="CPF">CPF</option>
+                                        <option value="CNPJ">CNPJ</option>
+                                    </select>
+                                        <div class="field-error" id="error-identificationType" style="display: none;"></div>
+                                </div>
+                                    <div class="field-wrapper">
+                                        <input type="text" id="form-checkout__identificationNumber" placeholder="Número do documento" class="form-input card-form-input professional" required maxlength="18" />
+                                        <div class="field-error" id="error-identificationNumber" style="display: none;"></div>
+                                    </div>
+                                </div>
+                                <div class="field-wrapper">
+                                    <input type="email" id="form-checkout__cardholderEmail" placeholder="E-mail" class="form-input card-form-input professional" required maxlength="100" />
+                                    <div class="field-error" id="error-cardholderEmail" style="display: none;"></div>
+                                </div>
+                                <progress value="0" class="progress-bar" id="cardFormProgress" style="width: 100%; margin-top: 10px; display: none;">Carregando...</progress>
+                            </div>
+                            <div id="cardFormErrors" style="color: #ef4444; margin-top: 10px; display: none; font-size: 14px;"></div>
+                        </form>
+                    </div>
+
+                    <!-- Container para Boleto -->
+                    <div id="boletoContainer" style="display: none; margin-top: 30px;">
+                        <div style="background: white; padding: 40px; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); max-width: 650px; margin: 0 auto; border: 1px solid #e5e7eb;">
+                            <div style="text-align: center; margin-bottom: 30px;">
+                                <div style="display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; background: linear-gradient(135deg, #395f69 0%, #1e2723 100%); border-radius: 16px; margin-bottom: 15px;">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.89 22 5.99 22H18C19.1 22 20 21.1 20 20V8L14 2ZM18 20H6V4H13V9H18V20Z" fill="white"/>
+                                    </svg>
+                                </div>
+                                <h3 style="color: #1e2723; margin: 0; font-size: 24px; font-weight: 700;">Boleto Bancário</h3>
+                                <p style="color: #6b7280; margin: 8px 0 0 0; font-size: 14px;">Vencimento em 3 dias úteis</p>
+                    </div>
+                            
+                            <div id="boletoInfo" style="margin-bottom: 25px;">
+                                <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); padding: 20px; border-radius: 12px; margin-bottom: 15px; border-left: 4px solid #0ea5e9; display: flex; align-items: center; gap: 15px;">
+                                    <div style="flex-shrink: 0; width: 40px; height: 40px; background: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M19 4H5C3.89 4 3 4.9 3 6V18C3 19.1 3.89 20 5 20H19C20.1 20 21 19.1 21 18V6C21 4.9 20.1 4 19 4ZM19 18H5V8H19V18ZM7 10H9V12H7V10ZM11 10H17V12H11V10ZM7 14H9V16H7V14ZM11 14H17V16H11V14Z" fill="#0ea5e9"/>
+                                        </svg>
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <p style="color: #1e2723; margin: 0; font-weight: 600; margin-bottom: 4px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Data de Vencimento</p>
+                                        <p id="boletoDueDate" style="color: #0c4a6e; margin: 0; font-size: 16px; font-weight: 600;">Calculando...</p>
+                                    </div>
+                                </div>
+                                
+                                <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); padding: 20px; border-radius: 12px; margin-bottom: 15px; border-left: 4px solid #10b981; display: flex; align-items: center; gap: 15px;">
+                                    <div style="flex-shrink: 0; width: 40px; height: 40px; background: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13.41 16.09V14.09C13.41 13.54 12.96 13.09 12.41 13.09H11.59C11.04 13.09 10.59 13.54 10.59 14.09V16.09C10.59 16.64 11.04 17.09 11.59 17.09H12.41C12.96 17.09 13.41 16.64 13.41 16.09ZM12.41 11.09H11.59C11.04 11.09 10.59 10.64 10.59 10.09V7.59C10.59 7.04 11.04 6.59 11.59 6.59H12.41C12.96 6.59 13.41 7.04 13.41 7.59V10.09C13.41 10.64 12.96 11.09 12.41 11.09Z" fill="#10b981"/>
+                                        </svg>
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <p style="color: #1e2723; margin: 0; font-weight: 600; margin-bottom: 4px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Valor Total</p>
+                                        <p id="boletoAmount" style="color: #065f46; margin: 0; font-size: 20px; font-weight: 700;">R$ 0,00</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="boletoLink" style="margin: 25px 0;"></div>
+                            
+                            <div id="boletoBarcode" style="margin: 25px 0; display: none;">
+                                <div style="background: #f9fafb; padding: 20px; border-radius: 12px; border: 1px solid #e5e7eb; margin-bottom: 15px;">
+                                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4ZM4 6V18H20V6H4ZM6 8H18V10H6V8ZM6 12H14V14H6V12Z" fill="#6b7280"/>
+                                        </svg>
+                                        <p style="color: #1e2723; font-weight: 600; margin: 0; font-size: 14px;">Código de Barras</p>
+                                    </div>
+                                    <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #d1d5db;">
+                                        <p id="boletoBarcodeText" style="font-family: 'Courier New', monospace; font-size: 13px; color: #1e2723; margin: 0; word-break: break-all; letter-spacing: 1px;"></p>
+                                    </div>
+                                </div>
+                                <button class="btn btn-secondary" onclick="copyBoletoBarcode()" id="copyBoletoBtn" style="margin-top: 0; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M16 1H4C2.9 1 2 1.9 2 3V17H4V3H16V1ZM19 5H8C6.9 5 6 5.9 6 7V21C6 22.1 6.9 23 8 23H19C20.1 23 21 22.1 21 21V7C21 5.9 20.1 5 19 5ZM19 21H8V7H19V21Z" fill="currentColor"/>
+                                    </svg>
+                                    Copiar Código de Barras
+                                </button>
+                            </div>
+
+                            <div style="text-align: center; margin-top: 25px; display: flex; gap: 12px; justify-content: center;">
+                                <button id="boletoViewBtn" type="button" class="btn btn-primary" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 28px; font-weight: 600;">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 4.5C7 4.5 2.73 7.61 1 12C2.73 16.39 7 19.5 12 19.5C17 19.5 21.27 16.39 23 12C21.27 7.61 17 4.5 12 4.5ZM12 17C9.24 17 7 14.76 7 12C7 9.24 9.24 7 12 7C14.76 7 17 9.24 17 12C17 14.76 14.76 17 12 17ZM12 9C10.34 9 9 10.34 9 12C9 13.66 10.34 15 12 15C13.66 15 15 13.66 15 12C15 10.34 13.66 9 12 9Z" fill="currentColor"/>
+                                    </svg>
+                                    Visualizar Boleto
+                                </button>
+                                <button class="btn btn-secondary" onclick="printBoleto()" id="printBoletoBtn" style="display: inline-flex; align-items: center; gap: 8px;">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M19 8H18V3H6V8H5C3.34 8 2 9.34 2 11V17H6V21H18V17H22V11C22 9.34 20.66 8 19 8ZM8 5H16V8H8V5ZM16 19H8V14H16V19ZM20 15H18V13H6V15H4V11C4 10.45 4.45 10 5 10H19C19.55 10 20 10.45 20 11V15Z" fill="currentColor"/>
+                                    </svg>
+                                    Imprimir
+                                </button>
+                            </div>
+
+                            <div id="boletoStatus" style="margin-top: 25px; padding: 20px; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-radius: 12px; display: none; border-left: 4px solid #0ea5e9;">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div style="flex-shrink: 0; width: 40px; height: 40px; background: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="animation: spin 2s linear infinite;">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z" fill="#0ea5e9"/>
+                                        </svg>
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <p style="color: #1e2723; margin: 0; font-weight: 600; font-size: 15px;">Aguardando pagamento do boleto</p>
+                                        <p style="color: #6b7280; margin: 4px 0 0 0; font-size: 13px;">Você receberá um e-mail quando o pagamento for confirmado.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="order-summary">
+                        <div class="summary-title">Resumo do Pedido</div>
+                        <div id="orderItems">
+                            <!-- Itens do pedido serão carregados aqui -->
+                        </div>
+                        <div class="summary-item">
+                            <span>Frete</span>
+                            <span>R$ 15,90</span>
+                        </div>
+                        <div class="summary-total">
+                            <span>Total</span>
+                            <span id="orderTotal">R$ 0,00</span>
+                        </div>
+                    </div>
+
+                    <div class="step-actions">
+                        <button class="btn btn-secondary" onclick="prevStep()">Voltar</button>
+                        <button class="btn btn-primary" onclick="processPayment()">Finalizar Pedido</button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Confirmation -->
+                <div class="step-content" id="content3">
+                    <div class="success-animation">
+                        <div class="success-icon"></div>
+                        <h2 class="success-title">Pedido Confirmado!</h2>
+                        <p class="success-message">Seu pedido foi processado com sucesso. Você receberá um e-mail de confirmação em breve.</p>
+                        
+                        <div class="order-number">
+                            <h4>Número do Pedido</h4>
+                            <p id="orderNumber">#DR2024001</p>
+                        </div>
+
+                        <div class="step-actions">
+                            <button class="btn btn-primary" onclick="goToHome()">Voltar ao Início</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        let currentStep = 1;
+        let selectedPayment = null;
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let preferenceId = null;
+        let pixCode = null;
+        let boletoBarcodeValue = null;
+        let boletoStatusInterval = null;
+
+        function loadSavedAddresses() {
+            const addresses = JSON.parse(localStorage.getItem('userAddresses')) || [];
+            const savedAddresses = document.getElementById('savedAddresses');
+            
+            if (addresses.length > 0) {
+                // Usar sanitização para prevenir XSS
+                const safeHTML = `
+                    <h3 style="margin-bottom: 15px; color: #1e2723;">Endereços Salvos</h3>
+                    ${addresses.map((address, index) => {
+                        const safeName = escapeHTML(address.name || '');
+                        const safeStreet = escapeHTML(address.street || '');
+                        const safeNumber = escapeHTML(address.number || '');
+                        const safeComplement = address.complement ? escapeHTML(address.complement) : '';
+                        const safeNeighborhood = escapeHTML(address.neighborhood || '');
+                        const safeCity = escapeHTML(address.city || '');
+                        const safeState = escapeHTML(address.state || '');
+                        const safeCep = escapeHTML(address.cep || '');
+                        return `
+                        <div class="address-card" onclick="selectAddress(${index})">
+                            <div class="address-name">${safeName}</div>
+                            <div class="address-info">
+                                ${safeStreet}, ${safeNumber}${safeComplement ? ', ' + safeComplement : ''}<br>
+                                ${safeNeighborhood} - ${safeCity}/${safeState}<br>
+                                CEP: ${safeCep}
+                            </div>
+                        </div>
+                    `;
+                    }).join('')}
+                    <hr style="margin: 20px 0; border: 1px solid #e5e7eb;">
+                    <h3 style="margin-bottom: 15px; color: #1e2723;">Ou preencha um novo endereço:</h3>
+                `;
+                if (typeof setSafeHTML !== 'undefined') {
+                    setSafeHTML(savedAddresses, safeHTML);
+                } else {
+                    savedAddresses.innerHTML = safeHTML;
+                }
+            }
+        }
+
+        function selectAddress(index) {
+            const addresses = JSON.parse(localStorage.getItem('userAddresses')) || [];
+            const address = addresses[index];
+            
+            document.getElementById('deliveryName').value = localStorage.getItem('userName') || '';
+            document.getElementById('deliveryCep').value = address.cep;
+            document.getElementById('deliveryAddress').value = address.street;
+            document.getElementById('deliveryNeighborhood').value = address.neighborhood;
+            document.getElementById('deliveryNumber').value = address.number;
+            document.getElementById('deliveryCity').value = address.city;
+            document.getElementById('deliveryState').value = address.state;
+
+            // Update selected address visual
+            document.querySelectorAll('.address-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+        }
+
+        function loadOrderSummary() {
+            const orderItems = document.getElementById('orderItems');
+            const orderTotal = document.getElementById('orderTotal');
+            
+            let subtotal = 0;
+            const safeHTML = cart.map(item => {
+                const itemTotal = item.price * item.quantity;
+                subtotal += itemTotal;
+                const safeName = typeof escapeHTML !== 'undefined' ? escapeHTML(item.name || '') : (item.name || '');
+                return `
+                    <div class="summary-item">
+                        <span>${safeName} (${item.quantity}x)</span>
+                        <span>R$ ${itemTotal.toFixed(2).replace('.', ',')}</span>
+                    </div>
+                `;
+            }).join('');
+            if (typeof setSafeHTML !== 'undefined') {
+                setSafeHTML(orderItems, safeHTML);
+            } else {
+                orderItems.innerHTML = safeHTML;
+            }
+
+            const shipping = 15.90;
+            const total = subtotal + shipping;
+            orderTotal.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+        }
+
+        let cardFormInstance = null;
+        let mpInstance = null;
+        let currentPreferenceId = null;
+
+        async function selectPayment(method, element) {
+            selectedPayment = method;
+            document.querySelectorAll('.payment-method').forEach(pm => {
+                pm.classList.remove('selected');
+            });
+            if (element) {
+                element.classList.add('selected');
+            }
+            
+            // Esconder todos os containers de pagamento
+            document.getElementById('pixContainer').style.display = 'none';
+            document.getElementById('boletoContainer').style.display = 'none';
+            document.getElementById('creditCardContainer').style.display = 'none';
+            
+            // Limpar e destruir formulário de cartão se existir
+            destroyCardForm();
+            
+            // Se for cartão de crédito, inicializar o formulário imediatamente para mostrar os campos
+            if (method === 'credit') {
+                // Mostrar container do cartão
+                document.getElementById('creditCardContainer').style.display = 'block';
+                
+                // Garantir que a div de erros esteja oculta ao selecionar o método
+                const errorsDiv = document.getElementById('cardFormErrors');
+                if (errorsDiv) {
+                    errorsDiv.style.display = 'none';
+                    errorsDiv.textContent = '';
+                }
+                
+                // Se o formulário ainda não foi inicializado e estamos no passo de pagamento, inicializar agora
+                if (!cardFormInstance && currentStep === 2) {
+                    // Inicializar o formulário de forma assíncrona sem bloquear
+                    initializeCardFormAsync().catch(error => {
+                        console.error('Erro ao inicializar formulário:', error);
+                        // Se falhar, o formulário será inicializado quando clicar em Finalizar Pedido
+                    });
+                } else if (cardFormInstance) {
+                    // Se o formulário já existe, apenas atualizar o estado do botão
+            updateFinalizeButton();
+                } else {
+                    // Se não estiver no passo de pagamento ainda, apenas habilitar o botão
+                    const finalizeBtn = document.querySelector('.step-actions .btn-primary');
+                    if (finalizeBtn) {
+                        finalizeBtn.disabled = false;
+                        finalizeBtn.style.opacity = '1';
+                        finalizeBtn.style.cursor = 'pointer';
+                    }
+                }
+            } else {
+                // Para outros métodos, atualizar estado do botão normalmente
+                updateFinalizeButton();
+            }
+            
+            // Se estivermos no passo de pagamento, processar automaticamente apenas para PIX e Boleto
+            // Para cartão de crédito, apenas mostrar o formulário - o processamento será no botão "Finalizar Pedido"
+            if (currentStep === 2 && method !== 'credit') {
+                // Verificar se os dados de entrega estão preenchidos
+                const deliveryName = document.getElementById('deliveryName')?.value;
+                const deliveryCpf = document.getElementById('deliveryCpf')?.value.replace(/\D/g, '');
+                const deliveryCep = document.getElementById('deliveryCep')?.value;
+                
+                // Se os dados básicos estiverem preenchidos, processar automaticamente
+                if (deliveryName && deliveryCpf && deliveryCpf.length === 11 && deliveryCep) {
+                    try {
+                        await processPayment();
+                    } catch (error) {
+                        console.error('Erro ao processar pagamento automaticamente:', error);
+                        // Se houver erro, apenas mostrar o método selecionado
+                    }
+                } else {
+                    // Se os dados não estiverem preenchidos, apenas mostrar o método selecionado
+                    // O usuário precisará preencher os dados primeiro
+                }
+            }
+        }
+
+        // Função para destruir completamente o formulário de cartão
+        function destroyCardForm() {
+            if (cardFormInstance) {
+                try {
+                    // Tentar desmontar o formulário
+                    if (typeof cardFormInstance.unmount === 'function') {
+                        cardFormInstance.unmount();
+                    }
+                } catch (e) {
+                    console.log('Erro ao desmontar formulário:', e);
+                }
+                cardFormInstance = null;
+            }
+            
+            // Limpar containers do formulário
+            const containers = [
+                'form-checkout__cardNumber',
+                'form-checkout__expirationDate',
+                'form-checkout__securityCode'
+            ];
+            
+            containers.forEach(id => {
+                const container = document.getElementById(id);
+                if (container) {
+                    container.innerHTML = '';
+                }
+            });
+            
+            // Limpar instância do Mercado Pago
+            mpInstance = null;
+        }
+
+        function cancelCardPayment() {
+            destroyCardForm();
+            selectPayment(null, null);
+            document.querySelectorAll('.payment-method').forEach(pm => {
+                pm.classList.remove('selected');
+            });
+            selectedPayment = null;
+        }
+
+        function nextStep() {
+            if (currentStep < 3) {
+                // Hide current step
+                document.getElementById(`content${currentStep}`).classList.remove('active');
+                document.getElementById(`step${currentStep}`).classList.remove('active');
+                document.getElementById(`step${currentStep}`).classList.add('completed');
+                
+                currentStep++;
+                
+                // Show next step
+                document.getElementById(`content${currentStep}`).classList.add('active');
+                document.getElementById(`step${currentStep}`).classList.add('active');
+                
+                updateProgressLine();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                // Hide current step
+                document.getElementById(`content${currentStep}`).classList.remove('active');
+                document.getElementById(`step${currentStep}`).classList.remove('active');
+                
+                currentStep--;
+                
+                // Show previous step
+                document.getElementById(`content${currentStep}`).classList.add('active');
+                document.getElementById(`step${currentStep}`).classList.add('active');
+                document.getElementById(`step${currentStep}`).classList.remove('completed');
+                
+                updateProgressLine();
+            }
+        }
+
+        function updateProgressLine() {
+            const progressLine = document.getElementById('progressLine');
+            const width = ((currentStep - 1) / 2) * 50; // 0%, 50%, 100%
+            progressLine.style.width = `${width}%`;
+        }
+
+        async function processPayment() {
+            if (!selectedPayment) {
+                if (typeof showError !== 'undefined') {
+                    showError(null, 'validation', { message: 'Por favor, selecione uma forma de pagamento.' });
+                } else {
+                alert('Por favor, selecione uma forma de pagamento.');
+                }
+                return;
+            }
+
+            // Validar dados de entrega
+            const deliveryName = document.getElementById('deliveryName').value;
+            const deliveryCpf = document.getElementById('deliveryCpf').value.replace(/\D/g, ''); // Remove formatação
+            const deliveryCep = document.getElementById('deliveryCep').value;
+            const deliveryAddress = document.getElementById('deliveryAddress').value;
+            const deliveryNeighborhood = document.getElementById('deliveryNeighborhood').value;
+            const deliveryNumber = document.getElementById('deliveryNumber').value;
+            const deliveryCity = document.getElementById('deliveryCity').value;
+            const deliveryState = document.getElementById('deliveryState').value;
+
+            if (!deliveryName || !deliveryCpf || !deliveryCep || !deliveryAddress || !deliveryNeighborhood || !deliveryNumber || !deliveryCity || !deliveryState) {
+                if (typeof showError !== 'undefined') {
+                    showError(null, 'validation', { message: 'Por favor, preencha todos os dados de entrega.' });
+                } else {
+                alert('Por favor, preencha todos os dados de entrega.');
+                }
+                prevStep();
+                return;
+            }
+
+            // Validar CPF básico (11 dígitos)
+            if (deliveryCpf.length !== 11) {
+                if (typeof showError !== 'undefined') {
+                    showError(null, 'validation', { message: 'Por favor, informe um CPF válido.' });
+                } else {
+                alert('Por favor, informe um CPF válido.');
+                }
+                prevStep();
+                return;
+            }
+
+            try {
+                // Obter token de autenticação
+                const userToken = localStorage.getItem('authToken') || localStorage.getItem('userToken') || localStorage.getItem('supabaseAuthToken');
+                if (!userToken) {
+                    if (typeof showError !== 'undefined') {
+                        showError(null, 'auth', { message: 'Por favor, faça login para continuar.' });
+                    } else {
+                    alert('Por favor, faça login para continuar.');
+                    }
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                // Calcular total
+                let subtotal = 0;
+                cart.forEach(item => {
+                    subtotal += item.price * item.quantity;
+                });
+                const shipping = 15.90;
+                const total = subtotal + shipping;
+
+                // Preparar itens para o Mercado Pago
+                const items = cart.map(item => ({
+                    id: item.id.toString(),
+                    title: item.name,
+                    description: item.description || item.name,
+                    quantity: item.quantity,
+                    unit_price: parseFloat(item.price)
+                }));
+
+                // Obter dados do usuário
+                const userEmail = localStorage.getItem('userEmail') || '';
+                const userName = localStorage.getItem('userName') || deliveryName;
+                const userPhone = localStorage.getItem('userPhone') || '';
+
+                // Preparar dados do pagador
+                const payer = {
+                    name: userName.split(' ')[0] || userName,
+                    surname: userName.split(' ').slice(1).join(' ') || '',
+                    email: userEmail,
+                    phone: userPhone ? {
+                        area_code: userPhone.substring(0, 2) || '',
+                        number: userPhone.substring(2) || ''
+                    } : undefined,
+                    identification: {
+                        type: 'CPF',
+                        number: deliveryCpf
+                    },
+                    address: {
+                        zip_code: deliveryCep.replace(/\D/g, ''),
+                        street_name: deliveryAddress,
+                        street_number: parseInt(deliveryNumber) || 0,
+                        neighborhood: deliveryNeighborhood,
+                        city: deliveryCity,
+                        federal_unit: deliveryState.toUpperCase()
+                    }
+                };
+
+                // Criar preferência no Mercado Pago
+                const response = await fetch('/.netlify/functions/mercado-pago-preference', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${userToken}`
+                    },
+                    body: JSON.stringify({
+                        items: items,
+                        payer: payer,
+                        paymentMethodId: selectedPayment,
+                        backUrls: {
+                            success: window.location.origin + '/checkout.html?status=success',
+                            failure: window.location.origin + '/checkout.html?status=failure',
+                            pending: window.location.origin + '/checkout.html?status=pending'
+                        }
+                    })
+                });
+
+                if (!response.ok) {
+                    let errorData;
+                    try {
+                        const text = await response.text();
+                        console.error('Resposta de erro do servidor:', text);
+                        errorData = JSON.parse(text);
+                    } catch (parseError) {
+                        console.error('Erro ao fazer parse da resposta:', parseError);
+                        errorData = { 
+                            error: `Erro ${response.status}: ${response.statusText}`,
+                            message: 'Não foi possível processar a resposta do servidor'
+                        };
+                    }
+                    
+                    const errorMessage = errorData.error || errorData.message || `Erro ${response.status}: ${response.statusText}`;
+                    console.error('Erro completo:', errorData);
+                    throw new Error(errorMessage);
+                }
+
+                const data = await response.json();
+                console.log('Dados recebidos do servidor:', {
+                    preference_id: data.preference_id,
+                    payment_id: data.payment_id,
+                    init_point: data.init_point,
+                    has_qr_code: !!data.qr_code_base64,
+                    payment_method_id: data.payment_method_id,
+                    selected_payment: selectedPayment
+                });
+                
+                preferenceId = data.preference_id || data.payment_id;
+
+                // Processar conforme método de pagamento
+                if (selectedPayment === 'pix') {
+                    // Para PIX, verificar se temos QR code na resposta
+                    if (data.qr_code_base64 && data.qr_code) {
+                        // Mostrar QR Code PIX na própria página
+                        document.getElementById('pixQrCode').innerHTML = `
+                            <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: inline-block;">
+                                <img src="data:image/png;base64,${data.qr_code_base64}" alt="QR Code PIX" style="max-width: 300px; display: block; margin: 0 auto;">
+                            </div>
+                        `;
+                        pixCode = data.qr_code;
+                        document.getElementById('pixContainer').style.display = 'block';
+                        document.getElementById('copyPixBtn').style.display = 'inline-block';
+                        document.getElementById('pixInstructions').style.display = 'block';
+                        document.getElementById('pixStatus').style.display = 'block';
+                        
+                        // Ocultar botão "Finalizar Pedido" já que o QR code foi gerado
+                        const finalizeBtn = document.querySelector('.step-actions .btn-primary');
+                        if (finalizeBtn) {
+                            finalizeBtn.style.display = 'none';
+                        }
+                        
+                        // Salvar payment_id para verificação de status
+                        if (data.payment_id) {
+                            localStorage.setItem('pixPaymentId', data.payment_id);
+                        }
+                        
+                        // Iniciar verificação periódica do status do pagamento
+                        startPixStatusCheck(data.payment_id);
+                    } else if (data.init_point) {
+                        // Se não tiver QR code mas tiver init_point, redirecionar
+                        console.log('QR code não disponível na resposta, redirecionando para:', data.init_point);
+                        window.location.href = data.init_point;
+                    } else {
+                        alert('Erro ao gerar QR code PIX. Tente novamente.');
+                    }
+                } else if (selectedPayment === 'boleto') {
+                    // Exibir boleto na própria página
+                    if (data.init_point) {
+                        // Calcular data de vencimento (3 dias úteis)
+                        const dueDate = new Date();
+                        let daysAdded = 0;
+                        while (daysAdded < 3) {
+                            dueDate.setDate(dueDate.getDate() + 1);
+                            // Pular finais de semana (sábado = 6, domingo = 0)
+                            if (dueDate.getDay() !== 0 && dueDate.getDay() !== 6) {
+                                daysAdded++;
+                            }
+                        }
+                        
+                        // Formatar data
+                        const formattedDate = dueDate.toLocaleDateString('pt-BR', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                        });
+                        
+                        // Obter valor total
+                        const totalText = document.getElementById('orderTotal').textContent;
+                        const total = totalText.replace('R$', '').trim();
+                        
+                        // Atualizar informações do boleto
+                        document.getElementById('boletoDueDate').textContent = formattedDate;
+                        document.getElementById('boletoAmount').textContent = totalText;
+                        
+                        // Salvar URL do boleto para visualização e impressão
+                        window.boletoUrl = data.init_point;
+                        
+                        // Exibir código de barras se disponível
+                        // O código de barras pode vir em diferentes formatos da resposta do Mercado Pago
+                        let barcodeText = null;
+                        if (data.barcode) {
+                            barcodeText = data.barcode;
+                        } else if (data.transaction_details && data.transaction_details.external_resource_url) {
+                            // Tentar extrair do URL se disponível
+                            barcodeText = 'Código disponível no boleto';
+                        }
+                        
+                        if (barcodeText) {
+                            document.getElementById('boletoBarcodeText').textContent = barcodeText;
+                            document.getElementById('boletoBarcode').style.display = 'block';
+                            boletoBarcodeValue = barcodeText;
+                        }
+                        
+                        // Mostrar container do boleto
+                        document.getElementById('boletoContainer').style.display = 'block';
+                        document.getElementById('boletoStatus').style.display = 'block';
+                        
+                        // Garantir que o listener do botão de visualizar esteja ativo
+                        setTimeout(() => {
+                            const boletoViewBtn = document.getElementById('boletoViewBtn');
+                            if (boletoViewBtn) {
+                                // Remover todos os listeners anteriores
+                                const newBtn = boletoViewBtn.cloneNode(true);
+                                boletoViewBtn.parentNode.replaceChild(newBtn, boletoViewBtn);
+                                
+                                // Adicionar novo listener com capture para garantir execução
+                                newBtn.addEventListener('click', function(e) {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    e.stopImmediatePropagation();
+                                    viewBoleto(e);
+                                    return false;
+                                }, true);
+                                
+                                // Também adicionar sem capture como fallback
+                                newBtn.addEventListener('click', function(e) {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    viewBoleto(e);
+                                    return false;
+                                }, false);
+                            }
+                        }, 100);
+                        
+                        // Ocultar botão "Finalizar Pedido" já que o boleto foi gerado
+                        const finalizeBtn = document.querySelector('.step-actions .btn-primary');
+                        if (finalizeBtn) {
+                            finalizeBtn.style.display = 'none';
+                        }
+                        
+                        // Salvar payment_id para verificação de status
+                        if (data.payment_id) {
+                            localStorage.setItem('boletoPaymentId', data.payment_id);
+                            // Iniciar verificação periódica do status do pagamento
+                            startBoletoStatusCheck(data.payment_id);
+                        }
+                    } else {
+                        alert('Erro ao gerar boleto. Tente novamente.');
+                    }
+                } else if (selectedPayment === 'credit') {
+                    // Para cartão, verificar se o formulário já foi inicializado
+                    if (!cardFormInstance) {
+                        // Se o formulário ainda não foi inicializado, inicializar agora
+                        if (data.preference_id) {
+                            currentPreferenceId = data.preference_id;
+                            try {
+                            await initializeCardForm(data.preference_id);
+                            // Aguardar um pouco para o formulário montar
+                                await new Promise(resolve => setTimeout(resolve, 1000));
+                                
+                                // Verificar se o formulário foi montado com sucesso
+                                if (!cardFormInstance) {
+                                    const errorsDiv = document.getElementById('cardFormErrors');
+                                    if (errorsDiv) {
+                                        errorsDiv.style.display = 'block';
+                                        errorsDiv.textContent = 'Erro ao carregar formulário de cartão. Verifique se a variável MERCADOPAGO_PUBLIC_KEY está configurada no Netlify.';
+                                    }
+                                    return;
+                                }
+                                
+                                // Não processar ainda - aguardar usuário preencher campos e clicar novamente
+                                return;
+                            } catch (error) {
+                                console.error('Erro ao inicializar formulário:', error);
+                                const errorsDiv = document.getElementById('cardFormErrors');
+                                if (errorsDiv) {
+                                    errorsDiv.style.display = 'block';
+                                    errorsDiv.textContent = error.message || 'Erro ao carregar formulário de cartão. Verifique se a variável MERCADOPAGO_PUBLIC_KEY está configurada no Netlify.';
+                                }
+                                return;
+                            }
+                        } else {
+                            alert('Erro ao criar preferência de pagamento. Tente novamente.');
+                            console.error('preference_id não disponível:', data);
+                            return;
+                        }
+                    }
+                    
+                    // Se o formulário já existe, validar e processar pagamento
+                    if (cardFormInstance && currentPreferenceId) {
+                        await processCardPayment(cardFormInstance, currentPreferenceId);
+                    } else {
+                        alert('Por favor, preencha todos os dados do cartão.');
+                    }
+                }
+
+            } catch (error) {
+                console.error('Erro ao processar pagamento:', error);
+                let errorMessage = 'Erro ao processar pagamento';
+                if (error.message) {
+                    errorMessage += ': ' + error.message;
+                }
+                alert(errorMessage);
+            }
+        }
+
+
+        async function updateStock() {
+            try {
+                for (const item of cart) {
+                    const currentStock = parseInt(item.stock) || 0;
+                    const newStock = Math.max(0, currentStock - item.quantity);
+                    
+                    const response = await fetch('/api/admin-products', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            id: item.id,
+                            stock: newStock
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        console.error(`Erro ao atualizar estoque do produto ${item.id}`);
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao atualizar estoque:', error);
+            }
+        }
+
+        function copyPixCode() {
+            if (pixCode) {
+                navigator.clipboard.writeText(pixCode).then(() => {
+                    alert('Código PIX copiado! Cole no app do seu banco para pagar.');
+                }).catch(err => {
+                    console.error('Erro ao copiar código:', err);
+                    // Fallback: selecionar texto
+                    const textArea = document.createElement('textarea');
+                    textArea.value = pixCode;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    try {
+                        document.execCommand('copy');
+                        alert('Código PIX copiado!');
+                    } catch (e) {
+                        alert('Erro ao copiar. Código: ' + pixCode);
+                    }
+                    document.body.removeChild(textArea);
+                });
+            }
+        }
+
+        let pixStatusInterval = null;
+
+        function startPixStatusCheck(paymentId) {
+            if (!paymentId) return;
+            
+            // Verificar status a cada 5 segundos
+            pixStatusInterval = setInterval(async () => {
+                try {
+                    const userToken = localStorage.getItem('authToken') || localStorage.getItem('userToken') || localStorage.getItem('supabaseAuthToken');
+                    const response = await fetch(`/.netlify/functions/mercado-pago-payment-status?payment_id=${paymentId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${userToken}`
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const statusData = await response.json();
+                        if (statusData.status === 'approved') {
+                            clearInterval(pixStatusInterval);
+                            alert('Pagamento aprovado! Redirecionando...');
+                            window.location.href = 'checkout.html?status=success';
+                        } else if (statusData.status === 'rejected' || statusData.status === 'cancelled') {
+                            clearInterval(pixStatusInterval);
+                            alert('Pagamento não aprovado.');
+                        }
+                    }
+                } catch (error) {
+                    console.error('Erro ao verificar status do pagamento:', error);
+                }
+            }, 5000); // Verificar a cada 5 segundos
+            
+            // Parar após 10 minutos
+            setTimeout(() => {
+                if (pixStatusInterval) {
+                    clearInterval(pixStatusInterval);
+                }
+            }, 600000);
+        }
+
+        // Copiar código de barras do boleto
+        function copyBoletoBarcode() {
+            if (boletoBarcodeValue) {
+                navigator.clipboard.writeText(boletoBarcodeValue).then(() => {
+                    alert('Código de barras copiado!');
+                }).catch(err => {
+                    console.error('Erro ao copiar código:', err);
+                    // Fallback: selecionar texto
+                    const barcodeText = document.getElementById('boletoBarcodeText');
+                    if (barcodeText) {
+                        const textArea = document.createElement('textarea');
+                        textArea.value = boletoBarcodeValue;
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        try {
+                            document.execCommand('copy');
+                            alert('Código de barras copiado!');
+                        } catch (e) {
+                            alert('Erro ao copiar. Código: ' + boletoBarcodeValue);
+                        }
+                        document.body.removeChild(textArea);
+                    }
+                });
+            }
+        }
+
+        // Visualizar boleto em nova janela
+        function viewBoleto(event) {
+            // Prevenir qualquer comportamento padrão
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+                event.stopImmediatePropagation();
+            }
+            
+            console.log('viewBoleto chamado, boletoUrl:', window.boletoUrl);
+            
+            if (!window.boletoUrl) {
+                console.error('URL do boleto não disponível');
+                alert('URL do boleto não disponível');
+                return false;
+            }
+            
+            // Como o Mercado Pago bloqueia iframes (X-Frame-Options),
+            // vamos abrir em uma nova janela controlada
+            try {
+                // Criar uma nova janela com características específicas
+                const width = 1200;
+                const height = 800;
+                const left = Math.max(0, (screen.width - width) / 2);
+                const top = Math.max(0, (screen.height - height) / 2);
+                
+                const windowFeatures = `width=${width},height=${height},left=${left},top=${top},toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,directories=no,status=no`;
+                
+                console.log('Tentando abrir janela com features:', windowFeatures);
+                
+                const boletoWindow = window.open(
+                    window.boletoUrl,
+                    'boletoViewer',
+                    windowFeatures
+                );
+                
+                // Verificar se a janela foi realmente aberta
+                if (!boletoWindow || boletoWindow.closed || typeof boletoWindow.closed === 'undefined') {
+                    // Se pop-ups estiverem bloqueados, mostrar mensagem mais clara
+                    const userMessage = `
+Não foi possível abrir o boleto em uma nova janela.
+
+Isso geralmente acontece quando:
+• Pop-ups estão bloqueados no seu navegador
+• Extensões de segurança estão bloqueando a abertura
+
+Soluções:
+1. Permita pop-ups para este site nas configurações do navegador
+2. Ou clique com o botão direito no botão "Visualizar Boleto" e selecione "Abrir em nova aba"
+3. Ou copie este link e cole na barra de endereços:
+${window.boletoUrl}
+                    `.trim();
+                    
+                    alert(userMessage);
+                    return false;
+                }
+                
+                // Focar na nova janela
+                try {
+                    boletoWindow.focus();
+                } catch (focusError) {
+                    console.warn('Não foi possível focar na janela:', focusError);
+                }
+                
+                // Verificar se a janela ainda está aberta após um breve delay
+                setTimeout(() => {
+                    if (boletoWindow.closed) {
+                        console.warn('A janela foi fechada imediatamente após abrir');
+                    } else {
+                        console.log('Boleto aberto com sucesso em nova janela');
+                    }
+                }, 500);
+                
+                console.log('Boleto aberto em nova janela');
+                return false;
+            } catch (error) {
+                console.error('Erro ao abrir boleto:', error);
+                alert('Erro ao abrir o boleto. Por favor, tente novamente ou copie este link: ' + window.boletoUrl);
+                return false;
+            }
+        }
+
+        // Imprimir boleto
+        function printBoleto() {
+            if (!window.boletoUrl) {
+                alert('URL do boleto não disponível');
+                return;
+            }
+            
+            // Abrir em nova janela e imprimir
+            const printWindow = window.open(window.boletoUrl, '_blank');
+            if (printWindow) {
+                printWindow.onload = function() {
+                    setTimeout(() => {
+                        printWindow.print();
+                    }, 1000);
+                };
+            } else {
+                alert('Por favor, permita pop-ups para imprimir o boleto');
+            }
+        }
+
+        // Adicionar event listener ao botão de visualizar boleto quando a página carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            // Adicionar event listener ao botão de visualizar boleto
+            const boletoViewBtn = document.getElementById('boletoViewBtn');
+            if (boletoViewBtn) {
+                boletoViewBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    viewBoleto(e);
+                    return false;
+                });
+            }
+        });
+
+        // Verificar status do pagamento do boleto
+        function startBoletoStatusCheck(paymentId) {
+            if (!paymentId) return;
+            
+            // Verificar status a cada 30 segundos (boleto demora mais para ser pago)
+            boletoStatusInterval = setInterval(async () => {
+                try {
+                    const userToken = localStorage.getItem('authToken') || localStorage.getItem('userToken') || localStorage.getItem('supabaseAuthToken');
+                    const response = await fetch(`/.netlify/functions/mercado-pago-payment-status?payment_id=${paymentId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${userToken}`
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const statusData = await response.json();
+                        if (statusData.status === 'approved') {
+                            clearInterval(boletoStatusInterval);
+                            alert('Pagamento aprovado! Redirecionando...');
+                            window.location.href = 'checkout.html?status=success';
+                        } else if (statusData.status === 'rejected' || statusData.status === 'cancelled') {
+                            clearInterval(boletoStatusInterval);
+                            const statusDiv = document.getElementById('boletoStatus');
+                            if (statusDiv) {
+                                statusDiv.style.background = 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)';
+                                statusDiv.style.borderLeftColor = '#ef4444';
+                                statusDiv.innerHTML = `
+                                    <div style="display: flex; align-items: center; gap: 12px;">
+                                        <div style="flex-shrink: 0; width: 40px; height: 40px; background: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM15.59 7L12 10.59L8.41 7L7 8.41L10.59 12L7 15.59L8.41 17L12 13.41L15.59 17L17 15.59L13.41 12L17 8.41L15.59 7Z" fill="#ef4444"/>
+                                            </svg>
+                                        </div>
+                                        <div style="flex: 1;">
+                                            <p style="color: #ef4444; margin: 0; font-weight: 600; font-size: 15px;">Pagamento não aprovado ou cancelado</p>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('Erro ao verificar status do pagamento:', error);
+                }
+            }, 30000); // Verificar a cada 30 segundos
+            
+            // Parar após 3 dias (tempo de vencimento do boleto)
+            setTimeout(() => {
+                if (boletoStatusInterval) {
+                    clearInterval(boletoStatusInterval);
+                }
+            }, 259200000); // 3 dias em milissegundos
+        }
+
+        // Aguardar SDK do Mercado Pago carregar
+        function waitForMercadoPagoSDK(maxAttempts = 50) {
+            return new Promise((resolve, reject) => {
+                let attempts = 0;
+                const checkSDK = setInterval(() => {
+                    attempts++;
+                    if (typeof MercadoPago !== 'undefined') {
+                        clearInterval(checkSDK);
+                        resolve();
+                    } else if (attempts >= maxAttempts) {
+                        clearInterval(checkSDK);
+                        reject(new Error('SDK do Mercado Pago não carregou a tempo'));
+                    }
+                }, 100);
+            });
+        }
+
+        // Inicializar formulário de cartão de forma assíncrona (ao selecionar o método)
+        async function initializeCardFormAsync() {
+            try {
+                // Verificar se já temos uma preferência
+                if (currentPreferenceId) {
+                    await initializeCardForm(currentPreferenceId);
+                    return;
+                }
+
+                // Obter token de autenticação
+                const userToken = localStorage.getItem('authToken') || localStorage.getItem('userToken') || localStorage.getItem('supabaseAuthToken');
+                if (!userToken) {
+                    console.log('Usuário não autenticado, formulário será inicializado ao clicar em Finalizar Pedido');
+                    return;
+                }
+
+                // Calcular total
+                let subtotal = 0;
+                cart.forEach(item => {
+                    subtotal += item.price * item.quantity;
+                });
+                const shipping = 15.90;
+                const total = subtotal + shipping;
+
+                // Preparar itens para o Mercado Pago
+                const items = cart.map(item => ({
+                    id: item.id.toString(),
+                    title: item.name,
+                    description: item.description || item.name,
+                    quantity: item.quantity,
+                    unit_price: parseFloat(item.price)
+                }));
+
+                // Obter dados de entrega
+                const deliveryName = document.getElementById('deliveryName')?.value || '';
+                const deliveryCpf = document.getElementById('deliveryCpf')?.value.replace(/\D/g, '') || '';
+                const deliveryCep = document.getElementById('deliveryCep')?.value || '';
+                const deliveryAddress = document.getElementById('deliveryAddress')?.value || '';
+                const deliveryNeighborhood = document.getElementById('deliveryNeighborhood')?.value || '';
+                const deliveryNumber = document.getElementById('deliveryNumber')?.value || '';
+                const deliveryCity = document.getElementById('deliveryCity')?.value || '';
+                const deliveryState = document.getElementById('deliveryState')?.value || '';
+
+                // Se os dados de entrega não estiverem preenchidos, usar valores padrão ou do localStorage
+                if (!deliveryName) {
+                    deliveryName = localStorage.getItem('userName') || 'Cliente';
+                }
+                if (!deliveryCpf || deliveryCpf.length !== 11) {
+                    // Se CPF não estiver válido, não podemos criar a preferência ainda
+                    console.log('CPF não preenchido ou inválido, formulário será inicializado ao clicar em Finalizar Pedido');
+                    return;
+                }
+                if (!deliveryCep || !deliveryAddress || !deliveryNeighborhood || !deliveryNumber || !deliveryCity || !deliveryState) {
+                    // Se dados de endereço não estiverem completos, não podemos criar a preferência ainda
+                    console.log('Dados de endereço incompletos, formulário será inicializado ao clicar em Finalizar Pedido');
+                    return;
+                }
+
+                // Obter dados do usuário
+                const userEmail = localStorage.getItem('userEmail') || '';
+                const userName = localStorage.getItem('userName') || deliveryName;
+                const userPhone = localStorage.getItem('userPhone') || '';
+
+                // Preparar dados do pagador
+                const payer = {
+                    name: userName.split(' ')[0] || userName,
+                    surname: userName.split(' ').slice(1).join(' ') || '',
+                    email: userEmail,
+                    phone: userPhone ? {
+                        area_code: userPhone.substring(0, 2) || '',
+                        number: userPhone.substring(2) || ''
+                    } : undefined,
+                    identification: {
+                        type: 'CPF',
+                        number: deliveryCpf
+                    },
+                    address: {
+                        zip_code: deliveryCep.replace(/\D/g, ''),
+                        street_name: deliveryAddress,
+                        street_number: parseInt(deliveryNumber) || 0,
+                        neighborhood: deliveryNeighborhood,
+                        city: deliveryCity,
+                        federal_unit: deliveryState.toUpperCase()
+                    }
+                };
+
+                // Criar preferência no Mercado Pago
+                const response = await fetch('/.netlify/functions/mercado-pago-preference', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${userToken}`
+                    },
+                    body: JSON.stringify({
+                        items: items,
+                        payer: payer,
+                        paymentMethodId: 'credit_card',
+                        backUrls: {
+                            success: window.location.origin + '/checkout.html?status=success',
+                            failure: window.location.origin + '/checkout.html?status=failure',
+                            pending: window.location.origin + '/checkout.html?status=pending'
+                        }
+                    })
+                });
+
+                if (!response.ok) {
+                    console.error('Erro ao criar preferência:', response.statusText);
+                    return;
+                }
+
+                const data = await response.json();
+                if (data.preference_id) {
+                    currentPreferenceId = data.preference_id;
+                    console.log('Inicializando formulário de cartão com preference_id:', data.preference_id);
+                    await initializeCardForm(data.preference_id);
+                    console.log('Formulário de cartão inicializado com sucesso');
+                } else {
+                    console.error('preference_id não retornado na resposta:', data);
+                }
+            } catch (error) {
+                console.error('Erro ao inicializar formulário de cartão:', error);
+                // Não exibir erro ao usuário - o formulário será inicializado quando clicar em Finalizar Pedido
+                // Apenas limpar qualquer instância parcial
+                destroyCardForm();
+            }
+        }
+
+        // Inicializar formulário de cartão do Mercado Pago
+        async function initializeCardForm(preferenceId) {
+            try {
+                // Destruir formulário existente antes de criar um novo
+                destroyCardForm();
+                
+                const userToken = localStorage.getItem('authToken') || localStorage.getItem('userToken') || localStorage.getItem('supabaseAuthToken');
+                
+                // Buscar a Public Key do servidor
+                const publicKeyResponse = await fetch('/.netlify/functions/mercado-pago-public-key', {
+                    headers: {
+                        'Authorization': `Bearer ${userToken}`
+                    }
+                });
+
+                if (!publicKeyResponse.ok) {
+                    let errorMessage = 'Erro ao obter Public Key';
+                    try {
+                    const errorData = await publicKeyResponse.json();
+                        errorMessage = errorData.message || errorData.error || errorMessage;
+                    } catch (e) {
+                        errorMessage = `Erro ${publicKeyResponse.status}: ${publicKeyResponse.statusText}`;
+                    }
+                    throw new Error(errorMessage);
+                }
+
+                const { publicKey } = await publicKeyResponse.json();
+                
+                // Aguardar SDK carregar
+                await waitForMercadoPagoSDK();
+
+                // Aguardar um pouco para garantir que qualquer contexto anterior foi limpo
+                await new Promise(resolve => setTimeout(resolve, 100));
+
+                // Inicializar Mercado Pago
+                mpInstance = new MercadoPago(publicKey, {
+                    locale: 'pt-BR'
+                });
+
+                // Calcular total
+                const totalText = document.getElementById('orderTotal').textContent;
+                const total = parseFloat(totalText.replace('R$', '').replace(/\./g, '').replace(',', '.').trim());
+
+                // Mostrar container ANTES de criar o formulário
+                const creditCardContainer = document.getElementById('creditCardContainer');
+                creditCardContainer.style.display = 'block';
+                
+                // Verificar se a Public Key é válida
+                if (!publicKey || publicKey.length < 20) {
+                    throw new Error('Public Key inválida. Verifique a configuração MERCADOPAGO_PUBLIC_KEY no Netlify.');
+                }
+                
+                // Garantir que os containers existam e estejam vazios
+                const cardNumberContainer = document.getElementById('form-checkout__cardNumber');
+                const expirationContainer = document.getElementById('form-checkout__expirationDate');
+                const securityCodeContainer = document.getElementById('form-checkout__securityCode');
+                
+                if (!cardNumberContainer || !expirationContainer || !securityCodeContainer) {
+                    throw new Error('Containers do formulário não encontrados');
+                }
+                
+                // Limpar containers antes de montar
+                cardNumberContainer.innerHTML = '';
+                expirationContainer.innerHTML = '';
+                securityCodeContainer.innerHTML = '';
+                
+                // Aguardar um pouco para garantir que o DOM foi atualizado
+                await new Promise(resolve => setTimeout(resolve, 50));
+
+                // Criar formulário de cartão usando cardForm
+                // IMPORTANTE: passar preferenceId para que as opções de parcelamento sejam carregadas
+                const cardFormConfig = {
+                    amount: total.toString(),
+                    iframe: true,
+                    form: {
+                        id: 'cardForm',
+                        cardNumber: {
+                            id: 'form-checkout__cardNumber',
+                            placeholder: 'Número do cartão',
+                        },
+                        expirationDate: {
+                            id: 'form-checkout__expirationDate',
+                            placeholder: 'MM/AA',
+                        },
+                        securityCode: {
+                            id: 'form-checkout__securityCode',
+                            placeholder: 'CVV',
+                        },
+                        cardholderName: {
+                            id: 'form-checkout__cardholderName',
+                            placeholder: 'Nome do titular',
+                        },
+                        issuer: {
+                            id: 'form-checkout__issuer',
+                            placeholder: 'Banco emissor',
+                        },
+                        installments: {
+                            id: 'form-checkout__installments',
+                            placeholder: 'Parcelas',
+                        },
+                        identificationType: {
+                            id: 'form-checkout__identificationType',
+                            placeholder: 'Tipo de documento',
+                        },
+                        identificationNumber: {
+                            id: 'form-checkout__identificationNumber',
+                            placeholder: 'Número do documento',
+                        },
+                        cardholderEmail: {
+                            id: 'form-checkout__cardholderEmail',
+                            placeholder: 'E-mail',
+                        },
+                    },
+                    callbacks: {
+                        onFormMounted: error => {
+                            if (error) {
+                                console.error('Erro ao montar o formulário:', error);
+                                
+                                // Tratar diferentes tipos de erro
+                                let errorMessage = 'Erro desconhecido';
+                                if (Array.isArray(error)) {
+                                    errorMessage = error.map(e => {
+                                        if (typeof e === 'string') return e;
+                                        if (e && e.message) return e.message;
+                                        if (e && e.error) return e.error;
+                                        return JSON.stringify(e);
+                                    }).join(', ');
+                                } else if (error && typeof error === 'object') {
+                                    errorMessage = error.message || error.error || error.toString() || JSON.stringify(error);
+                                } else if (error) {
+                                    errorMessage = String(error);
+                                }
+                                
+                                console.error('Mensagem de erro detalhada:', errorMessage);
+                                
+                                const errorsDiv = document.getElementById('cardFormErrors');
+                                errorsDiv.style.display = 'block';
+                                errorsDiv.textContent = 'Erro ao carregar formulário: ' + errorMessage;
+                                
+                                // Mostrar botão "Finalizar Pedido" novamente
+                                const finalizeBtn = document.querySelector('.step-actions .btn-primary');
+                                if (finalizeBtn) {
+                                    finalizeBtn.style.display = '';
+                                }
+                                
+                                // Tentar destruir e recriar se possível
+                                destroyCardForm();
+                                return;
+                            }
+                            console.log('Formulário montado com sucesso');
+                            
+                            // Garantir que a div de erros esteja oculta ao montar o formulário
+                            const errorsDiv = document.getElementById('cardFormErrors');
+                            if (errorsDiv) {
+                                errorsDiv.style.display = 'none';
+                                errorsDiv.textContent = '';
+                            }
+                            
+                            // Manter botão "Finalizar Pedido" visível mas desabilitado até campos estarem preenchidos
+                            const finalizeBtn = document.querySelector('.step-actions .btn-primary');
+                            if (finalizeBtn) {
+                                finalizeBtn.style.display = '';
+                                finalizeBtn.disabled = true;
+                                finalizeBtn.style.opacity = '0.6';
+                                finalizeBtn.style.cursor = 'not-allowed';
+                            }
+                            
+                            // Adicionar listeners para validação em tempo real
+                            setTimeout(() => {
+                                const cardholderName = document.getElementById('form-checkout__cardholderName');
+                                const installments = document.getElementById('form-checkout__installments');
+                                const identificationType = document.getElementById('form-checkout__identificationType');
+                                const identificationNumber = document.getElementById('form-checkout__identificationNumber');
+                                const cardholderEmail = document.getElementById('form-checkout__cardholderEmail');
+
+                                // Validar e atualizar em tempo real
+                                function validateField(fieldName, value) {
+                                    const validation = validateCardFormDetailed();
+                                    const fieldError = validation.errors[fieldName];
+                                    const errorDiv = document.getElementById(`error-${fieldName}`);
+                                    const input = document.getElementById(`form-checkout__${fieldName}`);
+                                    
+                                    if (errorDiv) {
+                                        if (fieldError) {
+                                            errorDiv.style.display = 'block';
+                                            errorDiv.textContent = fieldError;
+                                            if (input) input.classList.add('error');
+                                            if (input) input.classList.remove('valid');
+                                        } else {
+                                            errorDiv.style.display = 'none';
+                                            errorDiv.textContent = '';
+                                            if (input && value) {
+                                                input.classList.remove('error');
+                                                input.classList.add('valid');
+                                            } else if (input) {
+                                                input.classList.remove('error', 'valid');
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // Nome do titular - apenas letras e espaços
+                                if (cardholderName) {
+                                    cardholderName.addEventListener('input', (e) => {
+                                        // Remover caracteres não permitidos
+                                        e.target.value = e.target.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '');
+                                        // Limitar a 50 caracteres
+                                        if (e.target.value.length > 50) {
+                                            e.target.value = e.target.value.substring(0, 50);
+                                        }
+                                        validateField('cardholderName', e.target.value);
+                                        updateFinalizeButton();
+                                    });
+                                    cardholderName.addEventListener('blur', (e) => {
+                                        validateField('cardholderName', e.target.value);
+                                        updateFinalizeButton();
+                                    });
+                                }
+
+                                // Parcelas
+                                if (installments) {
+                                    installments.addEventListener('change', (e) => {
+                                        validateField('installments', e.target.value);
+                                        updateFinalizeButton();
+                                    });
+                                }
+
+                                // Tipo de documento
+                                if (identificationType) {
+                                    identificationType.addEventListener('change', (e) => {
+                                        // Aplicar máscara quando o tipo mudar
+                                        if (identificationNumber) {
+                                            identificationNumber.value = '';
+                                            identificationNumber.maxLength = e.target.value === 'CPF' ? 14 : 18;
+                                            applyDocumentMask(identificationNumber);
+                                        }
+                                        validateField('identificationType', e.target.value);
+                                        validateField('identificationNumber', identificationNumber?.value || '');
+                                        updateFinalizeButton();
+                                    });
+                                }
+
+                                // Número do documento - apenas números e aplicar máscara
+                                if (identificationNumber) {
+                                    identificationNumber.addEventListener('input', (e) => {
+                                        const identificationType = document.getElementById('form-checkout__identificationType')?.value || '';
+                                        
+                                        // Remover caracteres não numéricos e aplicar máscara
+                                        applyDocumentMask(e.target);
+                                        
+                                        // Validar após aplicar máscara
+                                        validateField('identificationNumber', e.target.value);
+                                        updateFinalizeButton();
+                                    });
+                                    identificationNumber.addEventListener('blur', (e) => {
+                                        // Garantir que a máscara está aplicada corretamente
+                                        applyDocumentMask(e.target);
+                                        validateField('identificationNumber', e.target.value);
+                                        updateFinalizeButton();
+                                    });
+                                }
+
+                                // E-mail
+                                if (cardholderEmail) {
+                                    cardholderEmail.addEventListener('input', (e) => {
+                                        // Limitar a 100 caracteres
+                                        if (e.target.value.length > 100) {
+                                            e.target.value = e.target.value.substring(0, 100);
+                                        }
+                                        validateField('cardholderEmail', e.target.value);
+                                        updateFinalizeButton();
+                                    });
+                                    cardholderEmail.addEventListener('blur', (e) => {
+                                        validateField('cardholderEmail', e.target.value);
+                                        updateFinalizeButton();
+                                    });
+                                }
+
+                                // Verificar periodicamente se o token do cartão foi gerado
+                                const checkCardToken = setInterval(() => {
+                                    updateFinalizeButton();
+                                    if (validateCardForm()) {
+                                        clearInterval(checkCardToken);
+                                    }
+                                }, 500);
+
+                                // Parar após 30 segundos
+                                setTimeout(() => clearInterval(checkCardToken), 30000);
+                            }, 1000);
+                        },
+                        onSubmit: async (event) => {
+                            event.preventDefault();
+                            // O botão "Finalizar Pedido" vai processar o pagamento
+                        },
+                        onValidityChange: (field, error) => {
+                            // Callback chamado quando a validação de um campo muda
+                            console.log('Validação do campo:', field, error);
+                            
+                            // Mapear nomes de campos do Mercado Pago para nossos IDs
+                            let fieldId = field;
+                            if (field === 'securityCode' || field === 'security_code' || field === 'securityCode') {
+                                fieldId = 'securityCode';
+                            } else if (field === 'expirationDate' || field === 'expiration_date' || field === 'expirationDate') {
+                                fieldId = 'expirationDate';
+                            } else if (field === 'cardNumber' || field === 'card_number' || field === 'cardNumber') {
+                                fieldId = 'cardNumber';
+                            }
+                            
+                            // Limpar erros anteriores do campo
+                            const errorDiv = document.getElementById(`error-${fieldId}`);
+                            if (errorDiv) {
+                                if (error) {
+                                    // Se houver erro, exibir mensagem específica
+                                    let errorMessage = '';
+                                    
+                                    if (fieldId === 'securityCode') {
+                                        errorMessage = 'CVV inválido ou incompleto';
+                                    } else if (fieldId === 'expirationDate') {
+                                        errorMessage = 'Data de validade (MM/AA) inválida ou incompleta';
+                                    } else if (fieldId === 'cardNumber') {
+                                        errorMessage = 'Dados do cartão inválidos';
+                                    } else {
+                                        errorMessage = error?.message || 'Campo inválido';
+                                    }
+                                    
+                                    errorDiv.style.display = 'block';
+                                    errorDiv.textContent = errorMessage;
+                                } else {
+                                    // Se não houver erro, limpar mensagem
+                                    errorDiv.style.display = 'none';
+                                    errorDiv.textContent = '';
+                                }
+                            }
+                            
+                            // Atualizar estado do botão
+                            updateFinalizeButton();
+                        },
+                        onFetching: (resource) => {
+                            console.log('Buscando recurso:', resource);
+                            const progressBar = document.getElementById('cardFormProgress');
+                            if (progressBar) {
+                                progressBar.style.display = 'block';
+                                progressBar.removeAttribute('value');
+                            }
+                            return () => {
+                                if (progressBar) {
+                                    progressBar.setAttribute('value', '0');
+                                    progressBar.style.display = 'none';
+                                }
+                            };
+                        }
+                    }
+                };
+
+                // Adicionar preferenceId se disponível (necessário para carregar opções de parcelamento)
+                if (preferenceId) {
+                    cardFormConfig.preferenceId = preferenceId;
+                    console.log('PreferenceId adicionado ao cardForm:', preferenceId);
+                } else {
+                    console.warn('PreferenceId não disponível - parcelas podem não aparecer');
+                }
+
+                // Criar instância do formulário de cartão
+                cardFormInstance = mpInstance.cardForm(cardFormConfig);
+                console.log('CardForm criado com configuração:', {
+                    amount: cardFormConfig.amount,
+                    hasPreferenceId: !!cardFormConfig.preferenceId,
+                    preferenceId: cardFormConfig.preferenceId
+                });
+                
+                // Manter botão "Finalizar Pedido" visível, mas desabilitado até campos serem preenchidos
+                const finalizeBtn = document.querySelector('.step-actions .btn-primary');
+                if (finalizeBtn) {
+                    finalizeBtn.style.display = '';
+                    finalizeBtn.disabled = true;
+                    finalizeBtn.style.opacity = '0.6';
+                    finalizeBtn.style.cursor = 'not-allowed';
+                }
+            } catch (error) {
+                console.error('Erro ao inicializar formulário de cartão:', error);
+                
+                // Limpar qualquer instância parcial em caso de erro
+                destroyCardForm();
+                
+                const errorsDiv = document.getElementById('cardFormErrors');
+                errorsDiv.style.display = 'block';
+                
+                // Melhorar mensagem de erro
+                let errorMessage = 'Erro desconhecido';
+                if (Array.isArray(error)) {
+                    errorMessage = error.map(e => e.message || e.toString()).join(', ');
+                } else if (error && error.message) {
+                    errorMessage = error.message;
+                } else if (error && typeof error === 'string') {
+                    errorMessage = error;
+                } else if (error) {
+                    errorMessage = JSON.stringify(error);
+                }
+                
+                errorsDiv.textContent = 'Erro ao carregar formulário de cartão: ' + errorMessage;
+                
+                // Mostrar botão "Finalizar Pedido" novamente
+                const finalizeBtn = document.querySelector('.step-actions .btn-primary');
+                if (finalizeBtn) {
+                    finalizeBtn.style.display = '';
+                }
+            }
+        }
+
+        // Aplicar máscara de CPF/CNPJ
+        function applyDocumentMask(input) {
+            if (!input) return;
+            
+            let value = input.value.replace(/\D/g, '');
+            const identificationType = document.getElementById('form-checkout__identificationType')?.value || '';
+            
+            if (identificationType === 'CPF') {
+                // Limitar a 11 dígitos
+                if (value.length > 11) {
+                    value = value.substring(0, 11);
+                }
+                // Aplicar máscara progressivamente: 000.000.000-00
+                if (value.length <= 3) {
+                    input.value = value;
+                } else if (value.length <= 6) {
+                    input.value = value.replace(/(\d{3})(\d+)/, '$1.$2');
+                } else if (value.length <= 9) {
+                    input.value = value.replace(/(\d{3})(\d{3})(\d+)/, '$1.$2.$3');
+                } else {
+                    input.value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+                }
+            } else if (identificationType === 'CNPJ') {
+                // Limitar a 14 dígitos
+                if (value.length > 14) {
+                    value = value.substring(0, 14);
+                }
+                // Aplicar máscara progressivamente: 00.000.000/0000-00
+                if (value.length <= 2) {
+                    input.value = value;
+                } else if (value.length <= 5) {
+                    input.value = value.replace(/(\d{2})(\d+)/, '$1.$2');
+                } else if (value.length <= 8) {
+                    input.value = value.replace(/(\d{2})(\d{3})(\d+)/, '$1.$2.$3');
+                } else if (value.length <= 12) {
+                    input.value = value.replace(/(\d{2})(\d{3})(\d{3})(\d+)/, '$1.$2.$3/$4');
+                } else {
+                    input.value = value.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+                }
+            } else {
+                // Sem tipo selecionado, apenas números
+                input.value = value;
+            }
+        }
+
+        // Validar campos do formulário de cartão e retornar erros específicos
+        function validateCardFormDetailed() {
+            const errors = {};
+            
+            if (!cardFormInstance) {
+                errors.cardForm = 'Formulário de cartão não inicializado';
+                return { isValid: false, errors };
+            }
+
+            // Validar token do cartão e campos específicos
+            try {
+                const formData = cardFormInstance.getCardFormData();
+                if (!formData || !formData.token) {
+                    // Se não tem token, algum campo está inválido
+                    // Tentar identificar qual campo específico está com erro verificando os campos do formulário
+                    errors.cardNumber = 'Dados do cartão inválidos';
+                }
+            } catch (e) {
+                // Capturar erros específicos do Mercado Pago
+                const errorMessage = e?.message || e?.toString() || '';
+                
+                // Verificar erros específicos
+                if (errorMessage.includes('security_code') || errorMessage.includes('CVV') || errorMessage.includes('cvv') || errorMessage.toLowerCase().includes('código de segurança') || errorMessage.toLowerCase().includes('cvv inválido')) {
+                    errors.securityCode = 'CVV inválido ou incompleto';
+                } else if (errorMessage.includes('expiration') || errorMessage.includes('expiration_date') || errorMessage.includes('MM/AA') || errorMessage.includes('data de validade') || errorMessage.toLowerCase().includes('vencimento') || errorMessage.toLowerCase().includes('data inválida')) {
+                    errors.expirationDate = 'Data de validade (MM/AA) inválida ou incompleta';
+                } else if (errorMessage.includes('card_number') || errorMessage.includes('cardNumber') || errorMessage.toLowerCase().includes('número do cartão') || errorMessage.toLowerCase().includes('cartão inválido')) {
+                    errors.cardNumber = 'Dados do cartão inválidos';
+                } else {
+                    // Erro genérico - tentar verificar campos individualmente
+                    // Verificar se conseguimos obter informações sobre os campos
+                    try {
+                        // Tentar obter dados do formulário para identificar qual campo está com erro
+                        const testData = cardFormInstance.getCardFormData();
+                        if (!testData) {
+                            errors.cardNumber = 'Dados do cartão inválidos';
+                        }
+                    } catch (innerError) {
+                        const innerMessage = innerError?.message || innerError?.toString() || '';
+                        if (innerMessage.includes('security') || innerMessage.includes('CVV') || innerMessage.includes('cvv')) {
+                            errors.securityCode = 'CVV inválido ou incompleto';
+                        } else if (innerMessage.includes('expiration') || innerMessage.includes('MM/AA') || innerMessage.includes('vencimento')) {
+                            errors.expirationDate = 'Data de validade (MM/AA) inválida ou incompleta';
+                        } else {
+                            errors.cardNumber = 'Dados do cartão inválidos';
+                        }
+                    }
+                }
+            }
+            
+            // Verificação adicional: se não identificamos erros específicos mas o token não existe,
+            // tentar uma validação mais detalhada
+            if (!errors.securityCode && !errors.expirationDate && !errors.cardNumber) {
+                try {
+                    const formData = cardFormInstance.getCardFormData();
+                    if (!formData || !formData.token) {
+                        // Se não tem token, algum campo do cartão está inválido
+                        // Como não conseguimos identificar qual especificamente sem tentar processar,
+                        // vamos deixar que o callback onValidityChange ou o processamento identifique
+                        // Por enquanto, não adicionamos erro genérico para não confundir o usuário
+                    }
+                } catch (e) {
+                    // Se houver erro ao obter dados, algum campo está inválido
+                    // Mas não conseguimos identificar qual especificamente aqui
+                    // O erro será capturado quando o usuário tentar processar o pagamento
+                }
+            }
+
+            const cardholderName = document.getElementById('form-checkout__cardholderName')?.value.trim() || '';
+            const installments = document.getElementById('form-checkout__installments')?.value || '';
+            const identificationType = document.getElementById('form-checkout__identificationType')?.value || '';
+            const identificationNumber = document.getElementById('form-checkout__identificationNumber')?.value.replace(/\D/g, '') || '';
+            const cardholderEmail = document.getElementById('form-checkout__cardholderEmail')?.value.trim() || '';
+
+            // Validar nome do titular
+            if (!cardholderName) {
+                errors.cardholderName = 'Nome do titular é obrigatório';
+            } else if (cardholderName.length < 3) {
+                errors.cardholderName = 'Nome deve ter pelo menos 3 caracteres';
+            } else if (!/^[A-Za-zÀ-ÿ\s]+$/.test(cardholderName)) {
+                errors.cardholderName = 'Nome deve conter apenas letras e espaços';
+            }
+
+            // Validar parcelas
+            if (!installments) {
+                errors.installments = 'Selecione o número de parcelas';
+            }
+
+            // Validar tipo de documento
+            if (!identificationType) {
+                errors.identificationType = 'Selecione o tipo de documento';
+            }
+
+            // Validar número do documento
+            if (!identificationNumber) {
+                errors.identificationNumber = 'Número do documento é obrigatório';
+            } else if (identificationType === 'CPF') {
+                if (identificationNumber.length !== 11) {
+                    errors.identificationNumber = 'CPF deve ter 11 dígitos';
+            }
+            } else if (identificationType === 'CNPJ') {
+                if (identificationNumber.length !== 14) {
+                    errors.identificationNumber = 'CNPJ deve ter 14 dígitos';
+            }
+            }
+
+            // Validar e-mail
+            if (!cardholderEmail) {
+                errors.cardholderEmail = 'E-mail é obrigatório';
+            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cardholderEmail)) {
+                errors.cardholderEmail = 'E-mail inválido';
+            }
+
+            return {
+                isValid: Object.keys(errors).length === 0,
+                errors
+            };
+        }
+
+        // Validar campos do formulário de cartão (versão simples para compatibilidade)
+        function validateCardForm() {
+            const validation = validateCardFormDetailed();
+            return validation.isValid;
+        }
+
+        // Exibir erros de validação nos campos
+        function displayFieldErrors(errors) {
+            // Limpar todos os erros primeiro
+            const allErrorDivs = document.querySelectorAll('.field-error');
+            allErrorDivs.forEach(div => {
+                div.style.display = 'none';
+                div.textContent = '';
+            });
+
+            // Remover classes de erro/validação
+            const allInputs = document.querySelectorAll('.card-form-input');
+            allInputs.forEach(input => {
+                input.classList.remove('error', 'valid');
+            });
+
+            // Exibir erros específicos
+            Object.keys(errors).forEach(fieldName => {
+                const errorDiv = document.getElementById(`error-${fieldName}`);
+                const input = document.getElementById(`form-checkout__${fieldName}`);
+                
+                if (errorDiv && errors[fieldName]) {
+                    errorDiv.style.display = 'block';
+                    errorDiv.textContent = errors[fieldName];
+                }
+                
+                if (input) {
+                    input.classList.add('error');
+                }
+            });
+
+            // Marcar campos válidos
+            const validFields = ['cardholderName', 'installments', 'identificationType', 'identificationNumber', 'cardholderEmail'];
+            validFields.forEach(fieldName => {
+                if (!errors[fieldName]) {
+                    const input = document.getElementById(`form-checkout__${fieldName}`);
+                    if (input && input.value) {
+                        input.classList.add('valid');
+                    }
+                }
+            });
+            
+            // Limpar erros dos campos do cartão se não houver erro
+            const cardFields = ['cardNumber', 'expirationDate', 'securityCode'];
+            cardFields.forEach(fieldName => {
+                if (!errors[fieldName]) {
+                    const errorDiv = document.getElementById(`error-${fieldName}`);
+                    if (errorDiv) {
+                        errorDiv.style.display = 'none';
+                        errorDiv.textContent = '';
+                    }
+                }
+            });
+        }
+
+        // Função para verificar e atualizar estado do botão "Finalizar Pedido"
+        function updateFinalizeButton() {
+            const finalizeBtn = document.querySelector('.step-actions .btn-primary');
+            if (!finalizeBtn) return;
+
+            if (selectedPayment === 'credit') {
+                // Se for cartão, verificar se todos os campos estão preenchidos
+                // Mas só validar se o formulário já foi inicializado
+                if (!cardFormInstance) {
+                    // Se o formulário ainda não foi inicializado, manter botão habilitado
+                    // A validação acontecerá quando o usuário clicar em "Finalizar Pedido"
+                    finalizeBtn.disabled = false;
+                    finalizeBtn.style.opacity = '1';
+                    finalizeBtn.style.cursor = 'pointer';
+                    return;
+                }
+                
+                // Se o formulário já existe, validar silenciosamente (sem exibir mensagens)
+                const isValid = validateCardForm();
+                finalizeBtn.disabled = !isValid;
+                if (isValid) {
+                    finalizeBtn.style.opacity = '1';
+                    finalizeBtn.style.cursor = 'pointer';
+                } else {
+                    finalizeBtn.style.opacity = '0.6';
+                    finalizeBtn.style.cursor = 'not-allowed';
+                }
+            } else {
+                // Para outros métodos, sempre habilitado
+                finalizeBtn.disabled = false;
+                finalizeBtn.style.opacity = '1';
+                finalizeBtn.style.cursor = 'pointer';
+            }
+        }
+
+        // Processar pagamento com cartão
+        async function processCardPayment(cardForm, preferenceId) {
+            try {
+                const finalizeBtn = document.querySelector('.step-actions .btn-primary');
+                if (finalizeBtn) {
+                    finalizeBtn.disabled = true;
+                    finalizeBtn.textContent = 'Processando...';
+                }
+
+                const errorsDiv = document.getElementById('cardFormErrors');
+                errorsDiv.style.display = 'none';
+                errorsDiv.textContent = '';
+
+                // Validar campos antes de processar
+                const validation = validateCardFormDetailed();
+                if (!validation.isValid) {
+                    // Exibir erros específicos em cada campo
+                    displayFieldErrors(validation.errors);
+                    
+                    // Exibir mensagem geral se houver erros
+                    const errorMessages = Object.values(validation.errors).filter(msg => msg);
+                    if (errorMessages.length > 0) {
+                    errorsDiv.style.display = 'block';
+                        errorsDiv.textContent = 'Por favor, corrija os erros indicados nos campos acima.';
+                    }
+                    
+                    if (finalizeBtn) {
+                        finalizeBtn.disabled = false;
+                        finalizeBtn.textContent = 'Finalizar Pedido';
+                        updateFinalizeButton();
+                    }
+                    return;
+                }
+
+                // Obter dados do formulário usando getCardFormData
+                let paymentMethodId, issuerId, email, amount, token, installments, identificationNumber, identificationType;
+                
+                try {
+                    const formData = cardForm.getCardFormData();
+                    paymentMethodId = formData.paymentMethodId;
+                    issuerId = formData.issuerId;
+                    email = formData.cardholderEmail;
+                    amount = formData.amount;
+                    token = formData.token;
+                    installments = formData.installments;
+                    identificationNumber = formData.identificationNumber;
+                    identificationType = formData.identificationType;
+                } catch (formError) {
+                    // Capturar erro específico do formulário
+                    const errorMessage = formError?.message || formError?.toString() || '';
+                    
+                    // Identificar qual campo está com erro
+                    if (errorMessage.includes('security_code') || errorMessage.includes('CVV') || errorMessage.includes('cvv') || errorMessage.toLowerCase().includes('código de segurança')) {
+                        const errorsDiv = document.getElementById('cardFormErrors');
+                        const errorFieldDiv = document.getElementById('error-securityCode');
+                        if (errorsDiv) {
+                            errorsDiv.style.display = 'block';
+                            errorsDiv.textContent = 'CVV inválido ou incompleto. Por favor, verifique o código de segurança do cartão.';
+                        }
+                        if (errorFieldDiv) {
+                            errorFieldDiv.style.display = 'block';
+                            errorFieldDiv.textContent = 'CVV inválido ou incompleto';
+                        }
+                        throw new Error('CVV inválido ou incompleto');
+                    } else if (errorMessage.includes('expiration') || errorMessage.includes('expiration_date') || errorMessage.includes('MM/AA') || errorMessage.includes('data de validade') || errorMessage.toLowerCase().includes('vencimento') || errorMessage.toLowerCase().includes('data inválida')) {
+                        const errorsDiv = document.getElementById('cardFormErrors');
+                        const errorFieldDiv = document.getElementById('error-expirationDate');
+                        if (errorsDiv) {
+                            errorsDiv.style.display = 'block';
+                            errorsDiv.textContent = 'Data de validade (MM/AA) inválida ou incompleta. Por favor, verifique a data de validade do cartão.';
+                        }
+                        if (errorFieldDiv) {
+                            errorFieldDiv.style.display = 'block';
+                            errorFieldDiv.textContent = 'Data de validade (MM/AA) inválida ou incompleta';
+                        }
+                        throw new Error('Data de validade (MM/AA) inválida ou incompleta');
+                    } else if (errorMessage.includes('card_number') || errorMessage.includes('cardNumber') || errorMessage.toLowerCase().includes('número do cartão')) {
+                        const errorsDiv = document.getElementById('cardFormErrors');
+                        const errorFieldDiv = document.getElementById('error-cardNumber');
+                        if (errorsDiv) {
+                            errorsDiv.style.display = 'block';
+                            errorsDiv.textContent = 'Dados do cartão inválidos. Por favor, verifique o número do cartão, CVV e data de validade.';
+                        }
+                        if (errorFieldDiv) {
+                            errorFieldDiv.style.display = 'block';
+                            errorFieldDiv.textContent = 'Dados do cartão inválidos';
+                        }
+                        throw new Error('Dados do cartão inválidos');
+                    } else {
+                        // Erro genérico
+                        const errorsDiv = document.getElementById('cardFormErrors');
+                        if (errorsDiv) {
+                            errorsDiv.style.display = 'block';
+                            errorsDiv.textContent = 'Erro ao processar dados do cartão. Verifique se todos os campos estão preenchidos corretamente.';
+                        }
+                    throw new Error('Erro ao processar dados do cartão. Verifique os campos preenchidos.');
+                    }
+                }
+
+                if (!token) {
+                    // Se não tem token, algum campo do cartão está inválido
+                    // Tentar identificar qual campo específico está com erro
+                    const errorsDiv = document.getElementById('cardFormErrors');
+                    const validation = validateCardFormDetailed();
+                    
+                    // Se a validação detalhada identificou erros específicos, exibi-los
+                    if (validation.errors && Object.keys(validation.errors).length > 0) {
+                        displayFieldErrors(validation.errors);
+                        
+                        // Construir mensagem com os campos com erro
+                        const errorFields = [];
+                        if (validation.errors.cardNumber) errorFields.push('número do cartão');
+                        if (validation.errors.expirationDate) errorFields.push('data de validade (MM/AA)');
+                        if (validation.errors.securityCode) errorFields.push('CVV');
+                        
+                        if (errorFields.length > 0) {
+                            const errorMessage = `Por favor, verifique os seguintes campos: ${errorFields.join(', ')}.`;
+                            if (errorsDiv) {
+                                errorsDiv.style.display = 'block';
+                                errorsDiv.textContent = errorMessage;
+                            }
+                        } else {
+                            if (errorsDiv) {
+                                errorsDiv.style.display = 'block';
+                                errorsDiv.textContent = 'Dados do cartão inválidos. Verifique se o número do cartão, CVV e data de validade (MM/AA) estão corretos.';
+                            }
+                        }
+                    } else {
+                        // Se não identificou erros específicos, mostrar mensagem genérica
+                        if (errorsDiv) {
+                            errorsDiv.style.display = 'block';
+                            errorsDiv.textContent = 'Dados do cartão inválidos. Verifique se o número do cartão, CVV e data de validade (MM/AA) estão corretos.';
+                        }
+                    }
+                    
+                    if (finalizeBtn) {
+                        finalizeBtn.disabled = false;
+                        finalizeBtn.textContent = 'Finalizar Pedido';
+                        updateFinalizeButton();
+                    }
+                    
+                    throw new Error('Erro ao processar dados do cartão. Verifique se todos os campos estão preenchidos corretamente.');
+                }
+
+                // Calcular total
+                const totalText = document.getElementById('orderTotal').textContent;
+                const total = parseFloat(totalText.replace('R$', '').replace(/\./g, '').replace(',', '.').trim());
+
+                // Processar pagamento no servidor
+                const userToken = localStorage.getItem('authToken') || localStorage.getItem('userToken') || localStorage.getItem('supabaseAuthToken');
+                const paymentResponse = await fetch('/.netlify/functions/mercado-pago-process-card', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${userToken}`
+                    },
+                    body: JSON.stringify({
+                        token: token,
+                        issuer_id: issuer_id,
+                        payment_method_id: payment_method_id || 'credit_card',
+                        transaction_amount: total,
+                        installments: parseInt(installments) || 1,
+                        description: 'Compra DrDerm',
+                        payer: {
+                            email: email || localStorage.getItem('userEmail') || '',
+                            identification: {
+                                type: identificationType || 'CPF',
+                                number: identificationNumber || document.getElementById('deliveryCpf').value.replace(/\D/g, '')
+                            }
+                        }
+                    })
+                });
+
+                if (!paymentResponse.ok) {
+                    const errorData = await paymentResponse.json();
+                    throw new Error(errorData.message || 'Erro ao processar pagamento');
+                }
+
+                const paymentData = await paymentResponse.json();
+
+                if (paymentData.status === 'approved') {
+                    // Atualizar estoque
+                    await updateStock();
+                    
+                    // Limpar carrinho
+                    localStorage.removeItem('cart');
+                    localStorage.removeItem('stockReservations');
+                    
+                    if (typeof showSuccess !== 'undefined') {
+                        showSuccess('Pagamento aprovado! Redirecionando...');
+                    } else {
+                    alert('Pagamento aprovado! Redirecionando...');
+                    }
+                    setTimeout(() => {
+                    window.location.href = 'checkout.html?status=success';
+                    }, 1500);
+                } else {
+                    throw new Error('Pagamento não aprovado: ' + (paymentData.status_detail || paymentData.status));
+                }
+
+            } catch (error) {
+                console.error('Erro ao processar pagamento:', error);
+                if (typeof showError !== 'undefined') {
+                    showError(error, 'payment', { message: error.message || 'Erro ao processar pagamento. Tente novamente.' });
+                } else {
+                const errorsDiv = document.getElementById('cardFormErrors');
+                    if (errorsDiv) {
+                errorsDiv.style.display = 'block';
+                errorsDiv.textContent = error.message || 'Erro ao processar pagamento. Tente novamente.';
+                    } else {
+                        alert(error.message || 'Erro ao processar pagamento. Tente novamente.');
+                    }
+                }
+                
+                const finalizeBtn = document.querySelector('.step-actions .btn-primary');
+                if (finalizeBtn) {
+                    finalizeBtn.disabled = false;
+                    finalizeBtn.textContent = 'Finalizar Pedido';
+                    updateFinalizeButton();
+                }
+            }
+        }
+
+        // Verificar status do pagamento na URL
+        function checkPaymentStatus() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const status = urlParams.get('status');
+            const payment_id = urlParams.get('payment_id');
+            const preference_id = urlParams.get('preference_id');
+
+            if (status === 'success' || status === 'approved') {
+                // Atualizar estoque
+                updateStock();
+                
+                // Limpar carrinho
+                localStorage.removeItem('cart');
+                localStorage.removeItem('stockReservations');
+                
+                // Gerar número do pedido
+                const orderNumber = '#DR' + new Date().getFullYear() + String(Date.now()).slice(-6);
+                document.getElementById('orderNumber').textContent = orderNumber;
+                
+                // Avançar para confirmação
+                if (currentStep < 3) {
+                    currentStep = 2;
+                    nextStep();
+                }
+            } else if (status === 'failure' || status === 'rejected') {
+                if (typeof showError !== 'undefined') {
+                    showError(null, 'payment', { message: 'Pagamento não aprovado. Tente novamente com outro método de pagamento.' });
+                } else {
+                alert('Pagamento não aprovado. Tente novamente com outro método de pagamento.');
+                }
+            } else if (status === 'pending') {
+                if (typeof showSuccess !== 'undefined') {
+                    showSuccess('Pagamento pendente. Você será notificado quando o pagamento for confirmado.');
+                } else {
+                alert('Pagamento pendente. Você será notificado quando o pagamento for confirmado.');
+                }
+            }
+        }
+
+        function goToHome() {
+            window.location.href = 'index.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSavedAddresses();
+            loadOrderSummary();
+            
+            // Load user data if logged in
+            const userName = localStorage.getItem('userName');
+            if (userName) {
+                document.getElementById('deliveryName').value = userName;
+            }
+
+            // Inicializar validação em tempo real nos formulários
+            if (typeof initFormValidation !== 'undefined') {
+                const deliveryForm = document.getElementById('deliveryForm');
+                if (deliveryForm) {
+                    initFormValidation(deliveryForm);
+                }
+            }
+
+            // Atualizar estado inicial do botão "Finalizar Pedido"
+            updateFinalizeButton();
+
+            // Máscara e validação para número do documento do cartão
+            setTimeout(() => {
+                const identificationNumberInput = document.getElementById('form-checkout__identificationNumber');
+                const identificationTypeSelect = document.getElementById('form-checkout__identificationType');
+                
+                if (identificationNumberInput && identificationTypeSelect) {
+                    identificationTypeSelect.addEventListener('change', function() {
+                        identificationNumberInput.value = '';
+                        identificationNumberInput.placeholder = this.value === 'CPF' ? '000.000.000-00' : '00.000.000/0000-00';
+                    });
+
+                    identificationNumberInput.addEventListener('input', function(e) {
+                        const value = e.target.value.replace(/\D/g, '');
+                        const identificationType = identificationTypeSelect.value;
+                        
+                        if (identificationType === 'CPF') {
+                            e.target.value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+                        } else if (identificationType === 'CNPJ') {
+                            e.target.value = value.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+                        } else {
+                            e.target.value = value;
+                        }
+                    });
+                }
+
+                // Validação em tempo real do nome do titular
+                const cardholderNameInput = document.getElementById('form-checkout__cardholderName');
+                if (cardholderNameInput) {
+                    cardholderNameInput.addEventListener('input', function(e) {
+                        e.target.value = e.target.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '');
+                    });
+                }
+            }, 1000);
+
+            // Máscara para CPF
+            const cpfInput = document.getElementById('deliveryCpf');
+            if (cpfInput) {
+                cpfInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length <= 11) {
+                        value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                        value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                        value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                        e.target.value = value;
+                    }
+                });
+            }
+            
+            // Verificar status do pagamento
+            checkPaymentStatus();
+        });
+    </script>
+</body>

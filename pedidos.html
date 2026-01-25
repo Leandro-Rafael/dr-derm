@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Pedidos - DrDerm</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests; block-all-mixed-content">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta name="Referrer-Policy" content="no-referrer">
+    <meta http-equiv="Permissions-Policy" content="geolocation=(), camera=(), microphone=(), payment=()">
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
+    <!-- Scripts de segurança temporariamente desabilitados para resolver problema de carregamento -->
+    <!-- <script src="crypto-utils.js" async></script> -->
+    <!-- <script src="code-protection.js" async></script> -->
+    <!-- <script src="integrity-check.js" async></script> -->
+    <script src="security.js" defer></script>
+    <script src="utils.js" defer></script>
+    <link rel="stylesheet" href="header-styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            color: #1e2723;
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+        
+
+        .container {
+            max-width: 100%;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 clamp(15px, 4vw, 30px);
+        }
+
+        /* Header - Usa header-styles.css compartilhado */
+        /* Header já está definido como fixed no header-styles.css */
+
+        .header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem clamp(1rem, 4vw, 2rem);
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo a {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-img {
+            height: 60px;
+            width: auto;
+            max-width: 200px;
+            object-fit: contain;
+            filter: brightness(0) invert(1);
+        }
+
+        /* mobile-menu-btn, mobile-cart-icon, mobile-favorites-icon e badges removidos - já estão definidos no header-styles.css compartilhado */
+
+        .nav {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            flex: 1;
+            justify-content: flex-end;
+        }
+
+        /* Ocultar barra de pesquisa no header (desktop e mobile) */
+        .header .search-container {
+            display: none !important;
+        }
+
+        /* Ocultar barra de pesquisa mobile */
+        .mobile-search-container {
+            display: none !important;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-top: 80px !important; /* Apenas header, sem barra de pesquisa mobile */
+            }
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-icon {
+            position: relative;
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-icon:hover {
+            background: rgba(220, 187, 146, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border: 2px solid white;
+        }
+        
+
+
+        /* Orders Page */
+        .orders-page {
+            padding: 60px 0;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .orders-page h1 {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1e2723;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .orders-container {
+            max-width: 100%;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0;
+        }
+
+
+
+        .empty-orders {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .empty-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-orders h3 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1e2723;
+            margin-bottom: 15px;
+        }
+
+        .empty-orders p {
+            font-size: 16px;
+            color: #6b7280;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #395f69;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1e2723;
+            transform: translateY(-2px);
+        }
+
+        /* Estilos do mobile-nav removidos - já estão definidos no header-styles.css compartilhado */
+        
+        /* Media queries para mobile removidas - já estão definidas no header-styles.css compartilhado */
+        
+        @media (max-width: 768px) {
+
+            .orders-page {
+                padding: 20px 0;
+            }
+
+            .orders-page h1 {
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
+
+
+
+            .empty-orders {
+                padding: 40px 15px;
+            }
+
+            .empty-icon {
+                font-size: 60px;
+            }
+
+            .empty-orders h3 {
+                font-size: 20px;
+            }
+
+            .empty-orders p {
+                font-size: 14px;
+            }
+        }
+    </style>
+<script>
+    (function(){
+        try {
+            var logged = localStorage.getItem('userLoggedIn') === 'true';
+            if (!logged) {
+                window.location.replace('login.html');
+            }
+        } catch (e) {}
+    })();
+</script>
+</head>
+<body>
+    <!-- Header será carregado dinamicamente -->
+    <div id="header-placeholder"></div>
+
+    <!-- Orders Page -->
+    <section class="orders-page">
+        <div class="container">
+            <h1>Meus Pedidos</h1>
+            
+            <div class="orders-container" id="ordersContainer">
+                <!-- Orders will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Menu hamburger será carregado dinamicamente -->
+    <div id="mobile-nav-placeholder"></div>
+
+    <script>
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+
+        function loadOrders() {
+            const ordersContainer = document.getElementById('ordersContainer');
+            
+            ordersContainer.innerHTML = `
+                <div class="empty-orders">
+                    <div class="empty-icon">📦</div>
+                    <h3>Nenhum pedido encontrado</h3>
+                    <p>Você ainda não fez nenhuma compra. Que tal explorar nossos produtos?</p>
+                    <a href="index.html" class="btn btn-primary">Explorar Produtos</a>
+                </div>
+            `;
+        }
+
+        function updateCartBadge() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartCount').textContent = totalItems;
+            
+            const mobileCartCount = document.getElementById('mobileCartCount');
+            if (mobileCartCount) {
+                mobileCartCount.textContent = totalItems;
+            }
+        }
+
+        function updateFavoritesBadge() {
+            document.getElementById('favCount').textContent = favorites.length;
+            
+            const mobileFavCount = document.getElementById('mobileFavCount');
+            if (mobileFavCount) {
+                mobileFavCount.textContent = favorites.length;
+            }
+        }
+
+        function toggleMobileNav() {
+            const mobileNav = document.getElementById('mobileNav');
+            const overlay = document.getElementById('mobileOverlay');
+            mobileNav.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function closeMobileNav() {
+            const mobileNav = document.getElementById('mobileNav');
+            const overlay = document.getElementById('mobileOverlay');
+            mobileNav.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+
+        function updateUserStatus() {
+            const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+            const mobileUserOptions = document.getElementById('mobileUserOptions');
+            
+            updateMobileProfile(isLoggedIn);
+            
+            // Garantir que mobileUserOptions existe antes de modificar
+            if (mobileUserOptions) {
+                if (isLoggedIn) {
+                    // Remover qualquer opção "Ver Perfil" que possa existir
+                    mobileUserOptions.innerHTML = '';
+                    const logoutItem = document.createElement('li');
+                    logoutItem.innerHTML = `<a href="#" class="nav-item" onclick="closeMobileNav(); handleLogout();"><span>→</span> Sair</a>`;
+                    mobileUserOptions.appendChild(logoutItem);
+                } else {
+                    mobileUserOptions.innerHTML = '';
+                    const loginItem = document.createElement('li');
+                    loginItem.innerHTML = `<a href="#" class="nav-item" onclick="closeMobileNav(); handleLogin();"><span>→</span> Entrar</a>`;
+                    const registerItem = document.createElement('li');
+                    registerItem.innerHTML = `<a href="login.html" class="nav-item" onclick="closeMobileNav();"><span>+</span> Cadastrar</a>`;
+                    mobileUserOptions.appendChild(loginItem);
+                    mobileUserOptions.appendChild(registerItem);
+                }
+            }
+        }
+
+        function updateMobileProfile(isLoggedIn) {
+            const mobileUserProfile = document.getElementById('mobileUserProfile');
+            const mobileUserAvatar = document.getElementById('mobileUserAvatar');
+            const mobileUserName = document.getElementById('mobileUserName');
+            const mobileUserEmail = document.getElementById('mobileUserEmail');
+            
+            if (isLoggedIn) {
+                const userName = localStorage.getItem('userName') || 'Usuário';
+                const userEmail = localStorage.getItem('userEmail') || 'usuario@email.com';
+                
+                mobileUserAvatar.textContent = userName.charAt(0).toUpperCase();
+                mobileUserName.textContent = userName;
+                mobileUserEmail.textContent = userEmail;
+                
+                mobileUserProfile.onclick = function() {
+                    closeMobileNav();
+                    window.location.href = 'perfil.html';
+                };
+            } else {
+                mobileUserAvatar.textContent = 'DR';
+                mobileUserName.textContent = 'Visitante';
+                mobileUserEmail.textContent = 'Faça login para acessar';
+                
+                mobileUserProfile.onclick = function() {
+                    closeMobileNav();
+                    window.location.href = 'login.html';
+                };
+            }
+        }
+
+        function handleLogin() {
+            window.location.href = 'login.html';
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('userLoggedIn');
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('userName');
+            localStorage.removeItem('userPhone');
+            updateUserStatus();
+            alert('Logout realizado com sucesso!');
+        }
+
+        function viewProfile() {
+            window.location.href = 'perfil.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadOrders();
+            updateCartBadge();
+            updateFavoritesBadge();
+            // Aguardar um pouco mais para garantir que o load-header.js já tenha carregado o menu
+            setTimeout(function() {
+                updateUserStatus();
+            }, 500);
+        });
+        
+        // Função para garantir que não há "Ver Perfil" no menu mobile
+        function ensureNoViewProfileInMenu() {
+            const mobileUserOptions = document.getElementById('mobileUserOptions');
+            if (mobileUserOptions) {
+                const items = mobileUserOptions.querySelectorAll('li');
+                items.forEach(item => {
+                    const link = item.querySelector('a');
+                    if (link && (link.textContent.includes('Ver Perfil') || link.textContent.includes('viewProfile'))) {
+                        item.remove();
+                    }
+                });
+            }
+        }
+        
+        // Sobrescrever toggleMobileNav para garantir remoção
+        const originalToggleMobileNav = window.toggleMobileNav;
+        if (originalToggleMobileNav) {
+            window.toggleMobileNav = function() {
+                originalToggleMobileNav();
+                setTimeout(function() {
+                    ensureNoViewProfileInMenu();
+                    updateUserStatus();
+                }, 50);
+            };
+        }
+        
+        // Monitorar mudanças no menu e remover "Ver Perfil" se aparecer
+        setInterval(ensureNoViewProfileInMenu, 1000);
+    </script>
+    
+    <!-- Script para carregar header e menu compartilhados -->
+    <script src="load-header.js"></script>
+</body>
+</html>
