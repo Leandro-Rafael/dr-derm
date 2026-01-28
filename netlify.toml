@@ -1,6 +1,17 @@
 [build]
   publish = "."
   functions = "netlify/functions"
+  command = ""
+
+# Desabilitar detecção automática do Next.js
+[build.environment]
+  NETLIFY_NEXT_PLUGIN_SKIP = "true"
+  NODE_VERSION = "18"
+
+# Desabilitar plugins automáticos do Next.js
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+  enabled = false
   
 [build.processing]
   skip_processing = false
