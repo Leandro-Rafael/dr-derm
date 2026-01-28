@@ -1,0 +1,5 @@
+# Este arquivo força o Netlify a tratar como site estático
+# Redirecionamentos já estão no netlify.toml, mas este arquivo ajuda na detecção
+
+/api/* /.netlify/functions/:splat 200
+/webhook/mercado-pago /.netlify/functions/mercado-pago-webhook 200
