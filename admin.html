@@ -272,6 +272,61 @@
             gap: 15px;
         }
 
+        .global-search-container {
+            position: relative;
+        }
+
+        .global-search-container input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .user-info {
+            transition: all 0.3s ease;
+        }
+
+        .user-info:hover {
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .global-search-container {
+                display: none !important;
+            }
+            .user-info #userInfoText {
+                display: none !important;
+            }
+        }
+
+        /* Melhorias para ações rápidas */
+        .btn-primary-ghost {
+            background: white;
+            border: 2px solid #e2e8f0;
+            color: #1e2723;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary-ghost:hover {
+            background: #f8fafc;
+            border-color: #dcbb92;
+            color: #395f69;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        /* Animação de loading para estatísticas */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .stat-loading {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
         /* Menu hambúrguer para mobile */
         .mobile-menu-toggle {
             display: none;
@@ -528,6 +583,24 @@
 
         .stat-card:hover .stat-value {
             transform: scale(1.05);
+        }
+
+        .stat-loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(0,0,0,0.1);
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .stat-action {
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover .stat-action {
+            opacity: 1;
         }
 
         .admin-section {
@@ -8199,6 +8272,34 @@
                 <a href="index.html"><img src="imagems/logo_dr_derm_cropped.png" alt="Dr Derm" class="logo-img"></a>
             </div>
             <div class="header-actions">
+                <!-- Busca Global -->
+                <div class="global-search-container" style="display: none; position: relative; margin-right: 16px;">
+                    <input type="search" id="globalSearch" placeholder="Buscar em todo o sistema..." 
+                           style="padding: 10px 40px 10px 16px; border: 2px solid rgba(255,255,255,0.3); border-radius: 25px; background: rgba(255,255,255,0.1); color: white; width: 300px; max-width: 100%; font-size: 14px;"
+                           oninput="handleGlobalSearch(this.value)"
+                           onfocus="this.style.background='rgba(255,255,255,0.2)'; this.style.borderColor='#dcbb92';"
+                           onblur="this.style.background='rgba(255,255,255,0.1)'; this.style.borderColor='rgba(255,255,255,0.3)';">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+                         style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.7); pointer-events: none;">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                </div>
+                
+                <!-- Info do Usuário -->
+                <div class="user-info" style="display: flex; align-items: center; gap: 12px; color: white; margin-right: 16px;">
+                    <div style="text-align: right; display: none;" id="userInfoText">
+                        <div style="font-weight: 600; font-size: 14px;" id="userNameDisplay">Admin</div>
+                        <div style="font-size: 12px; opacity: 0.8;" id="userEmailDisplay">drderm.adm@ofc</div>
+                    </div>
+                    <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(220, 187, 146, 0.3); display: flex; align-items: center; justify-content: center; border: 2px solid rgba(220, 187, 146, 0.5);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #dcbb92;">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                </div>
+                
                 <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Menu">
                     <span></span>
                     <span></span>
@@ -8321,16 +8422,33 @@
         <main class="main-content">
             <!-- Dashboard Section -->
             <div id="dashboard" class="content-section active">
-                <div style="display:flex; align-items:center; justify-content:space-between; gap:16px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap: wrap;">
                     <div>
                         <h1 class="admin-title">Painel Administrativo</h1>
-                        <p class="admin-subtitle">Gerencie usuários, produtos e pedidos do sistema</p>
+                        <p class="admin-subtitle">Visão geral e controle completo do sistema</p>
+                    </div>
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                        <button class="btn-secondary" onclick="showSection('produtos'); return false;" style="display: flex; align-items: center; gap: 8px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            Novo Produto
+                        </button>
+                        <button class="btn-secondary" onclick="loadUsers(); loadStatistics();" style="display: flex; align-items: center; gap: 8px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="23 4 23 10 17 10"></polyline>
+                                <polyline points="1 20 1 14 7 14"></polyline>
+                                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                            </svg>
+                            Atualizar
+                        </button>
                     </div>
                 </div>
 
                 <!-- Statistics -->
                 <div class="stats-grid">
-                    <div class="stat-card users">
+                    <div class="stat-card users" onclick="showSection('dashboard'); loadUsers();" style="cursor: pointer;">
                         <div class="stat-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -8340,9 +8458,14 @@
                             </svg>
                         </div>
                         <div class="stat-label">Total de Usuários</div>
-                        <div class="stat-value" id="totalUsers">0</div>
+                        <div class="stat-value" id="totalUsers">
+                            <span class="stat-loading">...</span>
+                        </div>
+                        <div class="stat-action" style="margin-top: 8px; font-size: 12px; color: #64748b;">
+                            <span id="usersBlocked" style="color: #ef4444;">0 bloqueados</span>
+                        </div>
                     </div>
-                    <div class="stat-card products">
+                    <div class="stat-card products" onclick="showSection('produtos'); return false;" style="cursor: pointer;">
                         <div class="stat-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
@@ -8351,9 +8474,14 @@
                             </svg>
                         </div>
                         <div class="stat-label">Produtos Cadastrados</div>
-                        <div class="stat-value" id="totalProducts">0</div>
+                        <div class="stat-value" id="totalProducts">
+                            <span class="stat-loading">...</span>
+                        </div>
+                        <div class="stat-action" style="margin-top: 8px; font-size: 12px; color: #64748b;">
+                            <span id="productsActive" style="color: #10b981;">0 ativos</span>
+                        </div>
                     </div>
-                    <div class="stat-card orders">
+                    <div class="stat-card orders" onclick="showSection('vendas'); return false;" style="cursor: pointer;">
                         <div class="stat-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <circle cx="9" cy="21" r="1"></circle>
@@ -8362,7 +8490,12 @@
                             </svg>
                         </div>
                         <div class="stat-label">Pedidos Realizados</div>
-                        <div class="stat-value" id="totalOrders">0</div>
+                        <div class="stat-value" id="totalOrders">
+                            <span class="stat-loading">...</span>
+                        </div>
+                        <div class="stat-action" style="margin-top: 8px; font-size: 12px; color: #64748b;">
+                            <span id="ordersPending" style="color: #f59e0b;">0 pendentes</span>
+                        </div>
                     </div>
                     <div class="stat-card revenue">
                         <div class="stat-icon">
@@ -8372,7 +8505,48 @@
                             </svg>
                         </div>
                         <div class="stat-label">Receita Total</div>
-                        <div class="stat-value" id="totalRevenue">R$ 0</div>
+                        <div class="stat-value" id="totalRevenue">
+                            <span class="stat-loading">...</span>
+                        </div>
+                        <div class="stat-action" style="margin-top: 8px; font-size: 12px; color: #64748b;">
+                            <span id="revenueMonth">Este mês: R$ 0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ações Rápidas -->
+                <div class="admin-section" style="margin-top: 30px;">
+                    <h2 class="section-title" style="margin-bottom: 20px;">Ações Rápidas</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                        <button class="btn-primary-ghost" onclick="showSection('produtos'); setTimeout(() => document.getElementById('productModal').style.display = 'flex', 100);" style="padding: 20px; text-align: center; flex-direction: column; gap: 12px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            <div style="font-weight: 600;">Adicionar Produto</div>
+                        </button>
+                        <button class="btn-primary-ghost" onclick="showSection('categorias');" style="padding: 20px; text-align: center; flex-direction: column; gap: 12px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                                <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                            </svg>
+                            <div style="font-weight: 600;">Gerenciar Categorias</div>
+                        </button>
+                        <button class="btn-primary-ghost" onclick="showSection('pagamento');" style="padding: 20px; text-align: center; flex-direction: column; gap: 12px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="1" x2="12" y2="23"></line>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                            </svg>
+                            <div style="font-weight: 600;">Configurar Pagamento</div>
+                        </button>
+                        <button class="btn-primary-ghost" onclick="window.open('https://drdermofc.netlify.app', '_blank');" style="padding: 20px; text-align: center; flex-direction: column; gap: 12px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                <polyline points="15 3 21 3 21 9"></polyline>
+                                <line x1="10" y1="14" x2="21" y2="3"></line>
+                            </svg>
+                            <div style="font-weight: 600;">Ver Site</div>
+                        </button>
                     </div>
                 </div>
 
@@ -9632,36 +9806,70 @@
                     return;
                 }
 
-                alert(isBlocked ? 'Usuário desbloqueado com sucesso!' : 'Usuário bloqueado com sucesso!');
+                showToast(isBlocked ? 'Usuário desbloqueado com sucesso!' : 'Usuário bloqueado com sucesso!', 'success');
                 await loadUsers();
+                await loadStatistics();
             } catch (error) {
                 console.error('Error blocking user:', error);
-                alert('Erro ao bloquear usuário');
+                showToast('Erro ao bloquear usuário', 'error');
             }
         }
 
         // Load statistics
         async function loadStatistics() {
-            // Load users count
+            const token = localStorage.getItem('authToken');
+            if (!token) return;
+
             try {
-                const token = localStorage.getItem('authToken');
-                if (token) {
-                    const res = await fetch('/api/admin-users', {
-                        headers: { 'Authorization': 'Bearer ' + token }
-                    });
-                    if (res.ok) {
-                        const data = await res.json();
-                        document.getElementById('totalUsers').textContent = data.total || 0;
+                // Load users count
+                const usersRes = await fetch('/api/admin-users', {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                if (usersRes.ok) {
+                    const usersData = await usersRes.json();
+                    const totalUsers = usersData.total || 0;
+                    const blockedUsers = (usersData.users || []).filter(u => u.isBlocked).length;
+                    document.getElementById('totalUsers').innerHTML = totalUsers.toLocaleString('pt-BR');
+                    const blockedEl = document.getElementById('usersBlocked');
+                    if (blockedEl) {
+                        blockedEl.textContent = `${blockedUsers} bloqueado${blockedUsers !== 1 ? 's' : ''}`;
                     }
                 }
             } catch (err) {
-                console.error('Error loading stats:', err);
+                console.error('Error loading users stats:', err);
+                document.getElementById('totalUsers').innerHTML = '<span style="color: #ef4444;">Erro</span>';
+            }
+
+            try {
+                // Load products count
+                const productsRes = await fetch('/api/admin-products', {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                if (productsRes.ok) {
+                    const productsData = await productsRes.json();
+                    const totalProducts = productsData.products?.length || 0;
+                    const activeProducts = (productsData.products || []).filter(p => p.is_active !== false).length;
+                    document.getElementById('totalProducts').innerHTML = totalProducts.toLocaleString('pt-BR');
+                    const activeEl = document.getElementById('productsActive');
+                    if (activeEl) {
+                        activeEl.textContent = `${activeProducts} ativo${activeProducts !== 1 ? 's' : ''}`;
+                    }
+                }
+            } catch (err) {
+                console.error('Error loading products stats:', err);
+                document.getElementById('totalProducts').innerHTML = '<span style="color: #ef4444;">Erro</span>';
+            }
+
+            // Placeholder para pedidos e receita (seria necessário endpoint específico)
+            const ordersEl = document.getElementById('totalOrders');
+            if (ordersEl && ordersEl.textContent === '0' || ordersEl.textContent.includes('...')) {
+                ordersEl.innerHTML = '<span style="color: #64748b;">-</span>';
             }
             
-            // Placeholder values for other stats (would need additional endpoints)
-            document.getElementById('totalProducts').textContent = '-';
-            document.getElementById('totalOrders').textContent = '-';
-            document.getElementById('totalRevenue').textContent = 'R$ 0';
+            const revenueEl = document.getElementById('totalRevenue');
+            if (revenueEl && revenueEl.textContent === 'R$ 0' || revenueEl.textContent.includes('...')) {
+                revenueEl.innerHTML = '<span style="color: #64748b;">R$ 0</span>';
+            }
         }
 
         // Toggle mobile menu
@@ -9873,18 +10081,41 @@
         }
 
         // Show toast notification
-        function showToast(message, type = 'success') {
+        function showToast(message, type = 'success', duration = 4000) {
             const toast = document.getElementById('toastNotification');
+            if (!toast) return;
+            
             const toastMessage = toast.querySelector('.toast-message');
+            const toastIcon = toast.querySelector('.toast-icon');
             
             toast.className = `toast-notification ${type}`;
             toastMessage.textContent = message;
+            
+            // Ícone baseado no tipo
+            const icons = {
+                success: '✓',
+                error: '✕',
+                warning: '⚠',
+                info: 'ℹ'
+            };
+            if (toastIcon) {
+                toastIcon.textContent = icons[type] || icons.info;
+            }
+            
             toast.classList.add('show');
 
-            // Auto hide after 4 seconds
+            // Auto hide
             setTimeout(() => {
                 toast.classList.remove('show');
-            }, 4000);
+            }, duration);
+        }
+
+        // Função para confirmar ações (substitui confirm nativo)
+        function showConfirm(message, onConfirm, onCancel) {
+            const confirmed = confirm(message);
+            if (confirmed && onConfirm) onConfirm();
+            else if (!confirmed && onCancel) onCancel();
+            return confirmed;
         }
 
         // Change password function
@@ -11955,6 +12186,9 @@
                 }, 100);
             } else if (sectionId === 'pagamento') {
                 loadMercadoPagoAccounts();
+            } else if (sectionId === 'dashboard') {
+                loadStatistics();
+                loadUsers();
             }
         };
 
@@ -12272,7 +12506,55 @@
             }
         });
 
+        // Carregar informações do usuário
+        function loadUserInfo() {
+            const userName = localStorage.getItem('userName') || 'Administrador';
+            const userEmail = localStorage.getItem('userEmail') || 'drderm.adm@ofc';
+            
+            const nameEl = document.getElementById('userNameDisplay');
+            const emailEl = document.getElementById('userEmailDisplay');
+            const infoText = document.getElementById('userInfoText');
+            
+            if (nameEl) nameEl.textContent = userName;
+            if (emailEl) emailEl.textContent = userEmail;
+            if (infoText && window.innerWidth > 768) {
+                infoText.style.display = 'block';
+            }
+        }
+
+        // Busca global
+        function handleGlobalSearch(query) {
+            if (!query || query.length < 2) return;
+            // Implementar busca global
+            console.log('Busca:', query);
+        }
+
+        // Atalhos de teclado
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + K para busca
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                const searchInput = document.getElementById('globalSearch');
+                if (searchInput) {
+                    searchInput.focus();
+                    searchInput.select();
+                }
+            }
+            // ESC para fechar modais
+            if (e.key === 'Escape') {
+                const modals = document.querySelectorAll('[id$="Modal"], [id$="modal"]');
+                modals.forEach(modal => {
+                    if (modal.style.display !== 'none') {
+                        const closeBtn = modal.querySelector('[onclick*="close"], [onclick*="hide"]');
+                        if (closeBtn) closeBtn.click();
+                    }
+                });
+            }
+        });
+
         document.addEventListener('DOMContentLoaded', async function() {
+            loadUserInfo();
+            
             // Adicionar listeners para preview de desconto
             const priceInput = document.getElementById('productPrice');
             const discountInput = document.getElementById('productDiscount');
@@ -12290,6 +12572,12 @@
                     renderApplicationAreaSelector();
                 }
             }, 100);
+            
+            // Carregar dados iniciais do dashboard
+            if (document.getElementById('dashboard')?.classList.contains('active')) {
+                loadStatistics();
+                loadUsers();
+            }
             
             // Fechar menu mobile ao clicar fora
             document.addEventListener('click', function(e) {
